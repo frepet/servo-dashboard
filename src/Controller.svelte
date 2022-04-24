@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { axes } from "./AxesStore";
     let axis: number[] = [];
 
     let poll: number;
+
     const plugIn = () => {
         startController();
     }
@@ -18,6 +20,7 @@
 
         pad.axes.forEach((val, i) => {
             axis[i] = val;
+            $axes[i] = val;
         });
 
         poll = requestAnimationFrame(startController);
@@ -43,7 +46,7 @@
 
 <style>
     .container {
-        background-color: aliceblue;
+        background-color: teal;
         border-radius: 0.5em;
         padding: 0.5em;
     }
@@ -64,5 +67,7 @@
 
     .row p {
         margin: auto 0 auto 0;
+        width: 3em;
+        text-align: right;
     }
 </style>
