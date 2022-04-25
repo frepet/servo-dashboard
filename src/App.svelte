@@ -4,14 +4,24 @@
 	import Servo from "./Servo.svelte";
 
 	const name: String = "Servo Dashboard";
+	let servos = [];
+	let nextID = 0;
 </script>
 
 <h1>{name}</h1>
 <div class="container">
 	<div class="cards">
 		<Controller/>
-		<Servo axis={0}/>
-		<Servo axis={1} speed={10}/>
+
+		{#each servos as id}
+			<Servo {id}/>
+		{/each}
+
+		<button on:click={() => {
+			servos = [...servos, nextID];
+			nextID++;
+		}}>+</button>
+
 	</div>
 	<Output url="ws://localhost:22022"/>
 </div>
