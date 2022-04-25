@@ -38,7 +38,7 @@
 
     {#each axis as value, i}
         <div class='row'>
-            {i}
+            <p class="label">{i}</p>
             <input type="range" min={-1} max={1} step={0.01} {value} disabled>
             <p>{value.toFixed(2)}</p>
         </div>
@@ -50,6 +50,7 @@
         background-color: teal;
         border-radius: 0.5em;
         padding: 0.5em;
+        width: fit-content;
     }
 
     .container h2 {
@@ -59,6 +60,7 @@
 
     .row {
         display: flex;
+        margin-left: 0.5em;
     }
 
     .row input {
@@ -70,5 +72,11 @@
         margin: auto 0 auto 0;
         width: 3em;
         text-align: right;
+    }
+
+    .row .label {
+        width: 0.1em;
+        text-align: right;
+        margin-right: 0.5em;
     }
 </style>

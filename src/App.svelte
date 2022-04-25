@@ -10,8 +10,8 @@
 
 <h1>{name}</h1>
 <div class="container">
+	<Controller/>
 	<div class="cards">
-		<Controller/>
 
 		{#each servos as id}
 			<Servo {id}/>
@@ -34,6 +34,7 @@
 	}
 	.cards {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
 </style>
