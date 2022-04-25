@@ -21,8 +21,25 @@
     loop();
 </script>
 
-<h3>OUTPUT({url}):</h3>
-<button on:click={() => WS.open(url)}>Open</button>
-{#each msgs as msg}
-    <p>{msg}</p>
-{/each}
+<div class="output">
+    <h3>WebSocket connector</h3>
+    <p class="url">{url}</p>
+    <button on:click={() => WS.open(url)}>Open</button>
+    {#each msgs as msg}
+        <p>{msg}</p>
+    {/each}
+</div>
+
+<style>
+    .output {
+        background-color: teal;
+        border-radius: 0.5em;
+        padding: 0.5em;
+    }
+    h3 {
+        margin-bottom: 0px;
+    }
+    .url {
+        margin-top: 0px;
+    }
+</style>

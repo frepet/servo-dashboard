@@ -35,6 +35,12 @@
         border-radius: 0.5em;
         padding: 0.5em;
     }
+
+    h2  {
+        padding: 0px;
+        margin: 0px;
+    }
+
     .row {
         display: flex;
     }

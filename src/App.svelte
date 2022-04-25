@@ -8,14 +8,21 @@
 
 <h1>{name}</h1>
 <div class="container">
-	<Controller/>
-	<Servo axis={0}/>
-	<Servo axis={1} speed={10}/>
+	<div class="cards">
+		<Controller/>
+		<Servo axis={0}/>
+		<Servo axis={1} speed={10}/>
+	</div>
+	<Output url="ws://localhost:22022"/>
 </div>
-<Output url="ws://localhost:22022"/>
 
 <style>
 	.container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.cards {
 		display: flex;
 		gap: 0.5rem;
 	}

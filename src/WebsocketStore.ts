@@ -6,10 +6,9 @@ let socket: WebSocket;
 
 const open = (url: string) => {
     socket = new WebSocket(url);
-    socket.addEventListener('open', (ev) => messageStore.set("Connected"));
-    socket.addEventListener('message', (ev) => messageStore.set(ev.data));
-    socket.addEventListener('close', (ev) => messageStore.set("Disconnected"));
-    socket.addEventListener('error', (ev) => messageStore.set(`Connection Error: ${ev}`));
+    socket.addEventListener('open', (ev) => messageStore.set("[INFO] WebSocket Connected"));
+    socket.addEventListener('message', (ev) => messageStore.set(`WebSocket: ${ev.data}`));
+    socket.addEventListener('close', (ev) => messageStore.set("[WARN] WebSocket disconnected from server!"));
 }
 
 const close = () => {
