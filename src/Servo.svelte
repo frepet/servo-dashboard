@@ -3,7 +3,7 @@
     import { pwms } from "./PWMStore";
     import { clamp } from "./utils";
 
-    export let axis: number = 0;
+    export let axis: number = -1;
     export let startValue = 127;
     export let speed = 1.0;
     export let id: number = 0;
@@ -14,7 +14,9 @@
 
     let poll: number;
     const loop = () => {
-        $pwms[id] = clamp($pwms[id] + ($axes[axis] ?? 0) * speed, 0, 255);
+        if (axis > -1) {
+            $pwms[id] = clamp($pwms[id] + ($axes[axis] ?? 0) * speed, 0, 255);
+        }
         poll = requestAnimationFrame(loop);
     }
     loop();
@@ -27,6 +29,15 @@
         <p>{Math.round($pwms[id])}</p>
         <button on:click={() => $pwms[id]--}>-</button>
         <button on:click={() => $pwms[id]++}>+</button>
+    </div>
+    <div class="row">
+        <p>Gamepad Axis:</p>
+        <select bind:value={axis}>
+            <option value={-1}>-</option>
+            {#each Array($axes.length) as _, i}
+                <option>{i}</option>
+            {/each}
+        </select>
     </div>
 </div>
 
@@ -44,11 +55,12 @@
 
     .row {
         display: flex;
+        justify-content: space-between;
     }
 
     .row p {
         margin: auto 0 auto 0;
-        width: 3em;
+        min-width: 3em;
         text-align: center;
     }
 </style>

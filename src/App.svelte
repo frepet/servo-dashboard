@@ -4,8 +4,8 @@
 	import Servo from "./Servo.svelte";
 
 	const name: String = "Servo Dashboard";
-	let servos = [];
-	let nextID = 0;
+	let servos = [0, 1, 2, 3];
+	let nextID = 4;
 </script>
 
 <h1>{name}</h1>

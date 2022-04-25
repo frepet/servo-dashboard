@@ -36,8 +36,9 @@
 <div class='container'>
     <h2>Gamepad</h2>
 
-    {#each axis as value}
+    {#each axis as value, i}
         <div class='row'>
+            {i}
             <input type="range" min={-1} max={1} step={0.01} {value} disabled>
             <p>{value.toFixed(2)}</p>
         </div>
