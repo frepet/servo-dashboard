@@ -1,7 +1,6 @@
 import { writable } from "svelte/store";
 
 const messageStore = writable('');
-
 let socket: WebSocket;
 
 const open = (url: string) => {
@@ -12,7 +11,6 @@ const open = (url: string) => {
 }
 
 const close = () => {
-    messageStore.set('');
     socket.close();
 }
 
@@ -22,9 +20,17 @@ const set = (msg: string) => {
     }
 }
 
+const isOpen = () => {
+    if (socket == undefined) {
+        return false;
+    }
+    return socket.readyState <= 1;
+}
+
 export default {
     subscribe: messageStore.subscribe,
     open,
     close,
     set,
+    isOpen
 }
