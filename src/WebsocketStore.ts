@@ -6,7 +6,7 @@ let socket: WebSocket;
 const open = (url: string) => {
     socket = new WebSocket(url);
     socket.addEventListener('open', (ev) => messageStore.set("[INFO] WebSocket Connected"));
-    socket.addEventListener('message', (ev) => messageStore.set(`WebSocket: ${ev.data}`));
+    socket.addEventListener('message', (ev) => messageStore.set(`${(new Date()).toLocaleTimeString('en-US', {hour12: false})}: ${ev.data}`));
     socket.addEventListener('close', (ev) => messageStore.set("[WARN] WebSocket disconnected from server!"));
 }
 
