@@ -58,7 +58,7 @@
     }
 
     h2 {
-        margin-bottom: 0px;
+        margin: 0px;
     }
 
     .url {
