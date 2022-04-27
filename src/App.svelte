@@ -1,29 +1,27 @@
 <script lang="ts">
-	import Controller from "./Controller.svelte";
-	import Output from "./Output.svelte";
-	import Servo from "./Servo.svelte";
+	import GamepadCard from "./GamepadCard.svelte";
+	import WebSocketCard from "./WebSocketCard.svelte";
+	import ServoCard from "./ServoCard.svelte";
 
 	const name: String = "Servo Dashboard";
 	let servos = [0, 1, 2, 3];
 	let nextID = 4;
 </script>
 
-<h1>{name}</h1>
 <div class="container">
-	<Controller/>
-	<div class="cards">
+	<h1>{name}</h1>
 
+	<GamepadCard/>
+
+	<div class="servos">
 		{#each servos as id}
-			<Servo {id}/>
+			<ServoCard {id}/>
 		{/each}
 
-		<button on:click={() => {
-			servos = [...servos, nextID];
-			nextID++;
-		}}>+</button>
-
+		<button on:click={() => { servos = [...servos, nextID]; nextID++;}}>+</button>
 	</div>
-	<Output url="ws://localhost:22022"/>
+
+	<WebSocketCard/>
 </div>
 
 <style>
@@ -32,7 +30,7 @@
 		flex-direction: column;
 		gap: 0.5rem;
 	}
-	.cards {
+	.servos {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
