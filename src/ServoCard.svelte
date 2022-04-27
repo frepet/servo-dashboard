@@ -59,6 +59,10 @@
         </select>
     </div>
 
+    <div class="row">
+        <p class="label">Axis speed:</p>
+        <input class="number" type="number" step={0.1} bind:value={speed}/>
+    </div>
 </div>
 
 <style>
