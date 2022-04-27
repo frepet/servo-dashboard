@@ -3,7 +3,7 @@
     import { pwms } from "./PWMStore";
 
     let msgs: string[] = [];
-    export let url: string = "ws://localhost:22022";
+    let port: number = 22022;
     let connected = false;
     let mouseOver = false;
 
@@ -12,6 +12,11 @@
             msgs = [...msgs, $WS];
         }
         connected = WS.isOpen();
+    }
+
+    $: {
+        let portElement = document.getElementById("port") as HTMLInputElement;
+        if (portElement) portElement.disabled = connected;
     }
 
     let poll: number;
@@ -34,12 +39,12 @@
 
 <div class="output">
     <h2>WebSocket</h2>
-    <input class="url" bind:value={url}/>
+    Port: <input id="port" class="port" type="number" min={1024} max={65535} bind:value={port}/>
 
     {#if connected}
         <button on:click={() => WS.close()}>Disconnect</button>
     {:else}
-        <button on:click={() => WS.open(url)}>Connect</button>
+        <button on:click={() => WS.open(`ws://localhost:${port}`)}>Connect</button>
     {/if}
 
     <hr/>
@@ -61,10 +66,11 @@
         margin: 0px;
     }
 
-    .url {
+    .port {
         margin-top: 0px;
         background-color: beige;
         border-radius: 0.5em;
+        width: 5em;
     }
 
     .messages {
