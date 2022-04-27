@@ -1,5 +1,6 @@
 <script lang="ts">
     import { axes } from "./AxesStore";
+    import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
     let axis: number[] = [];
 
     let poll: number;
@@ -33,23 +34,34 @@
     on:gamepaddisconnected={plugOut}
 />
 
-<div class='card'>
-    <h2>Gamepad</h2>
-    <ul>
-    {#each axis as value, i}
-        <li class='row'>
-            <p class="label">{i}</p>
-            <p>{value.toFixed(2)}</p>
-            <input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled>
-        </li>
-    {/each}
-    </ul>
-</div>
+<Accordion multiple>
+    <Panel>
+        {#if axis.length > 0}
+        <Header>Gamepad 0</Header>
+        <Content>
+            <div class='card'>
+                <ul>
+                {#each axis as value, i}
+                    <li class='row'>
+                        <p class="label">{i}</p>
+                        <p>{value.toFixed(2)}</p>
+                        <input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled>
+                    </li>
+                {/each}
+                </ul>
+            </div>
+        </Content>
+        {/if}
+    </Panel>
+</Accordion>
 
 <style>
     .card {
-        width: 20em;
-        background-color: var(--mdc-theme-secondary);;
+        width: 15em;
+    }
+
+    .card ul {
+        padding: 0 0 0 0.5em;
     }
 
     .row {

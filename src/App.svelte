@@ -4,11 +4,12 @@
 	import ServoCard from "./ServoCard.svelte";
 
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
+	import Card, { Actions, ActionButtons } from "@smui/card";
+	import Button, { Label } from "@smui/button";
 
 	const name: String = "Servo Dashboard";
 	let servos = [0, 1, 2, 3];
 	let nextID = 4;
-	let selectedServo: ServoCard;
 </script>
 
 <!-- SMUI Styles -->
@@ -28,18 +29,28 @@
 
 	<GamepadCard/>
 
-	<Accordion multiple>
-		{#each servos as id}
-		<Panel>
-			<Header>Servo {id}</Header>
-			<Content>
-				<ServoCard {id}/>
-			</Content>
-		</Panel>
-		{/each}
+	<Card>
+		<Content>
+			<Accordion multiple>
+				{#each servos as id}
+				<Panel>
+					<Header>Servo {id}</Header>
+					<Content>
+						<ServoCard {id}/>
+					</Content>
+				</Panel>
+				{/each}
 
-		<button on:click={() => { servos = [...servos, nextID]; nextID++;}}>+</button>
-	</Accordion>
+			</Accordion>
+		</Content>
+		<Actions>
+			<ActionButtons>
+				<Button on:click={() => { servos = [...servos, nextID]; nextID++;}} title="Add">
+					<Label>Add</Label>
+				</Button>
+			</ActionButtons>
+		</Actions>
+	</Card>
 
 	<WebSocketCard/>
 </div>

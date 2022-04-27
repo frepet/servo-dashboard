@@ -72,6 +72,10 @@
         flex-direction: row;
         width: 100%;
     }
+    
+    .servocontents ul {
+        padding: 0 0 0 0.5em;
+    }
 
     .row {
         display: flex;
