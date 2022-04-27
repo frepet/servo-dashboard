@@ -28,29 +28,29 @@
     loop();
 </script>
 
-<div class="container">
+<div class="card">
     <h2>{name}</h2>
 
     <div class="row">
         <p class="label">PWM</p>
-        <input type="range" min=0 max=255 step={1} bind:value={$pwms[id]}>
         <p>{Math.round($pwms[id])}</p>
+        <input class="slider" type="range" min=0 max=255 step={1} bind:value={$pwms[id]}>
     </div>
 
     <div class="row">
-        <p class="label">MIN</p>
-        <input type="range" min={0} max={255} step={1} bind:value={min}>
+        <p class="label">Min</p>
         <p>{min}</p>
+        <input class="slider" type="range" min={0} max={255} step={1} bind:value={min}>
     </div>
 
     <div class="row">
-        <p class="label">MAX</p>
-        <input type="range" min={0} max={255} step={1} bind:value={max}>
+        <p class="label">Max</p>
         <p>{max}</p>
+        <input class="slider" type="range" min={0} max={255} step={1} bind:value={max}>
     </div>
 
     <div class="row">
-        <p>Gamepad Axis:</p>
+        <p class="label">Gamepad Axis:</p>
         <select bind:value={axis}>
             <option value={-1}>-</option>
             {#each Array($axes.length) as _, i}
@@ -62,33 +62,6 @@
 </div>
 
 <style>
-    .container {
-        background-color: teal;
-        border-radius: 0.5em;
-        padding: 0.5em;
-    }
-
-    h2  {
-        padding: 0px;
-        margin: 0px;
-    }
-
-    .row {
-        display: flex;
-        justify-content: space-between;
-        margin-left: 0.5em;
-    }
-
-    .row input {
-        height: 0.8em;
-    }
-
-    .row p {
-        margin: auto 0 auto 0;
-        min-width: 3em;
-        text-align: center;
-    }
-
     .row .label {
         text-align: left;
         min-width: 3em;

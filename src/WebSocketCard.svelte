@@ -37,7 +37,7 @@
     loop();
 </script>
 
-<div class="output">
+<div class="card">
     <h2>WebSocket</h2>
     Port: <input id="port" class="port" type="number" min={1024} max={65535} bind:value={port}/>
 
@@ -56,14 +56,8 @@
 </div>
 
 <style>
-    .output {
-        background-color: teal;
-        border-radius: 0.5em;
-        padding: 0.5em;
-    }
-
-    h2 {
-        margin: 0px;
+    .card {
+        width: 40em;
     }
 
     .port {
