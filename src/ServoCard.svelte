@@ -5,7 +5,6 @@
 
     export let id: number = 0;
 
-    let name = `Servo ${id}`;
     let axis: number = -1;
     let min: number = 0;
     let max: number = 255;
@@ -28,46 +27,68 @@
     loop();
 </script>
 
-<div class="card">
-    <h2>{name}</h2>
+<div class="servocontents">
+    <ul>
+        <li class="row">
+            <p class="label">PWM</p>
+            <p class="value">{Math.round($pwms[id])}</p>
+            <input class="slider" type="range" min=0 max=255 step={1} bind:value={$pwms[id]}>
+        </li>
 
-    <div class="row">
-        <p class="label">PWM</p>
-        <p>{Math.round($pwms[id])}</p>
-        <input class="slider" type="range" min=0 max=255 step={1} bind:value={$pwms[id]}>
-    </div>
+        <li class="row">
+            <p class="label">Min</p>
+            <p class="value">{min}</p>
+            <input class="slider" type="range" min={0} max={255} step={1} bind:value={min}>
+        </li>
 
-    <div class="row">
-        <p class="label">Min</p>
-        <p>{min}</p>
-        <input class="slider" type="range" min={0} max={255} step={1} bind:value={min}>
-    </div>
+        <li class="row">
+            <p class="label">Max</p>
+            <p class="value">{max}</p>
+            <input class="slider" type="range" min={0} max={255} step={1} bind:value={max}>
+        </li>
+    </ul>
 
-    <div class="row">
-        <p class="label">Max</p>
-        <p>{max}</p>
-        <input class="slider" type="range" min={0} max={255} step={1} bind:value={max}>
-    </div>
+    <ul>
+        <li class="row">
+            <p class="label">Gamepad Axis:</p>
+            <select bind:value={axis}>
+                <option value={-1}>-</option>
+                {#each Array($axes.length) as _, i}
+                    <option>{i}</option>
+                {/each}
+            </select>
+        </li>
 
-    <div class="row">
-        <p class="label">Gamepad Axis:</p>
-        <select bind:value={axis}>
-            <option value={-1}>-</option>
-            {#each Array($axes.length) as _, i}
-                <option>{i}</option>
-            {/each}
-        </select>
-    </div>
-
-    <div class="row">
-        <p class="label">Axis speed:</p>
-        <input class="number" type="number" step={0.1} bind:value={speed}/>
-    </div>
+        <li class="row">
+                <p class="label">Axis speed:</p>
+                <input class="valueInput" type="number" step={0.1} bind:value={speed}/>
+        </li>
+    </ul>
 </div>
 
 <style>
-    .row .label {
-        text-align: left;
-        min-width: 3em;
+    .servocontents {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        height: 2em;
+    }
+
+    .row p {
+        margin: auto 0 auto 0;
+    }
+
+    .row .value {
+        text-align: right;
+        width: 3em;
+    }
+
+    .row .valueInput {
+        width: 3em;
     }
 </style>

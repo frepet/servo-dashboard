@@ -35,12 +35,30 @@
 
 <div class='card'>
     <h2>Gamepad</h2>
-
+    <ul>
     {#each axis as value, i}
-        <div class='row'>
+        <li class='row'>
             <p class="label">{i}</p>
             <p>{value.toFixed(2)}</p>
             <input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled>
-        </div>
+        </li>
     {/each}
+    </ul>
 </div>
+
+<style>
+    .card {
+        width: 20em;
+        background-color: var(--mdc-theme-secondary);;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        height: 2em;
+    }
+
+    .row p {
+        margin: auto 0 auto 0;
+    }
+</style>
