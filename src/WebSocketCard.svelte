@@ -1,6 +1,27 @@
+<Card>
+    <Content>
+        <h2>WebSocket</h2>
+        Port: <input id="port" class="port" type="number" min={1024} max={65535} bind:value={port}/>
+
+        {#if connected}
+            <button on:click={() => WS.close()}>Disconnect</button>
+        {:else}
+            <button on:click={() => WS.open(`ws://localhost:${port}`)}>Connect</button>
+        {/if}
+
+        <hr/>
+        <div class="messages" id="msgbox" on:mouseenter={() => mouseOver = true} on:mouseleave={() => mouseOver = false}>
+            {#each msgs as msg}
+                <p>{msg}</p>
+            {/each}
+        </div>
+    </Content>
+</Card>
+
 <script lang="ts">
     import WS from "./WebsocketStore";
     import { pwms } from "./PWMStore";
+    import Card, { Content } from "@smui/card";
 
     let msgs: string[] = [];
     let port: number = 22022;
@@ -37,27 +58,9 @@
     loop();
 </script>
 
-<div class="card">
-    <h2>WebSocket</h2>
-    Port: <input id="port" class="port" type="number" min={1024} max={65535} bind:value={port}/>
-
-    {#if connected}
-        <button on:click={() => WS.close()}>Disconnect</button>
-    {:else}
-        <button on:click={() => WS.open(`ws://localhost:${port}`)}>Connect</button>
-    {/if}
-
-    <hr/>
-    <div class="messages" id="msgbox" on:mouseenter={() => mouseOver = true} on:mouseleave={() => mouseOver = false}>
-        {#each msgs as msg}
-            <p>{msg}</p>
-        {/each}
-    </div>
-</div>
-
 <style>
-    .card {
-        width: 40em;
+    h2 {
+        margin-top: 0em;
     }
 
     .port {

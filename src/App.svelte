@@ -1,17 +1,3 @@
-<script lang="ts">
-	import GamepadCard from "./GamepadCard.svelte";
-	import WebSocketCard from "./WebSocketCard.svelte";
-	import ServoCard from "./ServoCard.svelte";
-
-    import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
-	import Card, { Actions, ActionButtons } from "@smui/card";
-	import Button, { Label } from "@smui/button";
-
-	const name: String = "Servo Dashboard";
-	let servos = [0, 1, 2, 3];
-	let nextID = 4;
-</script>
-
 <!-- SMUI Styles -->
 <link
   rel="stylesheet"
@@ -26,34 +12,20 @@
 
 <div class="container">
 	<h1>{name}</h1>
-
-	<GamepadCard/>
-
-	<Card>
-		<Content>
-			<Accordion multiple>
-				{#each servos as id}
-				<Panel>
-					<Header>Servo {id}</Header>
-					<Content>
-						<ServoCard {id}/>
-					</Content>
-				</Panel>
-				{/each}
-
-			</Accordion>
-		</Content>
-		<Actions>
-			<ActionButtons>
-				<Button on:click={() => { servos = [...servos, nextID]; nextID++;}} title="Add">
-					<Label>Add</Label>
-				</Button>
-			</ActionButtons>
-		</Actions>
-	</Card>
-
+	<GamepadsCard/>
+	<ServosCard/>
 	<WebSocketCard/>
+	Version: {SHA}
 </div>
+
+<script lang="ts">
+	import GamepadsCard from "./GamepadsCard.svelte";
+	import ServosCard from "./ServosCard.svelte";
+	import WebSocketCard from "./WebSocketCard.svelte";
+	import { SHA } from "./sha";
+
+	const name: String = "Servo Dashboard";
+</script>
 
 <style>
 	.container {
