@@ -15,7 +15,7 @@
 	<GamepadsCard/>
 	<ServosCard/>
 	<WebSocketCard/>
-	Version: {SHA}
+	<span>Version: {SHA.substring(0, 8)} of <a href={githubUrl} target="_blank">servo-dashboard</a></span>
 </div>
 
 <script lang="ts">
@@ -24,7 +24,8 @@
 	import WebSocketCard from "./WebSocketCard.svelte";
 	import { SHA } from "./sha";
 
-	const name: String = "Servo Dashboard";
+	const name = "Servo Dashboard";
+	const githubUrl = "https://github.com/frepet/servo-dashboard";
 </script>
 
 <style>

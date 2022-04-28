@@ -1,1 +1,1 @@
-export const SHA = 'local-dev';
+export const SHA = 'localdev';
