@@ -19,8 +19,8 @@
 </Card>
 
 <script lang="ts">
-    import WS from "./WebsocketStore";
-    import { pwms } from "./PWMStore";
+    import WS from "../stores/WebsocketStore";
+    import { pwms } from "../stores/PWMStore";
     import Card, { Content } from "@smui/card";
 
     let msgs: string[] = [];

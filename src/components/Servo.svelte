@@ -38,9 +38,9 @@
 </div>
 
 <script lang="ts">
-    import { axes } from "./AxesStore";
-    import { pwms } from "./PWMStore";
-    import { clamp } from "./utils";
+    import { axes } from "../stores/AxesStore";
+    import { pwms } from "../stores/PWMStore";
+    import { clamp } from "../utils";
 
     export let id: number = 0;
 

@@ -1,5 +1,31 @@
+<svelte:window
+    on:gamepadconnected={plugIn}
+    on:gamepaddisconnected={plugOut}
+/>
+
+<Accordion multiple>
+    <Panel>
+        {#if axis.length > 0}
+        <Header>Gamepad 0</Header>
+        <Content>
+            <div class='card'>
+                <ul>
+                {#each axis as value, i}
+                    <li class='row'>
+                        <p class="label">{i}</p>
+                        <p>{value.toFixed(2)}</p>
+                        <input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled>
+                    </li>
+                {/each}
+                </ul>
+            </div>
+        </Content>
+        {/if}
+    </Panel>
+</Accordion>
+
 <script lang="ts">
-    import { axes } from "./AxesStore";
+    import { axes } from "../stores/AxesStore";
     import Accordion, { Panel, Header, Content } from "@smui-extra/accordion";
     let axis: number[] = [];
 
@@ -28,32 +54,6 @@
     }
 
 </script>
-
-<svelte:window
-    on:gamepadconnected={plugIn}
-    on:gamepaddisconnected={plugOut}
-/>
-
-<Accordion multiple>
-    <Panel>
-        {#if axis.length > 0}
-        <Header>Gamepad 0</Header>
-        <Content>
-            <div class='card'>
-                <ul>
-                {#each axis as value, i}
-                    <li class='row'>
-                        <p class="label">{i}</p>
-                        <p>{value.toFixed(2)}</p>
-                        <input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled>
-                    </li>
-                {/each}
-                </ul>
-            </div>
-        </Content>
-        {/if}
-    </Panel>
-</Accordion>
 
 <style>
     .card {

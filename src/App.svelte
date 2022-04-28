@@ -19,9 +19,9 @@
 </div>
 
 <script lang="ts">
-	import GamepadsCard from "./GamepadsCard.svelte";
-	import ServosCard from "./ServosCard.svelte";
-	import WebSocketCard from "./WebSocketCard.svelte";
+	import GamepadsCard from "./components/GamepadsCard.svelte";
+	import ServosCard from "./components/ServosCard.svelte";
+	import WebSocketCard from "./components/WebSocketCard.svelte";
 	import { SHA } from "./sha";
 
 	const name = "Servo Dashboard";
