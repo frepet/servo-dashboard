@@ -9,10 +9,9 @@ export interface State {
 }
 
 export const get = async (request: {
-	local: { dbc: pgPromise.IDatabase<{}, pg.IClient> };
-}): Promise<{ body: { states: {[key: string]: string}} }> => {
-
-    let body = { states: {}};
+	local: { dbc: pgPromise.IDatabase<Record<string, unknown>, pg.IClient> };
+}): Promise<{ body: { states: { [key: string]: string } } }> => {
+	let body = { states: {} };
 
 	try {
 		await request.local.dbc
@@ -24,12 +23,12 @@ export const get = async (request: {
 					})
 				);
 				body = {
-                    states: Object.fromEntries(stateIdentifiers)
-                };
+					states: Object.fromEntries(stateIdentifiers)
+				};
 			});
 	} catch (error) {
 		console.log(error);
 	}
 
-    return { body };
+	return { body };
 };
