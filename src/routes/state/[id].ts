@@ -1,10 +1,20 @@
 import type pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
 
+export interface Servo {
+	id: number;
+	axis: number;
+	min: number;
+	max: number;
+	startValue: number;
+	speed: number;
+}
+
 export interface State {
 	uuid: string,
 	name: string;
 	pwms: number[];
+	servos: Servo[];
 }
 
 type getParams = {
@@ -19,7 +29,8 @@ export const get = async (request: {
 		state: {
 			uuid: request.params.id,
 			name: '-',
-			pwms: []
+			pwms: [],
+			servos: []
 		}
 	};
 
