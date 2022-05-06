@@ -50,3 +50,28 @@ export const get = async (request: {
  	body.state.uuid = request.params.id;
 	return { body };
 };
+
+
+export const post = async ({ request, local, params }): Promise<{}> => {
+	let state = {
+		...await request.json(),
+		uuid: params.id
+	};
+	
+	try {
+		await local.dbc.none(
+			'UPDATE states SET state = $1 WHERE uuid = $2',
+			[state, state.uuid]
+		);
+	} catch (error) {
+		console.log(error);
+		return {
+			status: 400,
+			body: { error }
+		};
+	}
+	return {
+		status: 200,
+		body: 'OK'
+	}; 
+};

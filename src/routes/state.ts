@@ -1,6 +1,3 @@
-import type pgPromise from 'pg-promise';
-import type pg from 'pg-promise/typescript/pg-subset';
-
 export const post = async ({ request, local }): Promise<{ body: { uuid: string } }> => {
 	let body = { uuid: "" };
     const reqBody = await request.json();
