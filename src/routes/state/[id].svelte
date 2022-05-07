@@ -21,12 +21,13 @@ PWMs:
 	</ol>
 {/if}
 
-
 Servos:
 {#if state.servos}
 	<ol>
 		{#each state.servos as servo}
-			<li>ID: {servo.id}, Axis: {servo.axis}, Speed: {servo.speed}, {servo.min}-{servo.max}, start: {servo.startValue}</li>
+			<li>
+				ID: {servo.id}, Axis: {servo.axis}, Speed: {servo.speed}, {servo.min}-{servo.max}, start: {servo.startValue}
+			</li>
 		{/each}
 	</ol>
 {/if}

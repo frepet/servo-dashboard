@@ -12,7 +12,7 @@ export interface Servo {
 }
 
 export interface State {
-	uuid: string,
+	uuid: string;
 	name: string;
 	pwms: number[];
 	servos: Servo[];
@@ -33,34 +33,31 @@ export const get: RequestHandler = async ({ params, locals }) => {
 	};
 
 	try {
-        await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id])
-            .then((data: any) => {
-                body.state = data['state'];
-            });
+		await locals.dbc
+			.one('SELECT state FROM states WHERE uuid = $1', [params.id])
+			.then((data: any) => {
+				body.state = data['state'];
+			});
 	} catch (error) {
 		console.log('ERROR:' + error);
-		return { 
+		return {
 			status: 404,
 			error: new Error(`State ${params.id} not found.`)
 		};
 	}
 
- 	body.state.uuid = params.id;
+	body.state.uuid = params.id;
 	return { body };
 };
 
-
 export const post: RequestHandler = async ({ request, params, locals }) => {
 	let state = {
-		...await request.json(),
+		...(await request.json()),
 		uuid: params.id
 	};
-	
+
 	try {
-		await locals.dbc.none(
-			'UPDATE states SET state = $1 WHERE uuid = $2',
-			[state, state.uuid]
-		);
+		await locals.dbc.none('UPDATE states SET state = $1 WHERE uuid = $2', [state, state.uuid]);
 	} catch (error) {
 		console.log(error);
 		return {
@@ -71,19 +68,19 @@ export const post: RequestHandler = async ({ request, params, locals }) => {
 	return {
 		status: 200,
 		body: 'OK'
-	}; 
+	};
 };
 
 export const del: RequestHandler = async ({ locals, params }): Promise<{}> => {
-    try {
-        await locals.dbc.none('DELETE FROM states WHERE uuid = $1', [params.id]);
+	try {
+		await locals.dbc.none('DELETE FROM states WHERE uuid = $1', [params.id]);
 		return {
-			body: "OK"
-		}
-    } catch (error) {
-        console.log(error);
+			body: 'OK'
+		};
+	} catch (error) {
+		console.log(error);
 		return {
 			status: 500
-		}
-    }
+		};
+	}
 };

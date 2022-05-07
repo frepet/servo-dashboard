@@ -12,7 +12,7 @@ export interface Servo {
 }
 
 export interface State {
-	uuid: string,
+	uuid: string;
 	name: string;
 	pwms: number[];
 	servos: Servo[];
@@ -33,18 +33,19 @@ export const get: RequestHandler = async ({ params, locals }) => {
 	};
 
 	try {
-        await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id])
-            .then((data: any) => {
-                body.state = data['state'];
-            });
+		await locals.dbc
+			.one('SELECT state FROM states WHERE uuid = $1', [params.id])
+			.then((data: any) => {
+				body.state = data['state'];
+			});
 	} catch (error) {
 		console.log('ERROR:' + error);
-		return { 
+		return {
 			status: 404,
 			error: new Error(`State ${params.id} not found.`)
 		};
 	}
 
- 	body.state.uuid = params.id;
+	body.state.uuid = params.id;
 	return { body };
 };

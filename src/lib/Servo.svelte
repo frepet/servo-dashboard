@@ -1,105 +1,118 @@
-<div class='servocontents'>
-    {#if $state.servos[id]}
-    <ul>
-        <li class='row'>
-            <p class='label'>PWM</p>
-            <p class='value'>{Math.round($pwms[id])}</p>
-            <input class='slider' type='range' min=0 max=255 step={1} bind:value={$pwms[id]}>
-        </li>
+<script lang="ts">
+	import { axes } from '$lib/stores/AxesStore';
+	import { pwms } from '$lib/stores/PWMStore';
+	import { state } from '$lib/stores/StateStore';
+	import { clamp } from '$lib/utils';
+	import { onDestroy } from 'svelte';
 
-        <li class='row'>
-            <p class='label'>Min</p>
-            <p class='value'>{$state.servos[id].min}</p>
-            <input class='slider' type='range' min={0} max={255} step={1} bind:value={$state.servos[id].min}>
-        </li>
+	export let id: number = 0;
 
-        <li class='row'>
-            <p class='label'>Max</p>
-            <p class='value'>{$state.servos[id].max}</p>
-            <input class='slider' type='range' min={0} max={255} step={1} bind:value={$state.servos[id].max}>
-        </li>
-    </ul>
+	let startValue = 127;
 
-        
-    <ul>
-        <li class='row'>
-            <p class='label'>Gamepad Axis:</p>
-            <select bind:value={$state.servos[id].axis}>
-                <option value={-1}>-</option>
-                {#each Array($axes.length) as _, i}
-                    <option>{i}</option>
-                {/each}
-            </select>
-        </li>
+	$pwms[id] = startValue;
 
-        <li class='row'>
-                <p class='label'>Axis speed:</p>
-                <input class='valueInput' type='number' step={0.1} bind:value={$state.servos[id].speed}/>
-        </li>
-    </ul>
-    {/if}
-</div>
+	let poll: number;
+	const loop = () => {
+		if ($state.servos) {
+			if ($state.servos[id].axis > -1) {
+				$pwms[id] = clamp(
+					$pwms[id] + ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed,
+					$state.servos[id].min,
+					$state.servos[id].max
+				);
+			} else {
+				$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
+			}
+		}
+		poll = requestAnimationFrame(loop);
+	};
+	loop();
 
-<script lang='ts'>
-    import { axes } from '$lib/stores/AxesStore';
-    import { pwms } from '$lib/stores/PWMStore';
-    import { state } from '$lib/stores/StateStore';
-    import { clamp } from '$lib/utils';
-    import { onDestroy } from 'svelte';
-
-    export let id: number = 0;
-
-    let startValue = 127;
-
-    $pwms[id] = startValue;
-
-    let poll: number;
-    const loop = () => {
-        if ($state.servos) {
-            if ($state.servos[id].axis > -1) {
-                $pwms[id] = clamp(
-                    $pwms[id] + ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed,
-                    $state.servos[id].min,
-                    $state.servos[id].max
-                );
-            } else {
-                $pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
-            }
-        }
-        poll = requestAnimationFrame(loop);
-    }
-    loop();
-
-    onDestroy(() => cancelAnimationFrame(poll));
+	onDestroy(() => cancelAnimationFrame(poll));
 </script>
 
+<div class="servocontents">
+	{#if $state.servos[id]}
+		<ul>
+			<li class="row">
+				<p class="label">PWM</p>
+				<p class="value">{Math.round($pwms[id])}</p>
+				<input class="slider" type="range" min="0" max="255" step={1} bind:value={$pwms[id]} />
+			</li>
+
+			<li class="row">
+				<p class="label">Min</p>
+				<p class="value">{$state.servos[id].min}</p>
+				<input
+					class="slider"
+					type="range"
+					min={0}
+					max={255}
+					step={1}
+					bind:value={$state.servos[id].min}
+				/>
+			</li>
+
+			<li class="row">
+				<p class="label">Max</p>
+				<p class="value">{$state.servos[id].max}</p>
+				<input
+					class="slider"
+					type="range"
+					min={0}
+					max={255}
+					step={1}
+					bind:value={$state.servos[id].max}
+				/>
+			</li>
+		</ul>
+
+		<ul>
+			<li class="row">
+				<p class="label">Gamepad Axis:</p>
+				<select bind:value={$state.servos[id].axis}>
+					<option value={-1}>-</option>
+					{#each Array($axes.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
+			</li>
+
+			<li class="row">
+				<p class="label">Axis speed:</p>
+				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].speed} />
+			</li>
+		</ul>
+	{/if}
+</div>
+
 <style>
-    .servocontents {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-    }
-    
-    .servocontents ul {
-        padding: 0 0 0 0.5em;
-    }
+	.servocontents {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+	}
 
-    .row {
-        display: flex;
-        justify-content: space-between;
-        height: 2em;
-    }
+	.servocontents ul {
+		padding: 0 0 0 0.5em;
+	}
 
-    .row p {
-        margin: auto 0 auto 0;
-    }
+	.row {
+		display: flex;
+		justify-content: space-between;
+		height: 2em;
+	}
 
-    .row .value {
-        text-align: right;
-        width: 3em;
-    }
+	.row p {
+		margin: auto 0 auto 0;
+	}
 
-    .row .valueInput {
-        width: 3em;
-    }
+	.row .value {
+		text-align: right;
+		width: 3em;
+	}
+
+	.row .valueInput {
+		width: 3em;
+	}
 </style>

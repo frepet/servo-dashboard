@@ -1,10 +1,3 @@
-<div class='container'>
-	<StateCard/>
-	<GamepadsCard/>
-	<ServosCard/>
-	<WebSocketCard/>
-</div>
-
 <script lang="ts">
 	//import type { State } from './[id]';
 	import StateCard from '../lib/StateCard.svelte';
@@ -14,6 +7,13 @@
 
 	//export let state: State;
 </script>
+
+<div class="container">
+	<StateCard />
+	<GamepadsCard />
+	<ServosCard />
+	<WebSocketCard />
+</div>
 
 <style>
 	.container {
