@@ -11,7 +11,7 @@ const db = pgp(cn);
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
-	event.local = { dbc: db };
+	event.locals.dbc = db;
 
 	const response = await resolve(event);
 	return response;

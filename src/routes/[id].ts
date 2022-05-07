@@ -1,3 +1,4 @@
+import type { RequestHandler } from '@sveltejs/kit';
 import type pgPromise from 'pg-promise';
 import type pg from 'pg-promise/typescript/pg-subset';
 
@@ -21,13 +22,10 @@ type getParams = {
 	id: string;
 };
 
-export const get = async (request: {
-	params: getParams;
-	local: { dbc: pgPromise.IDatabase<Record<string, unknown>, pg.IClient> };
-}): Promise<{ body: { state: State } } | { status: number, error: Error } > => {
+export const get: RequestHandler = async ({ params, locals }) => {
 	let body = {
 		state: {
-			uuid: request.params.id,
+			uuid: params.id,
 			name: '-',
 			pwms: [],
 			servos: []
@@ -35,7 +33,7 @@ export const get = async (request: {
 	};
 
 	try {
-        await request.local.dbc.one('SELECT state FROM states WHERE uuid = $1', [request.params.id])
+        await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id])
             .then((data: any) => {
                 body.state = data['state'];
             });
@@ -43,35 +41,10 @@ export const get = async (request: {
 		console.log('ERROR:' + error);
 		return { 
 			status: 404,
-			error: new Error(`State ${request.params.id} not found.`)
+			error: new Error(`State ${params.id} not found.`)
 		};
 	}
 
- 	body.state.uuid = request.params.id;
+ 	body.state.uuid = params.id;
 	return { body };
-};
-
-
-export const post = async ({ request, local, params }): Promise<{}> => {
-	let state = {
-		...await request.json(),
-		uuid: params.id
-	};
-	
-	try {
-		await local.dbc.none(
-			'UPDATE states SET state = $1 WHERE uuid = $2',
-			[state, state.uuid]
-		);
-	} catch (error) {
-		console.log(error);
-		return {
-			status: 400,
-			body: { error }
-		};
-	}
-	return {
-		status: 200,
-		body: 'OK'
-	}; 
 };

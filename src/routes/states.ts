@@ -1,5 +1,4 @@
-import type pgPromise from 'pg-promise';
-import type pg from 'pg-promise/typescript/pg-subset';
+import type { RequestHandler } from '@sveltejs/kit';
 
 export interface State {
 	uuid: string;
@@ -8,13 +7,11 @@ export interface State {
 	};
 }
 
-export const get = async (request: {
-	local: { dbc: pgPromise.IDatabase<Record<string, unknown>, pg.IClient> };
-}): Promise<{ body: { states: { [key: string]: string } } }> => {
+export const get: RequestHandler = async ({ locals }) => {
 	let body = { states: {} };
 
 	try {
-		await request.local.dbc
+		await locals.dbc
 			.manyOrNone('SELECT uuid, state FROM states')
 			.then((data: Array<State>) => {
 				const stateIdentifiers = new Map<string, string>(

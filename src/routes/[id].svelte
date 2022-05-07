@@ -1,32 +1,24 @@
-<script lang="ts">
-	import type { State } from './[id]';
+<div class='container'>
+	<StateCard/>
+	<GamepadsCard/>
+	<ServosCard/>
+	<WebSocketCard/>
+</div>
 
-	export let state: State;
+<script lang="ts">
+	//import type { State } from './[id]';
+	import StateCard from '../lib/StateCard.svelte';
+	import GamepadsCard from '../lib/GamepadsCard.svelte';
+	import ServosCard from '../lib/ServosCard.svelte';
+	import WebSocketCard from '../lib/WebSocketCard.svelte';
+
+	//export let state: State;
 </script>
 
-{#if state.name}
-	<h1>{state.name}</h1>
-{/if}
-
-{#if state.uuid}
-	<h4>{state.uuid}</h4>
-{/if}
-
-PWMs:
-{#if state.pwms}
-	<ol>
-		{#each state.pwms as pwm}
-			<li>{pwm}</li>
-		{/each}
-	</ol>
-{/if}
-
-
-Servos:
-{#if state.servos}
-	<ol>
-		{#each state.servos as servo}
-			<li>ID: {servo.id}, Axis: {servo.axis}, Speed: {servo.speed}, {servo.min}-{servo.max}, start: {servo.startValue}</li>
-		{/each}
-	</ol>
-{/if}
+<style>
+	.container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+</style>
