@@ -3,9 +3,10 @@
 	import { pwms } from '$lib/stores/PWMStore';
 	import Card, { Content } from '@smui/card';
 	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/env';
 
 	let msgs: string[] = [];
-	let port: number = 22022;
+	let port = 22022;
 	let connected = false;
 	let mouseOver = false;
 
@@ -32,14 +33,14 @@
 		poll = requestAnimationFrame(loop);
 	};
 
-	let stopLoop = (id: number) => {};
 	onMount(() => {
-		stopLoop = (id: number) => cancelAnimationFrame(id);
 		loop();
 	});
 
 	onDestroy(() => {
-		stopLoop(poll);
+		if (browser) {
+			cancelAnimationFrame(poll);
+		}
 	});
 </script>
 

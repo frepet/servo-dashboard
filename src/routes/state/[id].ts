@@ -1,6 +1,4 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import type pgPromise from 'pg-promise';
-import type pg from 'pg-promise/typescript/pg-subset';
 
 export interface Servo {
 	id: number;
@@ -18,12 +16,8 @@ export interface State {
 	servos: Servo[];
 }
 
-type getParams = {
-	id: string;
-};
-
 export const get: RequestHandler = async ({ params, locals }) => {
-	let body = {
+	const body = {
 		state: {
 			uuid: params.id,
 			name: '-',
@@ -33,16 +27,13 @@ export const get: RequestHandler = async ({ params, locals }) => {
 	};
 
 	try {
-		await locals.dbc
-			.one('SELECT state FROM states WHERE uuid = $1', [params.id])
-			.then((data: any) => {
-				body.state = data['state'];
-			});
+		const resp = await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id]);
+		body.state = resp['state'];
 	} catch (error) {
 		console.log('ERROR:' + error);
 		return {
 			status: 404,
-			error: new Error(`State ${params.id} not found.`)
+			error: `State ${params.id} not found.`
 		};
 	}
 
@@ -51,7 +42,7 @@ export const get: RequestHandler = async ({ params, locals }) => {
 };
 
 export const post: RequestHandler = async ({ request, params, locals }) => {
-	let state = {
+	const state = {
 		...(await request.json()),
 		uuid: params.id
 	};
@@ -67,11 +58,11 @@ export const post: RequestHandler = async ({ request, params, locals }) => {
 	}
 	return {
 		status: 200,
-		body: 'OK'
+		body: { state }
 	};
 };
 
-export const del: RequestHandler = async ({ locals, params }): Promise<{}> => {
+export const del: RequestHandler = async ({ locals, params }) => {
 	try {
 		await locals.dbc.none('DELETE FROM states WHERE uuid = $1', [params.id]);
 		return {

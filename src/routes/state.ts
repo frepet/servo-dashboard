@@ -1,9 +1,14 @@
-export const post = async ({ request, local }): Promise<{ body: { uuid: string } }> => {
-	let body = { uuid: '' };
+import type { RequestHandler } from '@sveltejs/kit';
+
+export const post: RequestHandler = async ({
+	request,
+	locals
+}): Promise<{ body: { uuid: string } }> => {
+	const body = { uuid: '' };
 	const reqBody = await request.json();
 
 	try {
-		await local.dbc
+		await locals.dbc
 			.one('INSERT INTO states (state) VALUES ($1) RETURNING uuid', [reqBody])
 			.then((data: string) => {
 				body.uuid = data;

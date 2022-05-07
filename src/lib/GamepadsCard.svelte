@@ -24,10 +24,12 @@
 
 		const pad = gamepads[0];
 
-		pad.axes.forEach((val, i) => {
-			axis[i] = val;
-			$axes[i] = val;
-		});
+		if (pad) {
+			pad.axes.forEach((val, i) => {
+				axis[i] = val;
+				$axes[i] = val;
+			});
+		}
 
 		poll = requestAnimationFrame(startController);
 	};

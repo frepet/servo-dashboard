@@ -5,7 +5,7 @@
 	import { clamp } from '$lib/utils';
 	import { onDestroy } from 'svelte';
 
-	export let id: number = 0;
+	export let id = 0;
 
 	let startValue = 127;
 

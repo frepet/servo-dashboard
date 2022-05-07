@@ -1,3 +1,4 @@
+import type { Handle } from '@sveltejs/kit';
 import 'dotenv/config';
 import pgPromise from 'pg-promise';
 
@@ -9,10 +10,9 @@ const cn = {
 };
 const db = pgp(cn);
 
-/** @type {import('@sveltejs/kit').Handle} */
-export async function handle({ event, resolve }) {
+export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.dbc = db;
 
 	const response = await resolve(event);
 	return response;
-}
+};

@@ -5,11 +5,11 @@ let socket: WebSocket;
 
 const open = (url: string) => {
 	socket = new WebSocket(url);
-	socket.addEventListener('open', (ev) => messageStore.set('[INFO] WebSocket Connected'));
+	socket.addEventListener('open', () => messageStore.set('[INFO] WebSocket Connected'));
 	socket.addEventListener('message', (ev) =>
 		messageStore.set(`${new Date().toLocaleTimeString('en-US', { hour12: false })}: ${ev.data}`)
 	);
-	socket.addEventListener('close', (ev) =>
+	socket.addEventListener('close', () =>
 		messageStore.set('[WARN] WebSocket disconnected from server!')
 	);
 };
