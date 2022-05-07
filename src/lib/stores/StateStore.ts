@@ -4,7 +4,6 @@ import type { State } from '$lib/interfaces';
 
 const BACKEND = 'http://localhost';
 const store = writable<State>({
-	uuid: '',
 	name: '',
 	pwms: [],
 	servos: []

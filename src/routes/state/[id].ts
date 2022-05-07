@@ -1,34 +1,12 @@
+import type { State } from '$lib/interfaces';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export interface Servo {
-	id: number;
-	axis: number;
-	min: number;
-	max: number;
-	startValue: number;
-	speed: number;
-}
-
-export interface State {
-	uuid: string;
-	name: string;
-	pwms: number[];
-	servos: Servo[];
-}
-
 export const get: RequestHandler = async ({ params, locals }) => {
-	const body = {
-		state: {
-			uuid: params.id,
-			name: '-',
-			pwms: [],
-			servos: []
-		}
-	};
+	let state: State;
 
 	try {
 		const resp = await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id]);
-		body.state = resp['state'];
+		state = resp['state'];
 	} catch (error) {
 		console.log('ERROR:' + error);
 		return {
@@ -37,8 +15,7 @@ export const get: RequestHandler = async ({ params, locals }) => {
 		};
 	}
 
-	body.state.uuid = params.id;
-	return { body };
+	return { body: state };
 };
 
 export const post: RequestHandler = async ({ request, params, locals }) => {

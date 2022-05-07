@@ -8,7 +8,6 @@ export interface Servo {
 }
 
 export interface State {
-	uuid: string;
 	name: string;
 	pwms: Array<number>;
 	servos: Array<Servo>;

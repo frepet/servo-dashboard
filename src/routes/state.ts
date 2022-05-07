@@ -8,11 +8,8 @@ export const post: RequestHandler = async ({
 	const reqBody = await request.json();
 
 	try {
-		await locals.dbc
-			.one('INSERT INTO states (state) VALUES ($1) RETURNING uuid', [reqBody])
-			.then((data: string) => {
-				body.uuid = data;
-			});
+		const resp = await locals.dbc.one('INSERT INTO states (state) VALUES ($1) RETURNING uuid', [reqBody]);
+		body.uuid = resp.uuid;
 	} catch (error) {
 		console.log(error);
 	}

@@ -1,26 +1,16 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
-export interface State {
-	uuid: string;
-	state: {
-		name: string;
-	};
-}
-
 export const get: RequestHandler = async ({ locals }) => {
-	let body = { states: {} };
+	let body = {};
 
 	try {
-		await locals.dbc.manyOrNone('SELECT uuid, state FROM states').then((data: Array<State>) => {
-			const stateIdentifiers = new Map<string, string>(
-				data.map(({ uuid, state }) => {
-					return [uuid, state['name']];
-				})
-			);
-			body = {
-				states: Object.fromEntries(stateIdentifiers)
-			};
-		});
+		const resp = await locals.dbc.manyOrNone('SELECT uuid, state FROM states');
+		const stateIdentifiers = new Map<string, string>(
+			resp.map(({ uuid, state }) => {
+				return [uuid, state.name];
+			})
+		);
+		body = Object.fromEntries(stateIdentifiers);
 	} catch (error) {
 		console.log(error);
 	}

@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 
 	export let state: State;
+	export let uuid: string;
 
 	onMount(() => {
 		stateStore.set(state);
@@ -15,7 +16,7 @@
 </script>
 
 <div class="container">
-	<StateCard {state} />
+	<StateCard {uuid} />
 	<GamepadsCard />
 	<ServosCard />
 	<WebSocketCard />
