@@ -2,7 +2,6 @@ import { writable, get } from 'svelte/store';
 import { pwms } from './PWMStore';
 import type { State } from '$lib/interfaces';
 
-const BACKEND = 'http://localhost';
 const store = writable<State>({
 	name: '',
 	pwms: [],
@@ -16,10 +15,7 @@ const uploadState = async (id: string) => {
 			pwms: get(pwms)
 		};
 
-		let url = `${BACKEND}/state`;
-		if (id !== '') {
-			url = `${url}/${id}`;
-		}
+		const url = `${window.location.origin}/state/${id}`;
 
 		const response = await fetch(url, {
 			method: 'POST',
