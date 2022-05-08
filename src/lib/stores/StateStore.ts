@@ -1,6 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { pwms } from './PWMStore';
-import type { State } from '$lib/interfaces';
+import type { State } from '$lib/types';
 
 const store = writable<State>({
 	name: '',

@@ -1,4 +1,4 @@
-import type { State } from '$lib/interfaces';
+import type { State } from '$lib/types';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const get: RequestHandler = async ({ params, locals }) => {

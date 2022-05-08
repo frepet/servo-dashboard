@@ -1,4 +1,4 @@
-import type { State } from '$lib/interfaces';
+import type { State } from '$lib/types';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const get: RequestHandler = async ({ params, locals }) => {
@@ -6,7 +6,7 @@ export const get: RequestHandler = async ({ params, locals }) => {
 
 	try {
 		const resp = await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id]);
-		state = resp['state'];
+		state = resp['state'] as State;
 	} catch (error) {
 		console.log('ERROR:' + error);
 		return {
@@ -15,5 +15,5 @@ export const get: RequestHandler = async ({ params, locals }) => {
 		};
 	}
 
-	return { body: { state, uuid: params.id} };
+	return { body: { state, uuid: params.id } };
 };

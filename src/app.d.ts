@@ -4,7 +4,7 @@
 // for information about these interfaces
 declare namespace App {
 	interface Locals {
-		dbc?: pgPromise.IDatabase<{}, pg.IClient>;
+		dbc?: pgPromise.IDatabase<Record<string, string>, pg.IClient>;
 	}
 	// interface Platform {}
 	// interface Session {}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { State } from '$lib/interfaces';
+	import type { State } from '$lib/types';
 	import { state as stateStore } from '$lib/stores/StateStore';
 	import StateCard from '../lib/StateCard.svelte';
 	import GamepadsCard from '../lib/GamepadsCard.svelte';
