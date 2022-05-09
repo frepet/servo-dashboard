@@ -3,6 +3,11 @@
 	import { state } from '$lib/stores/StateStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	let axis: number[] = [];
+	let deadzone: number[] = [];
+
+	for (let i = 0; i < 100; i++) {
+		deadzone[i] = 0;
+	}
 
 	let poll: number;
 
@@ -16,6 +21,14 @@
 		state.update((state) => state);
 	};
 
+	const applyDeadzone: (val: number, i: number) => number = (val, i) => {
+		if (Math.abs(val) > deadzone[i]) {
+			return (val - (Math.abs(val) / val) * deadzone[i]) / (1 - deadzone[i]);
+		} else {
+			return 0;
+		}
+	};
+
 	const startController = () => {
 		const gamepads = navigator.getGamepads();
 		if (!gamepads) {
@@ -26,8 +39,8 @@
 
 		if (pad) {
 			pad.axes.forEach((val, i) => {
-				axis[i] = val;
-				$axes[i] = val;
+				axis[i] = applyDeadzone(val, i);
+				$axes[i] = axis[i];
 			});
 		}
 
@@ -47,8 +60,9 @@
 						{#each axis as value, i}
 							<li class="row">
 								<p class="label">{i}</p>
-								<p>{value.toFixed(2)}</p>
 								<input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled />
+								<p class="value">{value.toFixed(2)}</p>
+								<input type="number" min={0} max={1} step={0.05} bind:value={deadzone[i]} />
 							</li>
 						{/each}
 					</ul>
@@ -75,5 +89,9 @@
 
 	.row p {
 		margin: auto 0 auto 0;
+	}
+
+	.row .value {
+		min-width: 4em;
 	}
 </style>

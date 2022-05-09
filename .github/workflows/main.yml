@@ -5,14 +5,16 @@ on:
     branches:
       - main
 
+env:
+  SHA: ${{ github.sha }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: echo "export const SHA = '${{ github.sha }}';" > src/sha.js
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: ${{secrets.HEROKU_KEY}}
+          heroku_api_key: ${{ secrets.HEROKU_KEY }}
           heroku_app_name: 'servo-dashboard'
           heroku_email: 'fredrik@peteri.se'
