@@ -50,13 +50,13 @@
 		<ul>
 			<li class="row">
 				<p class="label">Left</p>
-				<p class="value">{Math.round($motors[leftMotor])}</p>
+				<p class="value">{$motors[leftMotor].toFixed(2)}</p>
 				<input class="slider" type="range" min={-1} max={1} step={0.01} bind:value={$motors[leftMotor]} />
 			</li>
 
 			<li class="row">
 				<p class="label">Right</p>
-				<p class="value">{Math.round($motors[rightMotor])}</p>
+				<p class="value">{$motors[rightMotor].toFixed(2)}</p>
 				<input class="slider" type="range" min={-1} max={1} step={0.01} bind:value={$motors[rightMotor]} />
 			</li>
 
@@ -122,12 +122,13 @@
 
 	.row {
 		display: flex;
-		justify-content: space-between;
+		justify-content: end;
 		height: 2em;
 	}
 
 	.row p {
 		margin: auto 0 auto 0;
+		text-align: left;
 	}
 
 	.row .value {
