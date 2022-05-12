@@ -13,25 +13,27 @@
 	$motors[leftMotor] = 0;
 	$motors[rightMotor] = 0;
 
-	const skidSteer: (throttle: number, steering: number) => [number, number] = (throttle, steering) =>  {
-		return [
-			clamp(throttle + steering, -1, 1),
-			clamp(throttle - steering, -1, 1)
-		];
-	}
+	const skidSteer: (throttle: number, steering: number) => [number, number] = (
+		throttle,
+		steering
+	) => {
+		return [clamp(throttle + steering, -1, 1), clamp(throttle - steering, -1, 1)];
+	};
 
 	let poll: number;
 	const loop = () => {
 		if ($state.skidsteers) {
 			const motorState = $state.skidsteers[id];
-			if (motorState.forwardAxis > -1 &&
+			if (
+				motorState.forwardAxis > -1 &&
 				$axes[motorState.forwardAxis] != undefined &&
 				$axes[motorState.reverseAxis] != undefined &&
-				$axes[motorState.turnAxis] != undefined) {
+				$axes[motorState.turnAxis] != undefined
+			) {
 				const [left, right] = skidSteer(
-					motorState.speed * ($axes[motorState.forwardAxis] - $axes[motorState.reverseAxis]) / 2,
+					(motorState.speed * ($axes[motorState.forwardAxis] - $axes[motorState.reverseAxis])) / 2,
 					motorState.turnSpeed * $axes[motorState.turnAxis]
-				)
+				);
 				$motors[leftMotor] = left;
 				$motors[rightMotor] = right;
 			} else {
@@ -51,26 +53,52 @@
 			<li class="row">
 				<p class="label">Left</p>
 				<p class="value">{$motors[leftMotor].toFixed(2)}</p>
-				<input class="slider" type="range" min={-1} max={1} step={0.01} bind:value={$motors[leftMotor]} />
+				<input
+					class="slider"
+					type="range"
+					min={-1}
+					max={1}
+					step={0.01}
+					bind:value={$motors[leftMotor]}
+				/>
 			</li>
 
 			<li class="row">
 				<p class="label">Right</p>
 				<p class="value">{$motors[rightMotor].toFixed(2)}</p>
-				<input class="slider" type="range" min={-1} max={1} step={0.01} bind:value={$motors[rightMotor]} />
+				<input
+					class="slider"
+					type="range"
+					min={-1}
+					max={1}
+					step={0.01}
+					bind:value={$motors[rightMotor]}
+				/>
 			</li>
 
 			<li class="row">
 				<p class="label">Speed</p>
 				<p class="value">{$state.skidsteers[id].speed}</p>
-				<input class="slider" type="range" min={0} max={1} step={0.01} bind:value={$state.skidsteers[id].speed}
+				<input
+					class="slider"
+					type="range"
+					min={0}
+					max={1}
+					step={0.01}
+					bind:value={$state.skidsteers[id].speed}
 				/>
 			</li>
 
 			<li class="row">
 				<p class="label">Turn Speed</p>
 				<p class="value">{$state.skidsteers[id].turnSpeed}</p>
-				<input class="slider" type="range" min={0} max={1} step={0.01} bind:value={$state.skidsteers[id].turnSpeed}
+				<input
+					class="slider"
+					type="range"
+					min={0}
+					max={1}
+					step={0.01}
+					bind:value={$state.skidsteers[id].turnSpeed}
 				/>
 			</li>
 		</ul>

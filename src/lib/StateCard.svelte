@@ -5,7 +5,7 @@
 </script>
 
 <div class="container">
-	<Button on:click={() => state.uploadState(uuid)} variant='raised'>Save</Button>
+	<Button on:click={() => state.uploadState(uuid)} variant="raised">Save</Button>
 </div>
 
 <style>

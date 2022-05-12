@@ -24,12 +24,12 @@ const backwardsCompatability = (state: State) => {
 	}
 
 	return state;
-}
+};
 
 const v0tov1 = (state: State) => {
-	console.log("v0 -> v1");
-	state.version = 1
-	state.deadzones = []
-	state.skidsteers = []
+	console.log('v0 -> v1');
+	state.version = 1;
+	state.deadzones = [];
+	state.skidsteers = [];
 	return state;
-}
+};

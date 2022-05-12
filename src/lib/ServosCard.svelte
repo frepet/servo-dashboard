@@ -39,9 +39,8 @@
 					];
 				}}
 				title="Add Servo"
-				variant='outlined'
+				variant="outlined"
 			>
-				
 				<Label>Add Servo</Label>
 			</Button>
 		</ActionButtons>

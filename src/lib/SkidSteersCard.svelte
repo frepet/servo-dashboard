@@ -34,12 +34,12 @@
 							reverseAxis: -1,
 							turnAxis: -1,
 							speed: 1,
-							turnSpeed: 1,
+							turnSpeed: 1
 						}
 					];
 				}}
 				title="Add SkidSteer"
-				variant='outlined'
+				variant="outlined"
 			>
 				<Label>Add SkidSteer</Label>
 			</Button>

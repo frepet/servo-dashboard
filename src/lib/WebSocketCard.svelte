@@ -24,10 +24,7 @@
 		if (connected) {
 			$WS = JSON.stringify({
 				servos: $pwms.map((pwm: number) => Math.ceil(pwm)),
-				motors: $motors.map((motor: number) => [
-					Math.ceil(Math.abs(motor * 255)),
-					motor > 0]
-				)
+				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0])
 			});
 		}
 
@@ -58,9 +55,9 @@
 		Port:<input id="port" class="port" type="number" min={1024} max={65535} bind:value={port} />
 
 		{#if connected}
-			<Button on:click={() => WS.close()} variant='raised'>Disconnect</Button>
+			<Button on:click={() => WS.close()} variant="raised">Disconnect</Button>
 		{:else}
-			<Button on:click={() => WS.open(`ws://localhost:${port}`)} variant='outlined'>Connect</Button>
+			<Button on:click={() => WS.open(`ws://localhost:${port}`)} variant="outlined">Connect</Button>
 		{/if}
 
 		<hr />
