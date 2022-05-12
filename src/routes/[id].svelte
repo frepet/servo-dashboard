@@ -4,6 +4,7 @@
 	import StateCard from '../lib/StateCard.svelte';
 	import GamepadsCard from '../lib/GamepadsCard.svelte';
 	import ServosCard from '../lib/ServosCard.svelte';
+	import MotorsCard from '../lib/SkidSteersCard.svelte';
 	import WebSocketCard from '../lib/WebSocketCard.svelte';
 	import { onMount } from 'svelte';
 
@@ -19,6 +20,7 @@
 	<StateCard {uuid} />
 	<GamepadsCard />
 	<ServosCard />
+	<MotorsCard />
 	<WebSocketCard />
 </div>
 

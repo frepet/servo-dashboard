@@ -3,9 +3,11 @@ import { pwms } from './PWMStore';
 import type { State } from '$lib/types';
 
 const store = writable<State>({
+	version: 1,
 	name: '',
 	pwms: [],
-	servos: []
+	servos: [],
+	skidsteers: []
 });
 
 const uploadState = async (id: string) => {

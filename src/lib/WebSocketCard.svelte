@@ -1,7 +1,9 @@
 <script lang="ts">
 	import WS from '$lib/stores/WebsocketStore';
+	import { motors } from '$lib/stores/MotorsStore';
 	import { pwms } from '$lib/stores/PWMStore';
 	import Card, { Content } from '@smui/card';
+	import Button from '@smui/button';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/env';
 
@@ -20,7 +22,13 @@
 	let poll: number;
 	const loop = () => {
 		if (connected) {
-			$WS = JSON.stringify({ servos: $pwms.map((pwm: number) => Math.ceil(pwm)) });
+			$WS = JSON.stringify({
+				servos: $pwms.map((pwm: number) => Math.ceil(pwm)),
+				motors: $motors.map((motor: number) => [
+					Math.ceil(Math.abs(motor * 255)),
+					motor > 0]
+				)
+			});
 		}
 
 		if (!mouseOver) {
@@ -50,9 +58,9 @@
 		Port:<input id="port" class="port" type="number" min={1024} max={65535} bind:value={port} />
 
 		{#if connected}
-			<button on:click={() => WS.close()}>Disconnect</button>
+			<Button on:click={() => WS.close()} variant='raised'>Disconnect</Button>
 		{:else}
-			<button on:click={() => WS.open(`ws://localhost:${port}`)}>Connect</button>
+			<Button on:click={() => WS.open(`ws://localhost:${port}`)} variant='outlined'>Connect</Button>
 		{/if}
 
 		<hr />

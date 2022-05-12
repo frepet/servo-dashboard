@@ -6,7 +6,7 @@ export const get: RequestHandler = async ({ params, locals }) => {
 
 	try {
 		const resp = await locals.dbc.one('SELECT state FROM states WHERE uuid = $1', [params.id]);
-		state = resp['state'] as State;
+		state = backwardsCompatability(resp['state']);
 	} catch (error) {
 		console.log('ERROR:' + error);
 		return {
@@ -17,3 +17,19 @@ export const get: RequestHandler = async ({ params, locals }) => {
 
 	return { body: { state, uuid: params.id } };
 };
+
+const backwardsCompatability = (state: State) => {
+	if (state.version == undefined) {
+		state = v0tov1(state);
+	}
+
+	return state;
+}
+
+const v0tov1 = (state: State) => {
+	console.log("v0 -> v1");
+	state.version = 1
+	state.deadzones = []
+	state.skidsteers = []
+	return state;
+}

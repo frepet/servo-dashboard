@@ -3,12 +3,6 @@
 	import { state } from '$lib/stores/StateStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	let axis: number[] = [];
-	let deadzone: number[] = [];
-
-	for (let i = 0; i < 100; i++) {
-		deadzone[i] = 0;
-	}
-
 	let poll: number;
 
 	const plugIn = () => {
@@ -22,8 +16,8 @@
 	};
 
 	const applyDeadzone: (val: number, i: number) => number = (val, i) => {
-		if (Math.abs(val) > deadzone[i]) {
-			return (val - (Math.abs(val) / val) * deadzone[i]) / (1 - deadzone[i]);
+		if (Math.abs(val) > $state.deadzones[i]) {
+			return (val - (Math.abs(val) / val) * $state.deadzones[i]) / (1 - $state.deadzones[i]);
 		} else {
 			return 0;
 		}
@@ -62,7 +56,7 @@
 								<p class="label">{i}</p>
 								<input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled />
 								<p class="value">{value.toFixed(2)}</p>
-								<input type="number" min={0} max={1} step={0.05} bind:value={deadzone[i]} />
+								<input type="number" min={0} max={1} step={0.05} bind:value={$state.deadzones[i]} />
 							</li>
 						{/each}
 					</ul>

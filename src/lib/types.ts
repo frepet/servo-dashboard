@@ -7,8 +7,20 @@ export type Servo = {
 	speed: number;
 };
 
+export type SkidSteer = {
+	id: number;
+	forwardAxis: number;
+	reverseAxis: number;
+	turnAxis: number;
+	speed: number;
+	turnSpeed: number;
+};
+
 export type State = {
+	version: number;
 	name: string;
-	pwms: Array<number>;
-	servos: Array<Servo>;
+	deadzones: number[];
+	pwms: number[];
+	servos: Servo[];
+	skidsteers: SkidSteer[];
 };

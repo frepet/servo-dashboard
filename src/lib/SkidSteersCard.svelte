@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Servo from './Servo.svelte';
+	import SkidSteer from '$lib/SkidSteer.svelte';
 	import { state } from '$lib/stores/StateStore';
 
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
@@ -10,12 +10,12 @@
 <Card>
 	<Content>
 		<Accordion multiple>
-			{#if $state.servos}
-				{#each $state.servos as servo}
+			{#if $state.skidsteers}
+				{#each $state.skidsteers as motor}
 					<Panel>
-						<Header>Servo {servo.id}</Header>
+						<Header>Skid Steer {motor.id}</Header>
 						<Content>
-							<Servo id={servo.id} />
+							<SkidSteer id={motor.id} />
 						</Content>
 					</Panel>
 				{/each}
@@ -26,23 +26,22 @@
 		<ActionButtons>
 			<Button
 				on:click={() => {
-					$state.servos = [
-						...$state.servos,
+					$state.skidsteers = [
+						...$state.skidsteers,
 						{
-							id: $state.servos.length,
-							axis: -1,
-							min: 0,
-							max: 255,
-							startValue: 127,
-							speed: 1.0
+							id: $state.skidsteers.length,
+							forwardAxis: -1,
+							reverseAxis: -1,
+							turnAxis: -1,
+							speed: 1,
+							turnSpeed: 1,
 						}
 					];
 				}}
-				title="Add Servo"
+				title="Add SkidSteer"
 				variant='outlined'
 			>
-				
-				<Label>Add Servo</Label>
+				<Label>Add SkidSteer</Label>
 			</Button>
 		</ActionButtons>
 	</Actions>
