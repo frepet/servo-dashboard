@@ -31,7 +31,7 @@
 		if (!mouseOver) {
 			const msgbox = document.getElementById('msgbox');
 			if (msgbox) {
-				msgbox.scrollTo(0, msgbox.clientHeight);
+				msgbox.scrollTo(0, msgbox.scrollHeight);
 			}
 		}
 
