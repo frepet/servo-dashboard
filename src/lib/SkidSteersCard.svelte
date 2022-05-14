@@ -13,7 +13,13 @@
 			{#if $state.skidsteers}
 				{#each $state.skidsteers as motor}
 					<Panel>
-						<Header>Skid Steer {motor.id}</Header>
+						<Header>
+							Skid Steer {motor.id}: Axes 
+							{motor.forwardAxis},
+							{motor.reverseAxis},
+							{motor.turnAxis}
+
+						</Header>
 						<Content>
 							<SkidSteer id={motor.id} />
 						</Content>
