@@ -19,13 +19,9 @@ export const get: RequestHandler = async ({ params, locals }) => {
 };
 
 const backwardsCompatability = (state: State) => {
-	if (state.version == undefined) {
-		state = v0tov1(state);
-	}
-	if (state.version == 1) {
-		state = v1tov2(state);
-	}
-
+	if (state.version == undefined) state = v0tov1(state);
+	if (state.version == 1) state = v1tov2(state);
+	if (state.version == 2)	state = v2tov3(state);
 	return state;
 };
 
@@ -44,6 +40,15 @@ const v1tov2 = (state: State) => {
 		servo.buttonMinus = -1;
 		servo.buttonPlus = -1;
 		servo.buttonSpeed = 0;
+	});
+	return state;
+};
+
+const v2tov3 = (state: State) => {
+	console.log('v2 -> v3');
+	state.version = 3;
+	state.servos.forEach(servo => {
+		servo.name = "Servo"
 	});
 	return state;
 };

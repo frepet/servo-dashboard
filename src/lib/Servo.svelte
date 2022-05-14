@@ -33,8 +33,9 @@
 	onDestroy(() => cancelAnimationFrame(poll));
 </script>
 
+{#if $state.servos[id]}
+Name: <input bind:value={$state.servos[id].name}/>
 <div class="servocontents">
-	{#if $state.servos[id]}
 		<ul>
 			<li class="row">
 				<p class="label">PWM</p>
@@ -112,8 +113,8 @@
 				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].buttonSpeed} />
 			</li>
 		</ul>
-	{/if}
 </div>
+{/if}
 
 <style>
 	.servocontents {

@@ -1,4 +1,5 @@
 export type Servo = {
+	name: string;
 	id: number;
 	axis: number;
 	min: number;

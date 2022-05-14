@@ -14,10 +14,10 @@
 				{#each $state.servos as servo}
 					<Panel>
 						<Header>
-							Servo {servo.id}:
-							{servo.axis > 0 ? 'Axis ' + servo.axis: ''}
-							{servo.buttonPlus> 0 ? '(+) ' + servo.buttonPlus: ''}
-							{servo.buttonMinus> 0 ? '(-) ' + servo.buttonMinus: ''}
+							{servo.name}:
+							{servo.axis > 0 ? 'Axis ' + servo.axis : ''}
+							{servo.buttonPlus> 0 ? '(+) ' + servo.buttonPlus : ''}
+							{servo.buttonMinus> 0 ? '(-) ' + servo.buttonMinus : ''}
 						</Header>
 						<Content>
 							<Servo id={servo.id} />
@@ -34,6 +34,7 @@
 					$state.servos = [
 						...$state.servos,
 						{
+							name: 'Servo',
 							id: $state.servos.length,
 							axis: -1,
 							min: 0,
