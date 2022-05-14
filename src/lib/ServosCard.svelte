@@ -34,7 +34,10 @@
 							min: 0,
 							max: 255,
 							startValue: 127,
-							speed: 1.0
+							speed: 1.0,
+							buttonPlus: -1,
+							buttonMinus: -1,
+							buttonSpeed: 0,
 						}
 					];
 				}}

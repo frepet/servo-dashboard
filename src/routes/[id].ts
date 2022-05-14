@@ -22,6 +22,9 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == undefined) {
 		state = v0tov1(state);
 	}
+	if (state.version == 1) {
+		state = v1tov2(state);
+	}
 
 	return state;
 };
@@ -31,5 +34,16 @@ const v0tov1 = (state: State) => {
 	state.version = 1;
 	state.deadzones = [];
 	state.skidsteers = [];
+	return state;
+};
+
+const v1tov2 = (state: State) => {
+	console.log('v1 -> v2');
+	state.version = 2;
+	state.servos.forEach(servo => {
+		servo.buttonMinus = -1;
+		servo.buttonPlus = -1;
+		servo.buttonSpeed = 0;
+	});
 	return state;
 };

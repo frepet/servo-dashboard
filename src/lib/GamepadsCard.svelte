@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { axes } from '$lib/stores/AxesStore';
+	import { buttons } from '$lib/stores/ButtonsStore';
 	import { state } from '$lib/stores/StateStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
+	import Group from '@smui/button/src/Group.svelte';
 	let axis: number[] = [];
 	let poll: number;
 
@@ -16,6 +18,9 @@
 	};
 
 	const applyDeadzone: (val: number, i: number) => number = (val, i) => {
+		if ($state.deadzones[i] === undefined) {
+			$state.deadzones[i] = 0;
+		}
 		if (Math.abs(val) > $state.deadzones[i]) {
 			return (val - (Math.abs(val) / val) * $state.deadzones[i]) / (1 - $state.deadzones[i]);
 		} else {
@@ -29,14 +34,21 @@
 			return;
 		}
 
-		const pad = gamepads[0];
-
-		if (pad) {
-			pad.axes.forEach((val, i) => {
-				axis[i] = applyDeadzone(val, i);
-				$axes[i] = axis[i];
-			});
-		}
+		let axisi = 0;
+		let buttonsi = 0;
+		gamepads.forEach( pad =>  {
+			if (pad) {
+				pad.axes.forEach((val) => {
+					axis[axisi] = applyDeadzone(val, axisi);
+					$axes[axisi] = axis[axisi];
+					axisi++;
+				});
+				pad.buttons.forEach(({ pressed }) => {
+					$buttons[buttonsi] = pressed;
+					buttonsi++;
+				});
+			}
+		})
 
 		poll = requestAnimationFrame(startController);
 	};
@@ -46,38 +58,30 @@
 
 <Accordion multiple>
 	<Panel>
-		{#if axis.length > 0}
-			<Header>Gamepad 0</Header>
-			<Content>
-				<div class="card">
-					<ul>
-						{#each axis as value, i}
-							<li class="row">
-								<p class="label">{i}</p>
-								<input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled />
-								<p class="value">{value.toFixed(2)}</p>
-								<input type="number" min={0} max={1} step={0.05} bind:value={$state.deadzones[i]} />
-							</li>
-						{/each}
-					</ul>
-				</div>
-			</Content>
-		{/if}
+		<Header>Gamepad 0</Header>
+		<Content>
+			<ul>
+				{#each axis as value, i}
+					<li class="row">
+						<p class="label">{i}</p>
+						<input class="slider" type="range" min={-1} max={1} step={0.01} {value} disabled />
+						<p class="value">{value.toFixed(2)}</p>
+						<input type="number" min={0} max={1} step={0.05} bind:value={$state.deadzones[i]} />
+					</li>
+				{/each}
+			</ul>
+			<Group>
+				{#each $buttons as pressed, i}
+					<div class={'button' + (pressed ? ' pressed' : '')}>{i}</div>
+				{/each}
+			</Group>
+		</Content>
 	</Panel>
 </Accordion>
 
 <style>
-	.card {
-		width: 15em;
-	}
-
-	.card ul {
-		padding: 0 0 0 0.5em;
-	}
-
 	.row {
 		display: flex;
-		justify-content: space-between;
 		height: 2em;
 	}
 
@@ -87,5 +91,22 @@
 
 	.row .value {
 		min-width: 4em;
+	}
+
+	.button {
+		border-radius: 0.5em;
+		border: solid #676778 1px;
+		width: 2em;
+		text-align: center;
+		padding: 0.3em 0 0.5em 0;
+	}
+
+	.pressed {
+		background-color: #ff3e00;
+	}
+
+	.label {
+		min-width: 1.5em;
+		text-align: right;
 	}
 </style>

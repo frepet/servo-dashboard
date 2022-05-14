@@ -5,6 +5,9 @@ export type Servo = {
 	max: number;
 	startValue: number;
 	speed: number;
+	buttonPlus: number;
+	buttonMinus: number;
+	buttonSpeed: number;
 };
 
 export type SkidSteer = {

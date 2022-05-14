@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { axes } from '$lib/stores/AxesStore';
+	import { buttons } from '$lib/stores/ButtonsStore';
 	import { pwms } from '$lib/stores/PWMStore';
 	import { state } from '$lib/stores/StateStore';
 	import { clamp } from '$lib/utils';
@@ -15,14 +16,15 @@
 	const loop = () => {
 		if ($state.servos) {
 			if ($state.servos[id].axis > -1) {
-				$pwms[id] = clamp(
-					$pwms[id] + ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed,
-					$state.servos[id].min,
-					$state.servos[id].max
-				);
-			} else {
-				$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
+				$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
 			}
+			if ($state.servos[id].buttonPlus > -1) {
+				$pwms[id] += ($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+			}
+			if ($state.servos[id].buttonMinus > -1) {
+				$pwms[id] -= ($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+			}
+			$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
 		}
 		poll = requestAnimationFrame(loop);
 	};
@@ -69,7 +71,7 @@
 
 		<ul>
 			<li class="row">
-				<p class="label">Gamepad Axis:</p>
+				<p class="label">Axis:</p>
 				<select bind:value={$state.servos[id].axis}>
 					<option value={-1}>-</option>
 					{#each Array($axes.length) as _, i}
@@ -79,8 +81,35 @@
 			</li>
 
 			<li class="row">
-				<p class="label">Axis speed:</p>
+				<p class="label">Speed:</p>
 				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].speed} />
+			</li>
+		</ul>
+
+		<ul>
+			<li class="row">
+				<p class="label">Button(+):</p>
+				<select bind:value={$state.servos[id].buttonPlus}>
+					<option value={-1}>-</option>
+					{#each Array($buttons.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
+			</li>
+
+			<li class="row">
+				<p class="label">Button(-):</p>
+				<select bind:value={$state.servos[id].buttonMinus}>
+					<option value={-1}>-</option>
+					{#each Array($buttons.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
+			</li>
+
+			<li class="row">
+				<p class="label">Speed:</p>
+				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].buttonSpeed} />
 			</li>
 		</ul>
 	{/if}
