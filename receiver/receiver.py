@@ -10,6 +10,7 @@ com_port = None
 com_rate = 19200
 socket_port = None
 ser = None
+SERVOS = 9
 
 
 try:
@@ -34,13 +35,14 @@ async def main():
 		async def socket_handler(websocket):
 			last_update = time()
 			async for message in websocket:
+				print(message)
 				if time() < last_update + 0.02:
 					continue
 				last_update = time()
 
 				message = json.loads(message)
 				
-				pwms = [0, 0, 0, 0, 0, 0]
+				pwms = [0] * SERVOS
 				for i, s_pwm in enumerate(message["servos"]):
 					pwms[i] = s_pwm
 
@@ -63,7 +65,7 @@ async def main():
 
 				await read_serial_to_socket(websocket)
 
-		async with websockets.serve(socket_handler, "localhost", socket_port):
+		async with websockets.serve(socket_handler, "0.0.0.0", socket_port):
 			await asyncio.Future()
 
 try:

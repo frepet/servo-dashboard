@@ -21,8 +21,8 @@ typedef struct {
   byte dir;
 } Motor;
 
-const int SERVO_START_PIN = 8;
-const int SERVOS = 6;
+const int SERVO_PINS[9] = {8, 9, 10, 11, 12, 13, A0, A1, A2};
+const int SERVOS = 9;
 const int BAUD_RATE = 19200;
 const byte STX = 2;
 const int BAD_CHECKSUM_LED_PIN = 2;
@@ -40,7 +40,7 @@ Servo servo[SERVOS];
 void setup() {
 	pinMode(BAD_CHECKSUM_LED_PIN, OUTPUT);
 	for (int i = 0; i < SERVOS; i++) {
-		servo[i].attach(SERVO_START_PIN + i);
+		servo[i].attach(SERVO_PINS[i]);
 	}
   pinMode(MOTOR_1_DIR, OUTPUT);
   pinMode(MOTOR_2_DIR, OUTPUT);
