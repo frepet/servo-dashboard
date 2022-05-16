@@ -51,15 +51,20 @@ async def main():
 					motors.append(m_pwm)
 					motors.append(255 if m_dir else 0)
 
+				custom = 0
+				if "custom" in message:
+					custom = message["custom"]
+
 				if len(pwms) < 1:
 					continue
 
-				data_length = len(pwms)+len(motors)
+				data_length = len(pwms)+len(motors)+1
 				buff = bytearray(3+data_length)
 				buff[0] = 2  # STX
 				buff[1] = data_length  # Number bytes
 				buff[2: 2+len(pwms)] = bytearray(pwms)  # PWMs
-				buff[2+len(pwms): -1] = bytearray(motors)  # Motors
+				buff[2+len(pwms): -2] = bytearray(motors)  # Motors
+				buff[-2] = custom
 				buff[-1] = sum(buff[2:-1]) % 256  # Checksum
 				ser.write(buff)
 

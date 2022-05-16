@@ -2,10 +2,13 @@
 	import { axes } from '$lib/stores/AxesStore';
 	import { buttons } from '$lib/stores/ButtonsStore';
 	import { state } from '$lib/stores/StateStore';
+	import { localStore } from './stores/LocalStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	import Group from '@smui/button/src/Group.svelte';
 	let axis: number[] = [];
 	let poll: number;
+	let duplicateInput = false;
+	let duplicateInputDebounce = false;
 
 	const plugIn = () => {
 		startController();
@@ -39,16 +42,41 @@
 		gamepads.forEach( pad =>  {
 			if (pad) {
 				pad.axes.forEach((val) => {
-					axis[axisi] = applyDeadzone(val, axisi);
-					$axes[axisi] = axis[axisi];
+					if (!duplicateInput) {
+						axis[axisi] = applyDeadzone(val, axisi);
+						$axes[axisi] = axis[axisi];
+					}
 					axisi++;
 				});
+				if (duplicateInput) {
+					pad.axes.forEach((val) => {
+						axis[axisi] = applyDeadzone(val, axisi);
+						$axes[axisi] = axis[axisi];
+						axisi++;
+					});
+				}
+
 				pad.buttons.forEach(({ pressed }) => {
-					$buttons[buttonsi] = pressed;
+					if (!duplicateInputDebounce && buttonsi == $state.swapButton && pressed) {
+						duplicateInput = !duplicateInput;
+						$localStore.mode = duplicateInput ? 1 : 0;
+						duplicateInputDebounce = true;
+					} else if (buttonsi == $state.swapButton && !pressed) {
+						duplicateInputDebounce = false;
+					}
+					if (!duplicateInput) {
+						$buttons[buttonsi] = pressed;
+					}
+					buttonsi++;
+				});
+				pad.buttons.forEach(({ pressed }) => {
+					if (duplicateInput) {
+						$buttons[buttonsi] = pressed;
+					}
 					buttonsi++;
 				});
 			}
-		})
+		});
 
 		poll = requestAnimationFrame(startController);
 	};
@@ -58,9 +86,18 @@
 
 <Accordion multiple>
 	<Panel>
-		<Header>Gamepad 0</Header>
+		<Header>Gamepad: {duplicateInput ? 'DUP' : ''}</Header>
 		<Content>
 			<ul>
+				<li class='row'>
+					<p class="label">Duplicate Button:</p>
+					<select bind:value={$state.swapButton}>
+						<option value={-1}>-</option>
+						{#each Array($buttons.length) as _, i}
+							<option>{i}</option>
+						{/each}
+					</select>
+				</li>
 				{#each axis as value, i}
 					<li class="row">
 						<p class="label">{i}</p>

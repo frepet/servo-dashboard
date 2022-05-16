@@ -27,4 +27,5 @@ export type State = {
 	pwms: number[];
 	servos: Servo[];
 	skidsteers: SkidSteer[];
+	swapButton: number;
 };

@@ -2,6 +2,7 @@
 	import WS from '$lib/stores/WebsocketStore';
 	import { motors } from '$lib/stores/MotorsStore';
 	import { pwms } from '$lib/stores/PWMStore';
+	import { localStore } from './stores/LocalStore';
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { onDestroy, onMount } from 'svelte';
@@ -24,7 +25,8 @@
 		if (connected) {
 			$WS = JSON.stringify({
 				servos: $pwms.map((pwm: number) => Math.ceil(pwm)),
-				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0])
+				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0]),
+				custom: $localStore.mode,
 			});
 		}
 

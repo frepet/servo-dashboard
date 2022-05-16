@@ -6,15 +6,17 @@ const store = writable<State>({
 	version: 1,
 	name: '',
 	pwms: [],
+	deadzones: [],
 	servos: [],
-	skidsteers: []
+	skidsteers: [],
+	swapButton: -1,
 });
 
 const uploadState = async (id: string) => {
 	try {
 		const body = {
 			...get(store),
-			pwms: get(pwms)
+			pwms: get(pwms),
 		};
 
 		const url = `${window.location.origin}/state/${id}`;
