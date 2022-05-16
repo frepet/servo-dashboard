@@ -24,6 +24,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 2)	state = v2tov3(state);
 	if (state.version == 3)	state = v3tov4(state);
 	if (state.version == 4)	state = v4tov5(state);
+	if (state.version == 5)	state = v5tov6(state);
 	return state;
 };
 
@@ -68,6 +69,15 @@ const v4tov5 = (state: State) => {
 	state.servos.forEach(servo => {
 		servo.centering = false;
 		servo.centerTrim = 0;
+	});
+	return state;
+};
+
+const v5tov6 = (state: State) => {
+	console.log('v5 -> v6');
+	state.version = 6;
+	state.skidsteers.forEach(skidsteer => {
+		skidsteer.reversed = false;
 	});
 	return state;
 };

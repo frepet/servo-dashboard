@@ -20,6 +20,7 @@ export type SkidSteer = {
 	turnAxis: number;
 	speed: number;
 	turnSpeed: number;
+	reversed: boolean;
 };
 
 export type State = {
