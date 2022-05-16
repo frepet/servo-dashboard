@@ -23,6 +23,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 1) state = v1tov2(state);
 	if (state.version == 2)	state = v2tov3(state);
 	if (state.version == 3)	state = v3tov4(state);
+	if (state.version == 4)	state = v4tov5(state);
 	return state;
 };
 
@@ -58,5 +59,15 @@ const v3tov4 = (state: State) => {
 	console.log('v3 -> v4');
 	state.version = 4;
 	state.swapButton = -1;
+	return state;
+};
+
+const v4tov5 = (state: State) => {
+	console.log('v4 -> v5');
+	state.version = 5;
+	state.servos.forEach(servo => {
+		servo.centering = false;
+		servo.centerTrim = 0;
+	});
 	return state;
 };

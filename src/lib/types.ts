@@ -9,6 +9,8 @@ export type Servo = {
 	buttonPlus: number;
 	buttonMinus: number;
 	buttonSpeed: number;
+	centering: boolean;
+	centerTrim: number;
 };
 
 export type SkidSteer = {

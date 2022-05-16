@@ -44,6 +44,8 @@
 							buttonPlus: -1,
 							buttonMinus: -1,
 							buttonSpeed: 0,
+							centering: false,
+							centerTrim: 0,
 						}
 					];
 				}}

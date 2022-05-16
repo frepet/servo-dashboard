@@ -15,14 +15,18 @@
 	let poll: number;
 	const loop = () => {
 		if ($state.servos) {
-			if ($state.servos[id].axis > -1) {
-				$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
-			}
-			if ($state.servos[id].buttonPlus > -1) {
-				$pwms[id] += ($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
-			}
-			if ($state.servos[id].buttonMinus > -1) {
-				$pwms[id] -= ($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+			if ($state.servos[id].centering) {
+				$pwms[id] = $axes[$state.servos[id].axis] * 127.5 + 127.5 + $state.servos[id].centerTrim;
+			} else {
+				if ($state.servos[id].axis > -1) {
+					$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
+				}
+				if ($state.servos[id].buttonPlus > -1) {
+					$pwms[id] += ($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+				}
+				if ($state.servos[id].buttonMinus > -1) {
+					$pwms[id] -= ($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+				}
 			}
 			$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
 		}
@@ -111,6 +115,17 @@ Name: <input bind:value={$state.servos[id].name}/>
 			<li class="row">
 				<p class="label">Speed:</p>
 				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].buttonSpeed} />
+			</li>
+		</ul>
+
+		<ul>
+			<li class="row">
+				<p class="label">Centering:</p>
+				<input class="valueInput" type="checkbox" bind:checked={$state.servos[id].centering} />
+			</li>
+			<li class="row">
+				<p class="label">Trim:</p>
+				<input class="valueInput" type="number" step={1} bind:value={$state.servos[id].centerTrim} />
 			</li>
 		</ul>
 </div>
