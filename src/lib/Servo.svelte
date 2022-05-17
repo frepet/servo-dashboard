@@ -8,10 +8,6 @@
 
 	export let id = 0;
 
-	let startValue = 127;
-
-	$pwms[id] = startValue;
-
 	let poll: number;
 	const loop = () => {
 		if ($state.servos) {

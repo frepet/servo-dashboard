@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { State } from '$lib/types';
 	import { state as stateStore } from '$lib/stores/StateStore';
+	import { pwms } from '$lib/stores/PWMStore';
 	import StateCard from '../lib/StateCard.svelte';
 	import GamepadsCard from '../lib/GamepadsCard.svelte';
 	import ServosCard from '../lib/ServosCard.svelte';
@@ -12,6 +13,7 @@
 	export let uuid: string;
 
 	onMount(() => {
+		$pwms = state.pwms;
 		stateStore.set(state);
 	});
 </script>
