@@ -2,6 +2,7 @@
 	import { axes } from '$lib/stores/AxesStore';
 	import { motors } from '$lib/stores/MotorsStore';
 	import { state } from '$lib/stores/StateStore';
+	import { localStore } from './stores/LocalStore';
 	import { clamp } from '$lib/utils';
 	import { onDestroy } from 'svelte';
 
@@ -24,30 +25,30 @@
 	const loop = () => {
 		if ($state.skidsteers) {
 			const motorState = $state.skidsteers[id];
-			if (
-				motorState.forwardAxis > -1 &&
-				$axes[motorState.forwardAxis] != undefined &&
-				$axes[motorState.reverseAxis] != undefined &&
-				$axes[motorState.turnAxis] != undefined
-			) {
-				let throttle = 0;
-				if (motorState.forwardAxis === motorState.reverseAxis) {
-					throttle = $axes[motorState.forwardAxis];
-				} else {
-					throttle = (motorState.speed * ($axes[motorState.forwardAxis] - $axes[motorState.reverseAxis])) / 2;
-				}
-				if (motorState.reversed) {
-					throttle *= -1;
-				}
-				const [left, right] = skidSteer(
-					throttle,
-					motorState.turnSpeed * $axes[motorState.turnAxis]
-				);
-				$motors[leftMotor] = left;
-				$motors[rightMotor] = right;
-			} else {
-				$motors[id] = clamp($motors[id], -1, motorState.speed);
+			let forwardAxis = $localStore.mode === 0 ? motorState.forwardAxis : motorState.forwardAxis2;
+			let reverseAxis = $localStore.mode === 0 ? motorState.reverseAxis : motorState.reverseAxis2;
+			let turnAxis = $localStore.mode === 0 ? motorState.turnAxis : motorState.turnAxis2;
+			let reversed = $localStore.mode === 0 ? motorState.reversed : motorState.reversed2;
+
+			let steering = 0;
+			if ($axes[turnAxis] != undefined) {
+				steering = motorState.turnSpeed * $axes[turnAxis];
 			}
+
+			let throttle = 0;
+			if ( $axes[forwardAxis] != undefined && $axes[reverseAxis] != undefined) {
+				if (forwardAxis === reverseAxis) {
+					throttle = $axes[forwardAxis];
+				} else {
+					throttle = (motorState.speed * ($axes[forwardAxis] - $axes[reverseAxis])) / 2;
+				}
+				throttle *= reversed ? -1 : 1;
+
+			}
+
+			const [left, right] = skidSteer(throttle, steering);
+			$motors[leftMotor] = left;
+			$motors[rightMotor] = right;
 		}
 		poll = requestAnimationFrame(loop);
 	};
@@ -121,6 +122,12 @@
 						<option>{i}</option>
 					{/each}
 				</select>
+				<select bind:value={$state.skidsteers[id].forwardAxis2}>
+					<option value={-1}>-</option>
+					{#each Array($axes.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
 			</li>
 
 			<li class="row">
@@ -131,16 +138,29 @@
 						<option>{i}</option>
 					{/each}
 				</select>
+				<select bind:value={$state.skidsteers[id].reverseAxis2}>
+					<option value={-1}>-</option>
+					{#each Array($axes.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
 			</li>
 			
 			<li class="row">
 				<p class="label">Reversed:</p>
-				<input class="valueInput" type="checkbox" bind:checked={$state.skidsteers[id].reversed} />
+				<input class="checkbox" type="checkbox" bind:checked={$state.skidsteers[id].reversed} />
+				<input class="checkbox" type="checkbox" bind:checked={$state.skidsteers[id].reversed2} />
 			</li>
 
 			<li class="row">
 				<p class="label">Turn Axis:</p>
 				<select bind:value={$state.skidsteers[id].turnAxis}>
+					<option value={-1}>-</option>
+					{#each Array($axes.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
+				<select bind:value={$state.skidsteers[id].turnAxis2}>
 					<option value={-1}>-</option>
 					{#each Array($axes.length) as _, i}
 						<option>{i}</option>
@@ -176,5 +196,10 @@
 	.row .value {
 		text-align: right;
 		width: 3em;
+	}
+
+	.checkbox {
+		min-width: 2.8em;
+		margin: 0.5em;
 	}
 </style>
