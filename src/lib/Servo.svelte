@@ -12,7 +12,12 @@
 	const loop = () => {
 		if ($state.servos) {
 			if ($state.servos[id].centering) {
-				$pwms[id] = $axes[$state.servos[id].axis] * 127.5 + 127.5 + $state.servos[id].centerTrim;
+				let invert = 1;
+				if ($state.servos[id].speed < 0) {
+					invert = -1;
+				}
+				$pwms[id] =
+					invert * $axes[$state.servos[id].axis] * 127.5 + 127.5 + $state.servos[id].centerTrim;
 			} else {
 				if ($state.servos[id].axis > -1) {
 					$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
