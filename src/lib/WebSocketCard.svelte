@@ -26,7 +26,7 @@
 			$WS = JSON.stringify({
 				servos: $pwms.map((pwm: number) => Math.ceil(pwm)),
 				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0]),
-				custom: $localStore.mode,
+				custom: $localStore.mode
 			});
 		}
 

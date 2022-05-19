@@ -18,10 +18,12 @@
 					$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
 				}
 				if ($state.servos[id].buttonPlus > -1) {
-					$pwms[id] += ($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+					$pwms[id] +=
+						($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
 				}
 				if ($state.servos[id].buttonMinus > -1) {
-					$pwms[id] -= ($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+					$pwms[id] -=
+						($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
 				}
 			}
 			$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
@@ -34,8 +36,8 @@
 </script>
 
 {#if $state.servos[id]}
-Name: <input bind:value={$state.servos[id].name}/>
-<div class="servocontents">
+	Name: <input bind:value={$state.servos[id].name} />
+	<div class="servocontents">
 		<ul>
 			<li class="row">
 				<p class="label">PWM</p>
@@ -110,7 +112,12 @@ Name: <input bind:value={$state.servos[id].name}/>
 
 			<li class="row">
 				<p class="label">Speed:</p>
-				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].buttonSpeed} />
+				<input
+					class="valueInput"
+					type="number"
+					step={0.1}
+					bind:value={$state.servos[id].buttonSpeed}
+				/>
 			</li>
 		</ul>
 
@@ -121,10 +128,15 @@ Name: <input bind:value={$state.servos[id].name}/>
 			</li>
 			<li class="row">
 				<p class="label">Trim:</p>
-				<input class="valueInput" type="number" step={1} bind:value={$state.servos[id].centerTrim} />
+				<input
+					class="valueInput"
+					type="number"
+					step={1}
+					bind:value={$state.servos[id].centerTrim}
+				/>
 			</li>
 		</ul>
-</div>
+	</div>
 {/if}
 
 <style>

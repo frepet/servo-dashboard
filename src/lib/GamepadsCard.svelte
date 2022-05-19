@@ -39,7 +39,7 @@
 
 		let axisi = 0;
 		let buttonsi = 0;
-		gamepads.forEach( pad =>  {
+		gamepads.forEach((pad) => {
 			if (pad) {
 				pad.axes.forEach((val) => {
 					if (!duplicateInput) {
@@ -89,7 +89,7 @@
 		<Header>Gamepad: {duplicateInput ? 'DUP' : ''}</Header>
 		<Content>
 			<ul>
-				<li class='row'>
+				<li class="row">
 					<p class="label">Duplicate Button:</p>
 					<select bind:value={$state.swapButton}>
 						<option value={-1}>-</option>

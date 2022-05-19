@@ -21,11 +21,11 @@ export const get: RequestHandler = async ({ params, locals }) => {
 const backwardsCompatability = (state: State) => {
 	if (state.version == undefined) state = v0tov1(state);
 	if (state.version == 1) state = v1tov2(state);
-	if (state.version == 2)	state = v2tov3(state);
-	if (state.version == 3)	state = v3tov4(state);
-	if (state.version == 4)	state = v4tov5(state);
-	if (state.version == 5)	state = v5tov6(state);
-	if (state.version == 6)	state = v6tov7(state);
+	if (state.version == 2) state = v2tov3(state);
+	if (state.version == 3) state = v3tov4(state);
+	if (state.version == 4) state = v4tov5(state);
+	if (state.version == 5) state = v5tov6(state);
+	if (state.version == 6) state = v6tov7(state);
 	return state;
 };
 
@@ -40,7 +40,7 @@ const v0tov1 = (state: State) => {
 const v1tov2 = (state: State) => {
 	console.log('v1 -> v2');
 	state.version = 2;
-	state.servos.forEach(servo => {
+	state.servos.forEach((servo) => {
 		servo.buttonMinus = -1;
 		servo.buttonPlus = -1;
 		servo.buttonSpeed = 0;
@@ -51,8 +51,8 @@ const v1tov2 = (state: State) => {
 const v2tov3 = (state: State) => {
 	console.log('v2 -> v3');
 	state.version = 3;
-	state.servos.forEach(servo => {
-		servo.name = "Servo"
+	state.servos.forEach((servo) => {
+		servo.name = 'Servo';
 	});
 	return state;
 };
@@ -67,7 +67,7 @@ const v3tov4 = (state: State) => {
 const v4tov5 = (state: State) => {
 	console.log('v4 -> v5');
 	state.version = 5;
-	state.servos.forEach(servo => {
+	state.servos.forEach((servo) => {
 		servo.centering = false;
 		servo.centerTrim = 0;
 	});
@@ -77,7 +77,7 @@ const v4tov5 = (state: State) => {
 const v5tov6 = (state: State) => {
 	console.log('v5 -> v6');
 	state.version = 6;
-	state.skidsteers.forEach(skidsteer => {
+	state.skidsteers.forEach((skidsteer) => {
 		skidsteer.reversed = false;
 	});
 	return state;
@@ -86,7 +86,7 @@ const v5tov6 = (state: State) => {
 const v6tov7 = (state: State) => {
 	console.log('v6 -> v7');
 	state.version = 7;
-	state.skidsteers.forEach(skidsteer => {
+	state.skidsteers.forEach((skidsteer) => {
 		skidsteer.forwardAxis2 = -1;
 		skidsteer.reverseAxis2 = -1;
 		skidsteer.turnAxis2 = -1;

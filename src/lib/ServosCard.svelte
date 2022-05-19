@@ -16,8 +16,8 @@
 						<Header>
 							{servo.name}:
 							{servo.axis > 0 ? 'Axis ' + servo.axis : ''}
-							{servo.buttonPlus> 0 ? '(+) ' + servo.buttonPlus : ''}
-							{servo.buttonMinus> 0 ? '(-) ' + servo.buttonMinus : ''}
+							{servo.buttonPlus > 0 ? '(+) ' + servo.buttonPlus : ''}
+							{servo.buttonMinus > 0 ? '(-) ' + servo.buttonMinus : ''}
 						</Header>
 						<Content>
 							<Servo id={servo.id} />
@@ -45,7 +45,7 @@
 							buttonMinus: -1,
 							buttonSpeed: 0,
 							centering: false,
-							centerTrim: 0,
+							centerTrim: 0
 						}
 					];
 				}}

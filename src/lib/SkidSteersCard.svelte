@@ -14,11 +14,10 @@
 				{#each $state.skidsteers as motor}
 					<Panel>
 						<Header>
-							Skid Steer {motor.id}: Axes 
+							Skid Steer {motor.id}: Axes
 							{motor.forwardAxis},
 							{motor.reverseAxis},
 							{motor.turnAxis}
-
 						</Header>
 						<Content>
 							<SkidSteer id={motor.id} />
@@ -41,7 +40,7 @@
 							turnAxis: -1,
 							speed: 1,
 							turnSpeed: 1,
-							reversed: false,
+							reversed: false
 						}
 					];
 				}}

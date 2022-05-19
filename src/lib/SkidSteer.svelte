@@ -36,14 +36,13 @@
 			}
 
 			let throttle = 0;
-			if ( $axes[forwardAxis] != undefined && $axes[reverseAxis] != undefined) {
+			if ($axes[forwardAxis] != undefined && $axes[reverseAxis] != undefined) {
 				if (forwardAxis === reverseAxis) {
 					throttle = $axes[forwardAxis];
 				} else {
 					throttle = (motorState.speed * ($axes[forwardAxis] - $axes[reverseAxis])) / 2;
 				}
 				throttle *= reversed ? -1 : 1;
-
 			}
 
 			const [left, right] = skidSteer(throttle, steering);
@@ -145,7 +144,7 @@
 					{/each}
 				</select>
 			</li>
-			
+
 			<li class="row">
 				<p class="label">Reversed:</p>
 				<input class="checkbox" type="checkbox" bind:checked={$state.skidsteers[id].reversed} />

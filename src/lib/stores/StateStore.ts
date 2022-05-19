@@ -9,14 +9,14 @@ const store = writable<State>({
 	deadzones: [],
 	servos: [],
 	skidsteers: [],
-	swapButton: -1,
+	swapButton: -1
 });
 
 const uploadState = async (id: string) => {
 	try {
 		const body = {
 			...get(store),
-			pwms: get(pwms),
+			pwms: get(pwms)
 		};
 
 		const url = `${window.location.origin}/state/${id}`;
