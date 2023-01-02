@@ -13,6 +13,21 @@ export type Servo = {
 	centerTrim: number;
 };
 
+export type Step = {
+	servo: number;
+	pwm: number;
+}
+
+export type Action = {
+	steps: Step[];
+};
+
+export type Macro = {
+	name: string;
+	id: number;
+	actions: Action[];
+};
+
 export type SkidSteer = {
 	id: number;
 	forwardAxis: number;
@@ -34,5 +49,6 @@ export type State = {
 	pwms: number[];
 	servos: Servo[];
 	skidsteers: SkidSteer[];
+	macros: Macro[];
 	swapButton: number;
 };

@@ -26,6 +26,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 4) state = v4tov5(state);
 	if (state.version == 5) state = v5tov6(state);
 	if (state.version == 6) state = v6tov7(state);
+	if (state.version == 7) state = v7tov8(state);
 	return state;
 };
 
@@ -92,5 +93,12 @@ const v6tov7 = (state: State) => {
 		skidsteer.turnAxis2 = -1;
 		skidsteer.reversed2 = false;
 	});
+	return state;
+};
+
+const v7tov8 = (state: State) => {
+	console.log('v7 -> v8');
+	state.version = 8;
+	state.macros = [];
 	return state;
 };

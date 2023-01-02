@@ -6,6 +6,7 @@
 	import GamepadsCard from '../lib/GamepadsCard.svelte';
 	import ServosCard from '../lib/ServosCard.svelte';
 	import MotorsCard from '../lib/SkidSteersCard.svelte';
+	import MacrosCard from '../lib/MacrosCard.svelte';
 	import WebSocketCard from '../lib/WebSocketCard.svelte';
 	import { onMount } from 'svelte';
 
@@ -23,6 +24,7 @@
 	<GamepadsCard />
 	<ServosCard />
 	<MotorsCard />
+	<MacrosCard />
 	<WebSocketCard />
 </div>
 
