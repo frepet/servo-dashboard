@@ -5,7 +5,7 @@
 	export let step: Step
 </script>
 {#each step.actions as action}
-	(<input type=number value={action.servo}/>: <input type=number value={action.pwm}/>)
+	(<input type=number bind:value={action.servo}/>: <input type=number bind:value={action.pwm}/>)
 {/each}
 
 <Button

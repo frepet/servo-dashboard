@@ -16,6 +16,7 @@
 						<Header>
 							{macro.name}:
 						</Header>
+						<Button on:click={() => {$state.macros[macro.id].play = true}}>Play</Button>
 						<Content>
 							<Macro id={macro.id}/>
 						</Content>
@@ -34,6 +35,7 @@
 							name: 'Macro',
 							id: $state.macros.length,
 							steps: [],
+							play: false
 						}
 					];
 				}}
