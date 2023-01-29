@@ -13,19 +13,19 @@ export type Servo = {
 	centerTrim: number;
 };
 
-export type Step = {
+export type Action = {
 	servo: number;
 	pwm: number;
 }
 
-export type Action = {
-	steps: Step[];
+export type Step = {
+	actions: Action[];
 };
 
 export type Macro = {
 	name: string;
 	id: number;
-	actions: Action[];
+	steps: Step[];
 };
 
 export type SkidSteer = {

@@ -33,7 +33,7 @@
 						{
 							name: 'Macro',
 							id: $state.macros.length,
-							actions: [],
+							steps: [],
 						}
 					];
 				}}
