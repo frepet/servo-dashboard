@@ -2,9 +2,11 @@
 	import Step from './Step.svelte';
 	import Button, { Label } from "@smui/button";
 	import { state } from "./stores/StateStore";
+	import { buttons } from "./stores/ButtonsStore";
 	import type { Step as Step_t, Action as Action_t, Macro as Macro_t} from './types';
 
 	export let id: number;
+	let running = false;
 
 	function sleep(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,6 +16,7 @@
 		for (const step of macro.steps) {
 			await doStep(step)
 		}
+		running = false;
 	}
 
 	async function doStep(step: Step_t) {
@@ -23,12 +26,14 @@
 		await sleep(step.delaySeconds * 1000)
 	}
 
-	$: if($state.macros[id].play) {
-		$state.macros[id].play = false
+	$: if (!running && $buttons[$state.macros[id].button]) {
+		running = true;
+		console.log("Starting Macro")
 		if ($state.macros[id].steps.length > 0) {
 			runMacro($state.macros[id])
 		}
-	}
+		console.log("Macro Finished")
+	} 
 </script>
 
 {#if $state.macros[id]}
@@ -57,5 +62,21 @@
 	<Label>Add Step</Label>
 </Button>
 
+<div class="row">
+	<p class="label">Button:</p>
+	<select bind:value={$state.macros[id].button}>
+		<option value={-1}>-</option>
+		{#each Array($buttons.length) as _, i}
+			<option>{i}</option>
+		{/each}
+	</select>
+</div>
+
 <style>
+	.row {
+		display: flex;
+	}
+	.row select {
+		margin: auto 0 auto 0;
+	}
 </style>

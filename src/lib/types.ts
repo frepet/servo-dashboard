@@ -24,10 +24,10 @@ export type Step = {
 };
 
 export type Macro = {
-	play: boolean;
 	name: string;
 	id: number;
 	steps: Step[];
+	button: number;
 };
 
 export type SkidSteer = {
