@@ -17,7 +17,7 @@
 							{macro.name}:
 						</Header>
 						<Content>
-							<Macro id={macro.id}/>
+							<Macro {macro}/>
 						</Content>
 					</Panel>
 				{/each}

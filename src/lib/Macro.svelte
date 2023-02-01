@@ -6,7 +6,7 @@
 	import { clamp } from '$lib/utils';
 	import type { Step as Step_t, Action as Action_t, Macro as Macro_t} from './types';
 
-	export let id: number
+	export let macro: Macro_t
 	let running = false
 	let smoothingSteps = 20
 	let smoothingIntesity = 0.5
@@ -35,8 +35,9 @@
 
 	function doStep(step: Step_t) {
 		step.actions.forEach((action: Action_t) => {
+			let servo = $state.servos[action.servo]
 			let start = $state.pwms[action.servo]
-			let goal = clamp(action.pwm, $state.servos[action.servo].min, $state.servos[action.servo].max)
+			let goal = clamp(action.pwm, servo.min, servo.max)
 			let smoothingDelay = (step.delaySeconds * 1000 / smoothingSteps)
 			for (let i = 0;  i < smoothingSteps; i++) {
 				if (i < smoothingSteps - 1) {
@@ -56,17 +57,17 @@
 		})
 	}
 
-	$: if (!running && $buttons[$state.macros[id].button]) {
+	$: if (!running && $buttons[macro.button]) {
 		running = true;
-		if ($state.macros[id].steps.length > 0) {
-			runMacro($state.macros[id])
+		if (macro.steps.length > 0) {
+			runMacro(macro)
 		}
 	} 
 </script>
 
 <div class="row">
 	<p class="label">Button:</p>
-	<select bind:value={$state.macros[id].button}>
+	<select bind:value={macro.button}>
 		<option value={-1}>-</option>
 		{#each Array($buttons.length) as _, i}
 			<option>{i}</option>
@@ -74,9 +75,9 @@
 	</select>
 </div>
 
-{#if $state.macros[id]}
+{#if macro}
 	<ul>
-	{#each $state.macros[id].steps as step}
+	{#each macro.steps as step}
 		<hr/>
 		<li>
 			<Step {step}/>
@@ -90,8 +91,8 @@
 	<li>
 		<Button
 			on:click={() => {
-				$state.macros[id].steps = [
-					...$state.macros[id].steps,
+				macro.steps = [
+					...macro.steps,
 					{
 						actions: [],
 						delaySeconds: 1,
