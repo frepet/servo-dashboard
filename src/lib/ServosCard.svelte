@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Servo from './Servo.svelte';
 	import { state } from '$lib/stores/StateStore';
+	import { pwms } from '$lib/stores/PWMStore';
 
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	import Card, { Actions, ActionButtons } from '@smui/card';
@@ -11,7 +12,7 @@
 	<Content>
 		<Accordion multiple>
 			{#if $state.servos}
-				{#each $state.servos as servo}
+				{#each $state.servos as servo, i}
 					<Panel>
 						<Header>
 							{servo.name}:
@@ -20,7 +21,13 @@
 							{servo.buttonMinus > 0 ? '(-) ' + servo.buttonMinus : ''}
 						</Header>
 						<Content>
-							<Servo id={servo.id} />
+							<Servo {servo} pwm={$pwms[i]}/>
+							<Button
+								on:click={() => { $state.servos = $state.servos.filter((s) => s != servo) }}
+								title="Remove"
+								variant="outlined" >
+								<Label>Remove</Label>
+							</Button>
 						</Content>
 					</Panel>
 				{/each}

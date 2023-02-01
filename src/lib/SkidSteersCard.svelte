@@ -11,7 +11,7 @@
 	<Content>
 		<Accordion multiple>
 			{#if $state.skidsteers}
-				{#each $state.skidsteers as motor}
+				{#each $state.skidsteers as motor, i}
 					<Panel>
 						<Header>
 							Skid Steer {motor.id}: Axes
@@ -21,6 +21,12 @@
 						</Header>
 						<Content>
 							<SkidSteer id={motor.id} />
+							<Button
+								on:click={() => { $state.skidsteers = $state.skidsteers.filter((_, j) => j != i) }}
+								title="Remove"
+								variant="outlined" >
+								<Label>Remove</Label>
+							</Button>
 						</Content>
 					</Panel>
 				{/each}
@@ -37,10 +43,14 @@
 							id: $state.skidsteers.length,
 							forwardAxis: -1,
 							reverseAxis: -1,
+							forwardAxis2: -1,
+							reverseAxis2: -1,
 							turnAxis: -1,
+							turnAxis2: -1,
 							speed: 1,
 							turnSpeed: 1,
-							reversed: false
+							reversed: false,
+							reversed2: false
 						}
 					];
 				}}

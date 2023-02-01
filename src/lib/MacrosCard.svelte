@@ -11,13 +11,19 @@
 	<Content>
 		<Accordion multiple>
 			{#if $state.macros}
-				{#each $state.macros as macro}
+				{#each $state.macros as macro, i}
 					<Panel>
 						<Header>
 							{macro.name}:
 						</Header>
 						<Content>
 							<Macro {macro}/>
+							<Button
+								on:click={() => { $state.macros = $state.macros.filter((_, j) => j != i) }}
+								title="Remove"
+								variant="outlined" >
+								<Label>Remove</Label>
+							</Button>
 						</Content>
 					</Panel>
 				{/each}

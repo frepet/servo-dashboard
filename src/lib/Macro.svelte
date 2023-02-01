@@ -2,6 +2,7 @@
 	import Step from './Step.svelte';
 	import Button, { Label } from "@smui/button";
 	import { state } from "./stores/StateStore";
+	import { pwms } from "./stores/PWMStore";
 	import { buttons } from "./stores/ButtonsStore";
 	import { clamp } from '$lib/utils';
 	import type { Step as Step_t, Action as Action_t, Macro as Macro_t} from './types';
@@ -36,19 +37,19 @@
 	function doStep(step: Step_t) {
 		step.actions.forEach((action: Action_t) => {
 			let servo = $state.servos[action.servo]
-			let start = $state.pwms[action.servo]
+			let start = $pwms[action.servo]
 			let goal = clamp(action.pwm, servo.min, servo.max)
 			let smoothingDelay = (step.delaySeconds * 1000 / smoothingSteps)
 			for (let i = 0;  i < smoothingSteps; i++) {
 				if (i < smoothingSteps - 1) {
 					setTimeout(() => {
-						$state.pwms[action.servo] = logistic(i, smoothingSteps - 0.5, start, goal)
+						$pwms[action.servo] = logistic(i, smoothingSteps - 0.5, start, goal)
 					},
 					smoothingDelay * i
 					)
 				} else {
 					setTimeout(() => {
-						$state.pwms[action.servo] = goal
+						$pwms[action.servo] = goal
 					},
 					smoothingDelay * i
 					)
@@ -77,10 +78,16 @@
 
 {#if macro}
 	<ul>
-	{#each macro.steps as step}
+	{#each macro.steps as step, i}
 		<hr/>
 		<li>
 			<Step {step}/>
+			<Button
+				on:click={() => { macro.steps = macro.steps.filter((_, j) => j != i) }}
+				title="Remove"
+				variant="outlined" >
+				<Label>Remove</Label>
+			</Button>
 		</li>
 	{/each}
 	<hr/>

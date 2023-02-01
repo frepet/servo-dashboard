@@ -1,37 +1,35 @@
 <script lang="ts">
 	import { axes } from '$lib/stores/AxesStore';
 	import { buttons } from '$lib/stores/ButtonsStore';
-	import { pwms } from '$lib/stores/PWMStore';
 	import { state } from '$lib/stores/StateStore';
 	import { clamp } from '$lib/utils';
 	import { onDestroy } from 'svelte';
+	import type { Servo as Servo_t } from '$lib/types';
 
-	export let id = 0;
+	export let servo: Servo_t
+	export let pwm: number
 
 	let poll: number;
 	const loop = () => {
 		if ($state.servos) {
-			if ($state.servos[id].centering) {
+			if (servo.centering) {
 				let invert = 1;
-				if ($state.servos[id].speed < 0) {
+				if (servo.speed < 0) {
 					invert = -1;
 				}
-				$pwms[id] =
-					invert * $axes[$state.servos[id].axis] * 127.5 + 127.5 + $state.servos[id].centerTrim;
+				pwm = invert * $axes[servo.axis] * 127.5 + 127.5 + servo.centerTrim;
 			} else {
-				if ($state.servos[id].axis > -1) {
-					$pwms[id] += ($axes[$state.servos[id].axis] ?? 0) * $state.servos[id].speed;
+				if (servo.axis > -1) {
+					pwm += ($axes[servo.axis] ?? 0) * servo.speed;
 				}
-				if ($state.servos[id].buttonPlus > -1) {
-					$pwms[id] +=
-						($buttons[$state.servos[id].buttonPlus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+				if (servo.buttonPlus > -1) {
+					pwm += ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
 				}
-				if ($state.servos[id].buttonMinus > -1) {
-					$pwms[id] -=
-						($buttons[$state.servos[id].buttonMinus] ? 1 : 0) * $state.servos[id].buttonSpeed;
+				if (servo.buttonMinus > -1) {
+					pwm -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
 				}
 			}
-			$pwms[id] = clamp($pwms[id], $state.servos[id].min, $state.servos[id].max);
+			pwm = clamp(pwm, servo.min, servo.max);
 		}
 		poll = requestAnimationFrame(loop);
 	};
@@ -40,39 +38,39 @@
 	onDestroy(() => cancelAnimationFrame(poll));
 </script>
 
-{#if $state.servos[id]}
-	Name: <input bind:value={$state.servos[id].name} />
+{#if servo}
+	Name: <input bind:value={servo.name} />
 	<div class="servocontents">
 		<ul>
 			<li class="row">
 				<p class="label">PWM</p>
-				<p class="value">{Math.round($pwms[id])}</p>
-				<input class="slider" type="range" min="0" max="255" step={1} bind:value={$pwms[id]} />
+				<p class="value">{Math.round(pwm)}</p>
+				<input class="slider" type="range" min="0" max="255" step={1} bind:value={pwm} />
 			</li>
 
 			<li class="row">
 				<p class="label">Min</p>
-				<p class="value">{$state.servos[id].min}</p>
+				<p class="value">{servo.min}</p>
 				<input
 					class="slider"
 					type="range"
 					min={0}
 					max={255}
 					step={1}
-					bind:value={$state.servos[id].min}
+					bind:value={servo.min}
 				/>
 			</li>
 
 			<li class="row">
 				<p class="label">Max</p>
-				<p class="value">{$state.servos[id].max}</p>
+				<p class="value">{servo.max}</p>
 				<input
 					class="slider"
 					type="range"
 					min={0}
 					max={255}
 					step={1}
-					bind:value={$state.servos[id].max}
+					bind:value={servo.max}
 				/>
 			</li>
 		</ul>
@@ -80,7 +78,7 @@
 		<ul>
 			<li class="row">
 				<p class="label">Axis:</p>
-				<select bind:value={$state.servos[id].axis}>
+				<select bind:value={servo.axis}>
 					<option value={-1}>-</option>
 					{#each Array($axes.length) as _, i}
 						<option>{i}</option>
@@ -90,14 +88,14 @@
 
 			<li class="row">
 				<p class="label">Speed:</p>
-				<input class="valueInput" type="number" step={0.1} bind:value={$state.servos[id].speed} />
+				<input class="valueInput" type="number" step={0.1} bind:value={servo.speed} />
 			</li>
 		</ul>
 
 		<ul>
 			<li class="row">
 				<p class="label">Button(+):</p>
-				<select bind:value={$state.servos[id].buttonPlus}>
+				<select bind:value={servo.buttonPlus}>
 					<option value={-1}>-</option>
 					{#each Array($buttons.length) as _, i}
 						<option>{i}</option>
@@ -107,7 +105,7 @@
 
 			<li class="row">
 				<p class="label">Button(-):</p>
-				<select bind:value={$state.servos[id].buttonMinus}>
+				<select bind:value={servo.buttonMinus}>
 					<option value={-1}>-</option>
 					{#each Array($buttons.length) as _, i}
 						<option>{i}</option>
@@ -121,7 +119,7 @@
 					class="valueInput"
 					type="number"
 					step={0.1}
-					bind:value={$state.servos[id].buttonSpeed}
+					bind:value={servo.buttonSpeed}
 				/>
 			</li>
 		</ul>
@@ -129,7 +127,7 @@
 		<ul>
 			<li class="row">
 				<p class="label">Centering:</p>
-				<input class="valueInput" type="checkbox" bind:checked={$state.servos[id].centering} />
+				<input class="valueInput" type="checkbox" bind:checked={servo.centering} />
 			</li>
 			<li class="row">
 				<p class="label">Trim:</p>
@@ -137,7 +135,7 @@
 					class="valueInput"
 					type="number"
 					step={1}
-					bind:value={$state.servos[id].centerTrim}
+					bind:value={servo.centerTrim}
 				/>
 			</li>
 		</ul>
