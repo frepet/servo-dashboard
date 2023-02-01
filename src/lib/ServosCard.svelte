@@ -21,7 +21,7 @@
 							{servo.buttonMinus > 0 ? '(-) ' + servo.buttonMinus : ''}
 						</Header>
 						<Content>
-							<Servo {servo} pwm={$pwms[i]}/>
+							<Servo {servo} pwm_i={i}/>
 							<Button
 								on:click={() => { $state.servos = $state.servos.filter((s) => s != servo) }}
 								title="Remove"
