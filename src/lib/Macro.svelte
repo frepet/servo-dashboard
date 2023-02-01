@@ -3,36 +3,64 @@
 	import Button, { Label } from "@smui/button";
 	import { state } from "./stores/StateStore";
 	import { buttons } from "./stores/ButtonsStore";
+	import { clamp } from '$lib/utils';
 	import type { Step as Step_t, Action as Action_t, Macro as Macro_t} from './types';
 
-	export let id: number;
-	let running = false;
+	export let id: number
+	let running = false
+	let smoothingSteps = 20
+	let smoothingDelay = 15
+	let smoothingIntesity = 0.5
 
 	function sleep(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 
-	async function runMacro(macro: Macro_t) {
-		for (const step of macro.steps) {
-			await doStep(step)
-		}
-		running = false;
+	function logistic(i: number, iMax: number, start: number, goal: number) {
+		let k = smoothingIntesity
+		let end = goal - start
+		let midpoint = iMax / 2
+		return start + end / (1  + Math.pow(Math.E, -k * (i - midpoint)))
 	}
 
-	async function doStep(step: Step_t) {
+	async function runMacro(macro: Macro_t) {
+		setTimeout(() => {
+			running = false
+		}, smoothingDelay * smoothingSteps * macro.steps.length)
+
+		for (const step of macro.steps) {
+			doStep(step)
+			await sleep(smoothingDelay * smoothingSteps)
+		}
+	}
+
+	function doStep(step: Step_t) {
 		step.actions.forEach((action: Action_t) => {
-			$state.pwms[action.servo] = action.pwm
+			let start = $state.pwms[action.servo]
+			let goal = clamp(action.pwm, $state.servos[action.servo].min, $state.servos[action.servo].max)
+			for (let i = 0;  i < smoothingSteps; i++) {
+				if (i < smoothingSteps - 1) {
+					setTimeout(() => {
+						$state.pwms[action.servo] = logistic(i, smoothingSteps - 0.5, start, goal)
+					},
+					smoothingDelay * i
+					)
+				} else {
+					setTimeout(() => {
+						$state.pwms[action.servo] = goal
+					},
+					smoothingDelay * i
+					)
+				}
+			}
 		})
-		await sleep(step.delaySeconds * 1000)
 	}
 
 	$: if (!running && $buttons[$state.macros[id].button]) {
 		running = true;
-		console.log("Starting Macro")
 		if ($state.macros[id].steps.length > 0) {
 			runMacro($state.macros[id])
 		}
-		console.log("Macro Finished")
 	} 
 </script>
 
