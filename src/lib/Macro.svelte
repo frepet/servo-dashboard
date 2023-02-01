@@ -9,7 +9,6 @@
 	export let id: number
 	let running = false
 	let smoothingSteps = 20
-	let smoothingDelay = 15
 	let smoothingIntesity = 0.5
 
 	function sleep(ms: number) {
@@ -26,11 +25,11 @@
 	async function runMacro(macro: Macro_t) {
 		setTimeout(() => {
 			running = false
-		}, smoothingDelay * smoothingSteps * macro.steps.length)
+		}, 2000)
 
 		for (const step of macro.steps) {
 			doStep(step)
-			await sleep(smoothingDelay * smoothingSteps)
+			await sleep(step.delaySeconds * 1000)
 		}
 	}
 
@@ -38,6 +37,7 @@
 		step.actions.forEach((action: Action_t) => {
 			let start = $state.pwms[action.servo]
 			let goal = clamp(action.pwm, $state.servos[action.servo].min, $state.servos[action.servo].max)
+			let smoothingDelay = (step.delaySeconds * 1000 / smoothingSteps)
 			for (let i = 0;  i < smoothingSteps; i++) {
 				if (i < smoothingSteps - 1) {
 					setTimeout(() => {
@@ -64,32 +64,6 @@
 	} 
 </script>
 
-{#if $state.macros[id]}
-	<ul>
-	{#each $state.macros[id].steps as step}
-		<li>
-			<Step {step}/>
-		</li>
-	{/each}
-	</ul>
-{/if}
-
-<Button
-	on:click={() => {
-		$state.macros[id].steps = [
-			...$state.macros[id].steps,
-			{
-				actions: [],
-				delaySeconds: 1,
-			}
-		];
-	}}
-	title="Add Step"
-	variant="outlined"
->
-	<Label>Add Step</Label>
-</Button>
-
 <div class="row">
 	<p class="label">Button:</p>
 	<select bind:value={$state.macros[id].button}>
@@ -99,6 +73,39 @@
 		{/each}
 	</select>
 </div>
+
+{#if $state.macros[id]}
+	<ul>
+	{#each $state.macros[id].steps as step}
+		<hr/>
+		<li>
+			<Step {step}/>
+		</li>
+	{/each}
+	<hr/>
+	</ul>
+{/if}
+
+<ul>
+	<li>
+		<Button
+			on:click={() => {
+				$state.macros[id].steps = [
+					...$state.macros[id].steps,
+					{
+						actions: [],
+						delaySeconds: 1,
+					}
+				];
+			}}
+			title="Add Step"
+			variant="outlined"
+		>
+			<Label>Add Step</Label>
+
+		</Button>
+	</li>
+</ul>
 
 <style>
 	.row {
