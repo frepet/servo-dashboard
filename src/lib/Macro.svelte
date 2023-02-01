@@ -9,7 +9,7 @@
 	export let macro: Macro_t
 	let running = false
 	let smoothingSteps = 20
-	let smoothingIntesity = 0.5
+	let smoothingIntesity = 0.75
 
 	function sleep(ms: number) {
 		return new Promise((resolve) => setTimeout(resolve, ms));

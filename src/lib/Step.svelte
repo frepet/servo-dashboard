@@ -8,7 +8,7 @@
 	<p>Servo: <input type=number bind:value={action.servo}/> PWM:<input type=number bind:value={action.pwm}/></p>
 {/each}
 
-<input class="valueInput" type="number" step={0.1} bind:value={step.delaySeconds} />
+<p>Action time(s):<input class="valueInput" type="number" step={0.1} bind:value={step.delaySeconds} /></p>
 
 <Button
 	on:click={() => {
