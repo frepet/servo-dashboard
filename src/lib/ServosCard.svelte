@@ -22,14 +22,15 @@
 					}
 					new_value = invert * $axes[servo.axis] * 127.5 + 127.5 + servo.centerTrim;
 				} else {
+					new_value += servo.value;
 					if (servo.axis > -1) {
-						new_value = servo.value + ($axes[servo.axis] ?? 0) * servo.speed;
+						new_value += ($axes[servo.axis] ?? 0) * servo.speed;
 					}
 					if (servo.buttonPlus > -1) {
-						new_value = servo.value + ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
+						new_value += ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
 					}
 					if (servo.buttonMinus > -1) {
-						new_value = servo.value - ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
+						new_value -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
 					}
 				}
 				servo.value = clamp(new_value, servo.min, servo.max);
