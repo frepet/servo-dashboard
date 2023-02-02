@@ -1,24 +1,18 @@
-import { writable, get } from 'svelte/store';
-import { pwms } from './PWMStore';
+import { get, writable } from 'svelte/store';
 import type { State } from '$lib/types';
 
 const store = writable<State>({
 	version: 1,
 	name: '',
-	pwms: [],
 	deadzones: [],
 	servos: [],
 	skidsteers: [],
+	macros: [],
 	swapButton: -1
 });
 
 const uploadState = async (id: string) => {
 	try {
-		const body = {
-			...get(store),
-			pwms: get(pwms)
-		};
-
 		const url = `${window.location.origin}/state/${id}`;
 
 		const response = await fetch(url, {
@@ -27,7 +21,7 @@ const uploadState = async (id: string) => {
 				'Content-Type': 'application/json',
 				Accept: 'application/json'
 			},
-			body: JSON.stringify(body)
+			body: JSON.stringify({...get(store)})
 		});
 
 		return response;

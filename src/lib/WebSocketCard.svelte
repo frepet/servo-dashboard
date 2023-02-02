@@ -1,12 +1,13 @@
 <script lang="ts">
 	import WS from '$lib/stores/WebsocketStore';
 	import { motors } from '$lib/stores/MotorsStore';
-	import { pwms } from '$lib/stores/PWMStore';
 	import { localStore } from './stores/LocalStore';
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { onDestroy, onMount } from 'svelte';
 	import { browser } from '$app/env';
+	import { state } from './stores/StateStore';
+	import type { Servo as Servo_t } from '$lib/types';
 
 	let msgs: string[] = [];
 	let port = 22022;
@@ -24,7 +25,7 @@
 	const loop = () => {
 		if (connected) {
 			$WS = JSON.stringify({
-				servos: $pwms.map((pwm: number) => Math.ceil(pwm)),
+				servos: $state.servos.map((servo: Servo_t) => Math.ceil(servo.value)),
 				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0]),
 				custom: $localStore.mode
 			});

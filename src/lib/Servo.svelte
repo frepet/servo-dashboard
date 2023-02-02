@@ -1,42 +1,10 @@
 <script lang="ts">
 	import { axes } from '$lib/stores/AxesStore';
 	import { buttons } from '$lib/stores/ButtonsStore';
-	import { state } from '$lib/stores/StateStore';
-	import { pwms } from '$lib/stores/PWMStore';
-	import { clamp } from '$lib/utils';
-	import { onDestroy } from 'svelte';
 	import type { Servo as Servo_t } from '$lib/types';
 
 	export let servo: Servo_t
-	export let pwm_i: number
 
-	let poll: number;
-	const loop = () => {
-		if ($state.servos) {
-			if (servo.centering) {
-				let invert = 1;
-				if (servo.speed < 0) {
-					invert = -1;
-				}
-				$pwms[pwm_i] = invert * $axes[servo.axis] * 127.5 + 127.5 + servo.centerTrim;
-			} else {
-				if (servo.axis > -1) {
-					$pwms[pwm_i] += ($axes[servo.axis] ?? 0) * servo.speed;
-				}
-				if (servo.buttonPlus > -1) {
-					$pwms[pwm_i] += ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
-				}
-				if (servo.buttonMinus > -1) {
-					$pwms[pwm_i] -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
-				}
-			}
-			$pwms[pwm_i] = clamp($pwms[pwm_i], servo.min, servo.max);
-		}
-		poll = requestAnimationFrame(loop);
-	};
-	loop();
-
-	onDestroy(() => cancelAnimationFrame(poll));
 </script>
 
 {#if servo}
@@ -45,8 +13,8 @@
 		<ul>
 			<li class="row">
 				<p class="label">PWM</p>
-				<p class="value">{Math.round($pwms[pwm_i])}</p>
-				<input class="slider" type="range" min="0" max="255" step={1} bind:value={$pwms[pwm_i]} />
+				<p class="value">{Math.round(servo.value)}</p>
+				<input class="slider" type="range" min="0" max="255" step={1} bind:value={servo.value} />
 			</li>
 
 			<li class="row">

@@ -33,6 +33,9 @@ const backwardsCompatability = (state: State) => {
 const v0tov1 = (state: State) => {
 	console.log('v0 -> v1');
 	state.version = 1;
+	if (state.servos == undefined) {
+		state.servos = [];
+	}
 	state.deadzones = [];
 	state.skidsteers = [];
 	return state;

@@ -10,7 +10,7 @@ com_port = None
 com_rate = 19200
 socket_port = None
 ser = None
-SERVOS = 9
+SERVOS = 20 # 9
 
 
 try:

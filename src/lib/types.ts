@@ -4,7 +4,7 @@ export type Servo = {
 	axis: number;
 	min: number;
 	max: number;
-	startValue: number;
+	value: number;
 	speed: number;
 	buttonPlus: number;
 	buttonMinus: number;
@@ -48,7 +48,6 @@ export type State = {
 	version: number;
 	name: string;
 	deadzones: number[];
-	pwms: number[];
 	servos: Servo[];
 	skidsteers: SkidSteer[];
 	macros: Macro[];

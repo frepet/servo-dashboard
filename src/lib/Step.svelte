@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button, { Label } from "@smui/button";
-	import { state } from "./stores/StateStore";
 	import type { Step } from "./types";
 
 	export let step: Step
