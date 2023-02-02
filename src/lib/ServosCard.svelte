@@ -14,7 +14,7 @@
 	onMount(() => {
 		const loop = () => {
 			$state.servos.forEach((servo: Servo_t) => {
-				let new_value = 0
+				let new_value = 0;
 				if (servo.centering) {
 					let invert = 1;
 					if (servo.speed < 0) {
@@ -33,14 +33,13 @@
 					}
 				}
 				servo.value = clamp(new_value, servo.min, servo.max);
-
 			});
-			$state.servos = $state.servos
+			$state.servos = $state.servos;
 			poll = requestAnimationFrame(loop);
 		};
 
 		loop();
-	})
+	});
 	if (typeof window !== 'undefined') {
 		onDestroy(() => cancelAnimationFrame(poll));
 	}
@@ -59,11 +58,14 @@
 							{servo.buttonMinus >= 0 ? '(-) ' + servo.buttonMinus : ''}
 						</Header>
 						<Content>
-							<Servo bind:servo/>
+							<Servo bind:servo />
 							<Button
-								on:click={() => { $state.servos = $state.servos.filter((s) => s != servo) }}
+								on:click={() => {
+									$state.servos = $state.servos.filter((s) => s != servo);
+								}}
 								title="Remove"
-								variant="outlined" >
+								variant="outlined"
+							>
 								<Label>Remove</Label>
 							</Button>
 						</Content>

@@ -3,8 +3,7 @@
 	import { buttons } from '$lib/stores/ButtonsStore';
 	import type { Servo as Servo_t } from '$lib/types';
 
-	export let servo: Servo_t
-
+	export let servo: Servo_t;
 </script>
 
 {#if servo}
@@ -20,27 +19,13 @@
 			<li class="row">
 				<p class="label">Min</p>
 				<p class="value">{servo.min}</p>
-				<input
-					class="slider"
-					type="range"
-					min={0}
-					max={255}
-					step={1}
-					bind:value={servo.min}
-				/>
+				<input class="slider" type="range" min={0} max={255} step={1} bind:value={servo.min} />
 			</li>
 
 			<li class="row">
 				<p class="label">Max</p>
 				<p class="value">{servo.max}</p>
-				<input
-					class="slider"
-					type="range"
-					min={0}
-					max={255}
-					step={1}
-					bind:value={servo.max}
-				/>
+				<input class="slider" type="range" min={0} max={255} step={1} bind:value={servo.max} />
 			</li>
 		</ul>
 
@@ -84,12 +69,7 @@
 
 			<li class="row">
 				<p class="label">Speed:</p>
-				<input
-					class="valueInput"
-					type="number"
-					step={0.1}
-					bind:value={servo.buttonSpeed}
-				/>
+				<input class="valueInput" type="number" step={0.1} bind:value={servo.buttonSpeed} />
 			</li>
 		</ul>
 
@@ -100,12 +80,7 @@
 			</li>
 			<li class="row">
 				<p class="label">Trim:</p>
-				<input
-					class="valueInput"
-					type="number"
-					step={1}
-					bind:value={servo.centerTrim}
-				/>
+				<input class="valueInput" type="number" step={1} bind:value={servo.centerTrim} />
 			</li>
 		</ul>
 	</div>

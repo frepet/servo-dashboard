@@ -1,4 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
+import type { State } from '$lib/types';
 
 export const get: RequestHandler = async ({ locals }) => {
 	let body = {};
@@ -6,7 +7,7 @@ export const get: RequestHandler = async ({ locals }) => {
 	try {
 		const resp = await locals.dbc.manyOrNone('SELECT uuid, state FROM states');
 		const stateIdentifiers = new Map<string, string>(
-			resp.map(({ uuid, state }) => {
+			resp.map(({ uuid, state }: { uuid: string; state: State }) => {
 				return [uuid, state.name];
 			})
 		);

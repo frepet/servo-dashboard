@@ -17,11 +17,14 @@
 							{macro.name}:
 						</Header>
 						<Content>
-							<Macro {macro}/>
+							<Macro {macro} />
 							<Button
-								on:click={() => { $state.macros = $state.macros.filter((_, j) => j != i) }}
+								on:click={() => {
+									$state.macros = $state.macros.filter((_, j) => j != i);
+								}}
 								title="Remove"
-								variant="outlined" >
+								variant="outlined"
+							>
 								<Label>Remove</Label>
 							</Button>
 						</Content>
@@ -40,7 +43,7 @@
 							name: 'Macro',
 							id: $state.macros.length,
 							steps: [],
-							button: -1,
+							button: -1
 						}
 					];
 				}}

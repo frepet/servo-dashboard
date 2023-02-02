@@ -27,6 +27,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 5) state = v5tov6(state);
 	if (state.version == 6) state = v6tov7(state);
 	if (state.version == 7) state = v7tov8(state);
+	if (state.version == 8) state = v8tov9(state);
 	return state;
 };
 
@@ -103,5 +104,14 @@ const v7tov8 = (state: State) => {
 	console.log('v7 -> v8');
 	state.version = 8;
 	state.macros = [];
+	return state;
+};
+
+const v8tov9 = (state: State) => {
+	console.log('v8 -> v9');
+	state.version = 9;
+	state.servos.forEach((servo: { value: number }, i: number) => {
+		servo.value = state.pwms[i];
+	});
 	return state;
 };

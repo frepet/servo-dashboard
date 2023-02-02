@@ -21,7 +21,7 @@ const uploadState = async (id: string) => {
 				'Content-Type': 'application/json',
 				Accept: 'application/json'
 			},
-			body: JSON.stringify({...get(store)})
+			body: JSON.stringify({ ...get(store) })
 		});
 
 		return response;

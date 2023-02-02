@@ -16,11 +16,11 @@ export type Servo = {
 export type Action = {
 	servo: number;
 	pwm: number;
-}
+};
 
 export type Step = {
 	actions: Action[];
-	delaySeconds: number; 
+	delaySeconds: number;
 };
 
 export type Macro = {

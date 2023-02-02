@@ -22,9 +22,12 @@
 						<Content>
 							<SkidSteer id={motor.id} />
 							<Button
-								on:click={() => { $state.skidsteers = $state.skidsteers.filter((_, j) => j != i) }}
+								on:click={() => {
+									$state.skidsteers = $state.skidsteers.filter((_, j) => j != i);
+								}}
 								title="Remove"
-								variant="outlined" >
+								variant="outlined"
+							>
 								<Label>Remove</Label>
 							</Button>
 						</Content>
