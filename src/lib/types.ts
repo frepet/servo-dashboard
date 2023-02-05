@@ -6,6 +6,7 @@ export type Servo = {
 	max: number;
 	value: number;
 	speed: number;
+	exp: number;
 	buttonPlus: number;
 	buttonMinus: number;
 	buttonSpeed: number;

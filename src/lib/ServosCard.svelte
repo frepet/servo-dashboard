@@ -9,6 +9,11 @@
 	import type { Servo as Servo_t } from '$lib/types';
 	import { clamp } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
+	
+	const expF = (value: number, strength: number) => {
+		let expf = Math.abs(Math.pow(value, (1+(strength*2))));
+		return value > 0 ? expf : -expf;
+	}
 
 	let poll: number;
 	onMount(() => {
@@ -24,7 +29,7 @@
 				} else {
 					new_value += servo.value;
 					if (servo.axis > -1) {
-						new_value += ($axes[servo.axis] ?? 0) * servo.speed;
+						new_value += expF(($axes[servo.axis] ?? 0), servo.exp) * servo.speed;
 					}
 					if (servo.buttonPlus > -1) {
 						new_value += ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
@@ -88,6 +93,7 @@
 							min: 0,
 							max: 255,
 							value: 127,
+							exp: 1,
 							speed: 1.0,
 							buttonPlus: -1,
 							buttonMinus: -1,

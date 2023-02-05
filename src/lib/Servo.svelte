@@ -44,6 +44,11 @@
 				<p class="label">Speed:</p>
 				<input class="valueInput" type="number" step={0.1} bind:value={servo.speed} />
 			</li>
+
+			<li class="row">
+				<p class="label">Exp:</p>
+				<input class="valueInput" type="number" step={0.1} bind:value={servo.exp} />
+			</li>
 		</ul>
 
 		<ul>
