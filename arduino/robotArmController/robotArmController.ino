@@ -30,9 +30,6 @@ byte custom = 0;
 void setup() {
 	pinMode(BAD_CHECKSUM_LED_PIN, OUTPUT);
 	pinMode(CUSTOM_PIN, OUTPUT);
-	for (int i = 0; i < SERVOS; i++) {
-		servo[i].attach(SERVO_PINS[i]);
-	}
 	pinMode(MOTOR_2_DIR, OUTPUT);
 	pinMode(MOTOR_2_DIR, OUTPUT);
 	pinMode(MOTOR_1_PWM, OUTPUT);
@@ -90,6 +87,9 @@ bool readSerial() {
 void updateServos(byte *pwms) {
 	for (int i = 0; i < SERVOS; i++) {
 		servo[i].writeMicroseconds(map(pwms[i], 0, 255, 500, 2500));
+		if (!servo[i].attached()) {
+			servo[i].attach(SERVO_PINS[i]);
+		}
 	}
 }
 
