@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:  
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: somelongsecret
+      POSTGRES_USER: servodashboard
+      POSTGRES_DB: servodashboard
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    #command: ["postgres", "-c", "log_statement=all"]
+  frontend:
+    image: servo-dashboard
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    environment:
+      DATABASE_URL: postgres://servodashboard:somelongsecret@db:5432
+      NO_SSL: true
+    ports:
+      - "8080:3000"
