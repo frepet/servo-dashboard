@@ -5,9 +5,9 @@
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { onDestroy, onMount } from 'svelte';
-	import { browser } from '$app/env';
 	import { state } from './stores/StateStore';
 	import type { Servo as Servo_t } from '$lib/types';
+	import { browser } from '$app/environment';
 
 	let msgs: string[] = [];
 	let port = 22022;

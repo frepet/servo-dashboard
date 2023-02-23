@@ -13,7 +13,7 @@ const store = writable<State>({
 
 const uploadState = async (id: string) => {
 	try {
-		const url = `${window.location.origin}/state/${id}`;
+		const url = `${window.location.origin}/api/${id}`;
 
 		const response = await fetch(url, {
 			method: 'POST',

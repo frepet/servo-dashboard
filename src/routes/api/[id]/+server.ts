@@ -1,7 +1,7 @@
 import type { State } from '$lib/types';
-import type { RequestHandler } from '@sveltejs/kit';
 
-export const get: RequestHandler = async ({ params, locals }) => {
+/** @type {import('./$types').RequestHandler} */
+export async function GET({ params, locals }) {
 	let state: State;
 
 	try {
@@ -15,10 +15,11 @@ export const get: RequestHandler = async ({ params, locals }) => {
 		};
 	}
 
-	return { body: state };
+	return new Response(String({ body: state }));
 };
 
-export const post: RequestHandler = async ({ request, params, locals }) => {
+/** @type {import('./$types').RequestHandler} */
+export async function POST({ request, params, locals }) {
 	const state = {
 		...(await request.json()),
 		uuid: params.id
@@ -33,13 +34,14 @@ export const post: RequestHandler = async ({ request, params, locals }) => {
 			body: 'Could not update state'
 		};
 	}
-	return {
+	return new Response(String({
 		status: 200,
 		body: { state }
-	};
+	}));
 };
 
-export const del: RequestHandler = async ({ locals, params }) => {
+/** @type {import('./$types').RequestHandler} */
+export async function DELETE({ locals, params }) {
 	try {
 		await locals.dbc.none('DELETE FROM states WHERE uuid = $1', [params.id]);
 		return {
@@ -47,8 +49,8 @@ export const del: RequestHandler = async ({ locals, params }) => {
 		};
 	} catch (error) {
 		console.log(error);
-		return {
+		return new Response(String({
 			status: 500
-		};
+		}));
 	}
 };
