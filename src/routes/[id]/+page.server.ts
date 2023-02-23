@@ -1,7 +1,7 @@
 import type { State } from '$lib/types';
-import type { RequestHandler } from '@sveltejs/kit';
 
-export const get: RequestHandler = async ({ params, locals }) => {
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ params, locals }) {
 	let state: State;
 
 	try {
