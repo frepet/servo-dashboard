@@ -7,6 +7,7 @@
 	import MotorsCard from '$lib/SkidSteersCard.svelte';
 	import MacrosCard from '$lib/MacrosCard.svelte';
 	import WebSocketCard from '$lib/WebSocketCard.svelte';
+	import IK from '$lib/IK/IK.svelte';
 	import { onMount } from 'svelte';
 
 	export let data: any;
@@ -23,6 +24,7 @@
 <div class="container">
 	{#if state != undefined}
 		<StateCard {uuid} />
+		<IK />
 		<GamepadsCard />
 		<ServosCard />
 		<MotorsCard />
