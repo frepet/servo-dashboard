@@ -20,7 +20,9 @@ export class IK {
 
     addIKServo(servo : any) {
         this.servos.push(servo);
-        if (servo.address === 1) { // When both IK servos are used, set target to PWM 127, 127 as start position.
+        this.servoRanges.push(0);
+        this.servoMidpoints.push(0);
+        if (this.servos.length == 2) { // When both IK servos are used, set target to PWM 127, 127 as start position.
             this.updateArm();
             this.target = this.arm[1];
         }

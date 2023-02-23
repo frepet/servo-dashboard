@@ -1,33 +1,42 @@
 <script lang="ts">
 	import { axes } from '$lib/stores/AxesStore';
-	import Slider from '@smui/slider';
+	import { state } from '$lib/stores/StateStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	import { onMount } from 'svelte';
 	import { draw } from './draw';
-	import { Vec2 } from './vec2';
 	import { IK } from './IK';
 
 	let context : any;
-
+	let canvas : any;
+	let IKobject: IK;
 
 	onMount(() => {
-		let canvas : any = document.getElementById("canvas");
+		canvas = document.getElementById("canvas");
 		console.log(canvas);
 		context = canvas.getContext("2d");
 		console.log(context);
-		
-		let IKobject = new IK();
+
+		IKobject = new IK();
 
 		draw(context,IKobject.servos,IKobject.base,IKobject.arm,IKobject.target,canvas.width,canvas.height);
 
 	});
 
-	function update(){
-		
-		
+	$: $state, addServoToIk();
+
+	function addServoToIk(){
+		if(IKobject == undefined){
+			return;
+		}
+		if($state.servos.length <= 2 && $state.servos.length > IKobject.servos.length){
+			IKobject.addIKServo($state.servos.at(-1));
+			draw(context,IKobject.servos,IKobject.base,IKobject.arm,IKobject.target,canvas.width,canvas.height);
+		}
 	}
 
-
+	function update(){
+		
+	}
 
 </script>
 
