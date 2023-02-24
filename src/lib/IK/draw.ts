@@ -1,7 +1,8 @@
+import type { Servo } from "$lib/types";
 import { deg2rad } from "./utils";
 import { Vec2 } from "./vec2";
 
-export function draw(context: any, servos: any, base: Vec2, arm: Vec2[], target: Vec2, width: number, height: number) {
+export function draw(context: any, servos: Servo[], base: Vec2, arm: Vec2[], target: Vec2, width: number, height: number) {
 
 	context.transform(1, 0, 0, -1, 0, height); // Flip Y so that origo is at lower left corner
 	context.clearRect(0, 0, width, height);
@@ -18,14 +19,16 @@ export function draw(context: any, servos: any, base: Vec2, arm: Vec2[], target:
 	context.transform(1, 0, 0, 1, width * 1.9 / 2.8, 75);
 	drawTopDownArena(context);
 	if (servos.length >= 3) {
-		drawTopDownArm(context,arm, servos, target, base);
+		//drawTopDownArm(context,arm, servos, target, base);
 	}
 
 	context.transform(1, 0, 0, 1, -width * 1.9 / 2.8, -75);
 	context.transform(1, 0, 0, -1, 0, height);
 }
 
-export function drawTopDownArm(context: any, arm: Vec2[], servos: any, target: Vec2, base: Vec2) {
+/*
+TODO fix radians
+export function drawTopDownArm(context: any, arm: Vec2[], servos: Servo[], target: Vec2, base: Vec2) {
 	const hand = new Vec2(0, arm[1].x).rotate(servos[2].radians);
 	const elbow = new Vec2(0, arm[0].x).rotate(servos[2].radians);
 	const _target = new Vec2(0, target.x).rotate(servos[2].radians);
@@ -37,6 +40,11 @@ export function drawTopDownArm(context: any, arm: Vec2[], servos: any, target: V
 	drawLine(context, new Vec2(0, 0), elbow, "#009900", 4);
 	drawCircle(context, _target, 2, "#ff5500");
 	context.beginPath()
+}
+*/
+
+function PWMToRadians(pwm: number, range: number, midpoint: number) {
+	return (pwm / 255.0 * range) - range / 2 + midpoint;
 }
 
 export function drawTopDownArena(context: any) {
