@@ -6,38 +6,74 @@
 	import { draw } from './draw';
 	import { IK } from './IK';
 
-	let context : any;
-	let canvas : any;
+	let context: any;
+	let canvas: any;
 	let IKobject: IK;
 
+	//TODO fix deadzones
+	let deadzones: number[] = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2];
+
 	onMount(() => {
-		canvas = document.getElementById("canvas");
+		canvas = document.getElementById('canvas');
 		console.log(canvas);
-		context = canvas.getContext("2d");
+		context = canvas.getContext('2d');
 		console.log(context);
 
 		IKobject = new IK();
-
-		draw(context,IKobject.servos,IKobject.base,IKobject.arm,IKobject.target,canvas.width,canvas.height);
-
 	});
 
 	$: $state, addServoToIk();
 
-	function addServoToIk(){
-		if(IKobject == undefined){
+	function addServoToIk() {
+		if (IKobject == undefined) {
 			return;
 		}
-		if($state.servos.length <= 2 && $state.servos.length > IKobject.servos.length){
-			IKobject.addIKServo($state.servos.at(-1));
-			draw(context,IKobject.servos,IKobject.base,IKobject.arm,IKobject.target,canvas.width,canvas.height);
+		if ($state.servos.length <= 2 && $state.servos.length > IKobject.servos.length) {
+			let servo = $state.servos.at(IKobject.servos.length);
+			if (servo != undefined) {
+				IKobject.addIKServo(servo);
+			}
 		}
 	}
 
-	function update(){
-		
+	function moveTarget() {
+		let delta = 10; // TODO fix
+		if (IKobject != undefined) {
+			if (IKobject.targetXAxis != undefined && $axes[IKobject.targetXAxis]) {
+				IKobject.target.x +=
+					deadzone(IKobject.targetXAxis, $axes[IKobject.targetXAxis]) * IKobject.ikSpeed[0] * delta;
+			}
+			if (IKobject.targetYAxis != undefined && $axes[IKobject.targetYAxis]) {
+				IKobject.target.y +=
+					deadzone(IKobject.targetYAxis, $axes[IKobject.targetYAxis]) * IKobject.ikSpeed[1] * delta;
+			}
+			update();
+		}
+	}
+	function deadzone(axis: number, val: number) {
+		if (Math.abs(val) < deadzones[axis]) {
+			return 0;
+		}
+		const adjusted = (Math.abs(val) - deadzones[axis]) / (1 - deadzones[axis]);
+		return val > 0 ? adjusted : -adjusted;
 	}
 
+	$: $state, moveTarget();
+
+	function update() {
+		IKobject.update();
+		console.log(IKobject.servos[0]);
+		console.log(IKobject.servos[1]);
+		draw(
+			context,
+			IKobject.servos,
+			IKobject.base,
+			IKobject.arm,
+			IKobject.target,
+			canvas.width,
+			canvas.height
+		);
+	}
 </script>
 
 <Accordion multiple>
@@ -50,45 +86,45 @@
 			<Panel>
 				<Header>IK settings</Header>
 				<Content>
-					<h2>Base plate</h2>
-					<p class="label">Base Position (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="0" max="1000" step={1} />
-					<p class="label">Base Position (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="0" max="1000" step={1} />
-
-					<h2>Limb lenghts</h2>
-					<p class="label">Limb Lengths (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="0" max="1000" step={1} />
-					<p class="label">Limb Lengths (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="0" max="1000" step={1} />
-
-					<h2>Target Speeds</h2>
-					<p class="label">Limb Lengths (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="-100" max="100" step={1} />
-					<p class="label">Limb Lengths (mm)</p>
-					<p class="value" />
-					<input class="slider" type="range" min="-100" max="100" step={1} />
-
-					<h2>Gamepad</h2>
-					<p class="label">X Axis:</p>
-					<select>
-						<option value={-1}>-</option>
-						{#each Array($axes.length) as _, i}
-							<option>{i}</option>
-						{/each}
-					</select>
-					<p class="label">Y Axis:</p>
-					<select>
-						<option value={-1}>-</option>
-						{#each Array($axes.length) as _, i}
-							<option>{i}</option>
-						{/each}
-					</select>
+					<p>ikSpeed</p>
+				</Content>
+			</Panel>
+			<Panel>
+				<Header>limbs settings</Header>
+				<Content>
+					<p>limbs (mm)</p>
+				</Content>
+			</Panel>
+			<Panel>
+				<Header>Gamepad settings</Header>
+				<Content>
+					<p>Target axis</p>
+				</Content>
+			</Panel>
+			<Panel>
+				<Header>Servo settings</Header>
+				<Content>
+					<p>servo X</p>
+					<p>midpoint X</p>
+					<p>range X</p>
+					<p>servo Y</p>
+					<p>midpoint Y</p>
+					<p>range Y</p>
+					<p>servo Z?</p>
+					<p>midpoint Z</p>
+					<p>range Z</p>
+				</Content>
+			</Panel>
+			<Panel>
+				<Header>base settings</Header>
+				<Content>
+					<p>base</p>
+				</Content>
+			</Panel>
+			<Panel>
+				<Header>bounding box settings</Header>
+				<Content>
+					<p>constrainTarget</p>
 				</Content>
 			</Panel>
 		</Content>
