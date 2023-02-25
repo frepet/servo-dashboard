@@ -19,6 +19,6 @@ services:
       dockerfile: ./Dockerfile
     environment:
       DATABASE_URL: postgres://servodashboard:somelongsecret@db:5432
-      NO_SSL: true
+      NO_SSL: "true"
     ports:
       - "8080:3000"
