@@ -3,32 +3,29 @@ import { clamp } from "../utils";
 import type { Servo } from "$lib/types";
 
 export class IK {
-    targetXAxis = 0;
-    targetYAxis = 1;
     target: Vec2 = vec2(0, 0);
-    ikSpeed = [-0.4, -0.4];
-    base: Vec2 = vec2(0, 74.5); // mm
-    limbs = [280, 185]; // mm
     arm: Vec2[] = [];
 
-    //Abstract away please
-    servoRanges: number[] = [];
-    servoMidpoints: number[] = [];
+    base: Vec2 = vec2(0, 74.5); // mm
+
+    targetXAxis = 0;
+    targetYAxis = 1;
+
+    ikSpeedX = 0;
+    ikSpeedY = 0;
+
+    limbArm = 280; // mm
+    servoRangeArm = Math.PI * 3 / 2;
+    servoMidpointArm = Math.PI / 2;
+    
+    limbFore = 185; // mm
+    servoRangeForeArm = -Math.PI;
+    servoMidpointForeArm = -Math.PI / 2;
 
     //Abstract away please
     servos: Servo[] = [];
 
     addIKServo(servo: Servo) {
-
-        if (this.servos.length == 0) {
-            this.servoRanges.push(Math.PI * 3 / 2);
-            this.servoMidpoints.push(Math.PI / 2);
-        } else if (this.servos.length  == 1) {
-
-            this.servoRanges.push(-Math.PI);
-            this.servoMidpoints.push(-Math.PI / 2);
-        }
-
         this.servos.push(servo);
         servo.value = 127;
 
@@ -51,8 +48,8 @@ export class IK {
 
     constrainTarget() {
         // Keep target within reach
-        if (this.target.length() > this.limbs[0] + this.limbs[1]) {
-            this.target = this.target.resize(this.limbs[0] + this.limbs[1]);
+        if (this.target.length() > this.limbArm + this.limbFore) {
+            this.target = this.target.resize(this.limbArm + this.limbFore);
         }
         // Back limit
         if (this.target.x < 100) {
@@ -78,13 +75,13 @@ export class IK {
      */
     moveToTarget() {
         const r = this.target.length();
-        const l0 = this.limbs[0];
-        const l1 = this.limbs[1];
+        const l0 = this.limbArm;
+        const l1 = this.limbFore;
         const beta = Math.acos(clamp((l0 * l0 + l1 * l1 - r * r) / (2 * l0 * l1), -0.999999999999, 0.99999999999));
         const alfa0 = Math.atan2(this.target.y, this.target.x);
         const alfa1 = Math.asin(l1 * Math.sin(beta) / r);
-        this.servos[0].value = this.RadiansToPWM(alfa0 + alfa1, this.servoRanges[0], this.servoMidpoints[0]);
-        this.servos[1].value = this.RadiansToPWM(-Math.PI + beta, this.servoRanges[1], this.servoMidpoints[1]);
+        this.servos[0].value = this.RadiansToPWM(alfa0 + alfa1, this.servoRangeArm, this.servoMidpointArm);
+        this.servos[1].value = this.RadiansToPWM(-Math.PI + beta, this.servoRangeForeArm, this.servoMidpointForeArm);
         this.updateArm();
         return this.target.add(this.arm[1].invert()).length();
     }
@@ -99,10 +96,10 @@ export class IK {
             return;
         }
         let arm = [];
-        const l0 = this.limbs[0];
-        const l1 = this.limbs[1];
-        const alfa = this.PWMToRadians(this.servos[0].value, this.servoRanges[0], this.servoMidpoints[0]);
-        const beta = this.PWMToRadians(this.servos[1].value, this.servoRanges[1], this.servoMidpoints[1]);
+        const l0 = this.limbArm;
+        const l1 = this.limbFore;
+        const alfa = this.PWMToRadians(this.servos[0].value, this.servoRangeArm, this.servoMidpointArm);
+        const beta = this.PWMToRadians(this.servos[1].value, this.servoRangeForeArm, this.servoMidpointForeArm);
         const elbow = vec2(l0 * Math.cos(alfa), l0 * Math.sin(alfa));
         const hand = elbow.add(vec2(l1 * Math.cos(alfa + beta), l1 * Math.sin(alfa + beta)));
         arm.push(elbow);
