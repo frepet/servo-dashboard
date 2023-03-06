@@ -4,10 +4,10 @@ export function vec2(x: number, y: number) {
 
 export class Vec2 {
 
-    x : number;
-    y : number;
+    x: number;
+    y: number;
 
-    constructor(x : number, y : number) {
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
@@ -20,7 +20,7 @@ export class Vec2 {
         return Math.hypot(this.x, this.y);
     }
 
-    scale(factor : number) {
+    scale(factor: number) {
         return vec2(this.x * factor, this.y * factor);
     }
 
@@ -28,7 +28,7 @@ export class Vec2 {
         return this.scale(1 / this.length());
     }
 
-    resize(length : number) {
+    resize(length: number) {
         return this.normalize().scale(length);
     }
 
@@ -36,7 +36,7 @@ export class Vec2 {
         return this.scale(-1);
     }
 
-    dot(other : Vec2) {
+    dot(other: Vec2) {
         return this.x * other.x + this.y * other.y;
     }
 
@@ -44,11 +44,11 @@ export class Vec2 {
         return Math.atan2(this.y, this.x);
     }
 
-    angleTo(other : Vec2) {
+    angleTo(other: Vec2) {
         return other.angle() - this.angle();
     }
 
-    rotate(radians : number) {
+    rotate(radians: number) {
         return vec2(
             this.x * Math.cos(radians) - this.y * Math.sin(radians),
             this.x * Math.sin(radians) + this.y * Math.cos(radians)

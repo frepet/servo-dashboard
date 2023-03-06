@@ -1,3 +1,5 @@
+import type { IK } from "./IK/IK";
+
 export type Servo = {
 	name: string;
 	id: number;
@@ -53,4 +55,5 @@ export type State = {
 	skidsteers: SkidSteer[];
 	macros: Macro[];
 	swapButton: number;
+	ik: IK;
 };

@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store';
 import type { State } from '$lib/types';
+import { IK } from '$lib/IK/IK';
 
 const store = writable<State>({
 	version: 1,
@@ -8,12 +9,15 @@ const store = writable<State>({
 	servos: [],
 	skidsteers: [],
 	macros: [],
-	swapButton: -1
+	swapButton: -1,
+	ik: new IK()
 });
 
 const uploadState = async (id: string) => {
 	try {
 		const url = `${window.location.origin}/api/${id}`;
+
+		console.log(JSON.stringify({ ...get(store) }));
 
 		const response = await fetch(url, {
 			method: 'POST',
