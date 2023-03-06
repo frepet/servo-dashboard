@@ -1,6 +1,7 @@
 import { Vec2, vec2 } from "./vec2";
 import { clamp } from "../utils";
 import type { Servo } from "$lib/types";
+import { deg2rad } from "./utils";
 
 export class IK {
     target: Vec2 = vec2(0, 0);
@@ -11,16 +12,17 @@ export class IK {
     targetXAxis = 0;
     targetYAxis = 1;
 
-    ikSpeedX = 0;
-    ikSpeedY = 0;
+    // TODO fix start value
+    ikSpeedX = -4;
+    ikSpeedY = -4;
 
-    limbArm = 280; // mm
-    servoRangeArm = Math.PI * 3 / 2;
-    servoMidpointArm = Math.PI / 2;
-    
-    limbFore = 185; // mm
-    servoRangeForeArm = -Math.PI;
-    servoMidpointForeArm = -Math.PI / 2;
+    limbArm = 200; // mm
+    servoRangeArm = 0;
+    servoMidpointArm = 0;
+
+    limbFore = 200; // mm
+    servoRangeForeArm = 0;
+    servoMidpointForeArm = 0;
 
     //Abstract away please
     servos: Servo[] = [];
@@ -80,8 +82,8 @@ export class IK {
         const beta = Math.acos(clamp((l0 * l0 + l1 * l1 - r * r) / (2 * l0 * l1), -0.999999999999, 0.99999999999));
         const alfa0 = Math.atan2(this.target.y, this.target.x);
         const alfa1 = Math.asin(l1 * Math.sin(beta) / r);
-        this.servos[0].value = this.RadiansToPWM(alfa0 + alfa1, this.servoRangeArm, this.servoMidpointArm);
-        this.servos[1].value = this.RadiansToPWM(-Math.PI + beta, this.servoRangeForeArm, this.servoMidpointForeArm);
+        this.servos[0].value = clamp(this.RadiansToPWM(alfa0 + alfa1, deg2rad(this.servoRangeArm), deg2rad(this.servoMidpointArm)), this.servos[0].min, this.servos[0].max);
+        this.servos[1].value = clamp(this.RadiansToPWM(-Math.PI + beta, deg2rad(this.servoRangeForeArm), deg2rad(this.servoMidpointForeArm)), this.servos[1].min, this.servos[1].max);
         this.updateArm();
         return this.target.add(this.arm[1].invert()).length();
     }
@@ -98,8 +100,8 @@ export class IK {
         let arm = [];
         const l0 = this.limbArm;
         const l1 = this.limbFore;
-        const alfa = this.PWMToRadians(this.servos[0].value, this.servoRangeArm, this.servoMidpointArm);
-        const beta = this.PWMToRadians(this.servos[1].value, this.servoRangeForeArm, this.servoMidpointForeArm);
+        const alfa = this.PWMToRadians(this.servos[0].value, deg2rad(this.servoRangeArm), deg2rad(this.servoMidpointArm));
+        const beta = this.PWMToRadians(this.servos[1].value, deg2rad(this.servoRangeForeArm), deg2rad(this.servoMidpointForeArm));
         const elbow = vec2(l0 * Math.cos(alfa), l0 * Math.sin(alfa));
         const hand = elbow.add(vec2(l1 * Math.cos(alfa + beta), l1 * Math.sin(alfa + beta)));
         arm.push(elbow);
@@ -113,4 +115,5 @@ export class IK {
     RadiansToPWM(radians: number, range: number, midpoint: number) {
         return (255.0 / range) * ((range / 2) - midpoint + radians);
     }
+    
 }

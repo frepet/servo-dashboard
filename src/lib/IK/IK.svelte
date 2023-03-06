@@ -7,42 +7,48 @@
 	import { IK } from './IK';
 	import Slider from '@smui/slider';
 	import { buttons } from '$lib/stores/ButtonsStore';
+	import { Vec2 } from './vec2';
+	import type { Servo as Servo_t } from '$lib/types';
 
 	let context: any;
 	let canvas: any;
-	let IKobject: IK;
 
 	onMount(() => {
 		canvas = document.getElementById('canvas');
 		context = canvas.getContext('2d');
-
-		IKobject = new IK();
 	});
 
 	$: $state, addServoToIk();
 
 	function addServoToIk() {
-		if (IKobject == undefined) {
+		if ($state.ik == undefined) {
 			return;
 		}
-		for (let i = IKobject.servos.length; i < 2; i++) {
+		for (let i = $state.ik.servos.length; i < 2; i++) {
 			let servo = $state.servos.at(i);
 			if (servo != undefined) {
-				IKobject.addIKServo(servo);
+				$state.ik.addIKServo(servo);
+				$state.ik = $state.ik;
 			}
 		}
 	}
 
+	$: $state, moveTarget();
+
 	function moveTarget() {
 		let delta = 10; // TODO fix
-		if (IKobject != undefined) {
-			if (IKobject.targetXAxis != undefined && $axes[IKobject.targetXAxis]) {
-				IKobject.target.x +=
-					deadzone(IKobject.targetXAxis, $axes[IKobject.targetXAxis]) * IKobject.ikSpeedX * delta;
+		if ($state.ik != undefined) {
+			if ($state.ik.targetXAxis != undefined && $axes[$state.ik.targetXAxis]) {
+				$state.ik.target.x +=
+					deadzone($state.ik.targetXAxis, $axes[$state.ik.targetXAxis]) *
+					$state.ik.ikSpeedX/10 *
+					delta;
 			}
-			if (IKobject.targetYAxis != undefined && $axes[IKobject.targetYAxis]) {
-				IKobject.target.y +=
-					deadzone(IKobject.targetYAxis, $axes[IKobject.targetYAxis]) * IKobject.ikSpeedY * delta;
+			if ($state.ik.targetYAxis != undefined && $axes[$state.ik.targetYAxis]) {
+				$state.ik.target.y +=
+					deadzone($state.ik.targetYAxis, $axes[$state.ik.targetYAxis]) *
+					$state.ik.ikSpeedY/10 *
+					delta;
 			}
 			update();
 		}
@@ -55,16 +61,23 @@
 		return val > 0 ? adjusted : -adjusted;
 	}
 
-	$: $state, moveTarget();
-
 	function update() {
-		IKobject.update();
+		if ($state.ik == undefined || canvas == undefined || context == undefined) {
+			console.log('Hello world');
+			return;
+		}
+		if (!($state.ik instanceof IK)) {
+			console.log('Hello world');
+			return;
+		}
+		// TODO add disable
+		$state.ik.update();
 		draw(
 			context,
-			IKobject.servos,
-			IKobject.base,
-			IKobject.arm,
-			IKobject.target,
+			$state.ik.servos,
+			$state.ik.base,
+			$state.ik.arm,
+			$state.ik.target,
 			canvas.width,
 			canvas.height
 		);
@@ -79,28 +92,29 @@
 				<canvas height="500" id="canvas" width="1300" />
 			</div>
 
-			{#if IKobject != undefined && IKobject.servos.length == 2}
+			{#if $state.ik != undefined && $state.ik.servos.length == 2}
 				<Panel>
 					<Header>IK settings</Header>
 					<Content>
 						<Header>Speed settings</Header>
 						<Content>
-							<p>IK speed X: {IKobject.ikSpeedX}</p>
+							<p>IK speed X: {$state.ik.ikSpeedX / 10}</p>
 							<Slider
-								bind:value={IKobject.ikSpeedX}
-								min={-10}
-								max={10}
-								step={0.1}
+								bind:value={$state.ik.ikSpeedX} 
+								min={-100}
+								max={100}
+								step={1}
 								discrete
 								tickMarks
 								input$aria-label="IK speed X"
 							/>
-							<p>IK speed Y: {IKobject.ikSpeedY}</p>
+							
+							<p>IK speed Y: {$state.ik.ikSpeedY / 10}</p>
 							<Slider
-								bind:value={IKobject.ikSpeedY}
-								min={-10}
-								max={10}
-								step={0.1}
+								bind:value={$state.ik.ikSpeedY}
+								min={-100}
+								max={100}
+								step={1}
 								discrete
 								tickMarks
 								input$aria-label="IK speed Y"
@@ -111,9 +125,9 @@
 				<Panel>
 					<Header>limbs settings</Header>
 					<Content>
-						<p>Arm: {IKobject.limbArm} mm</p>
+						<p>Arm: {$state.ik.limbArm} mm</p>
 						<Slider
-							bind:value={IKobject.limbArm}
+							bind:value={$state.ik.limbArm}
 							min={0}
 							max={1000}
 							step={5}
@@ -122,9 +136,9 @@
 							input$aria-label="Limb arm length (mm)"
 						/>
 						<h2>Limb forearm settings</h2>
-						<p>Forearm: {IKobject.limbFore} mm</p>
+						<p>Forearm: {$state.ik.limbFore} mm</p>
 						<Slider
-							bind:value={IKobject.limbFore}
+							bind:value={$state.ik.limbFore}
 							min={0}
 							max={1000}
 							step={5}
@@ -138,14 +152,14 @@
 					<Header>Gamepad settings</Header>
 					<Content>
 						<p>Target axis X:</p>
-						<select bind:value={IKobject.targetXAxis}>
+						<select bind:value={$state.ik.targetXAxis}>
 							<option value={-1}>-</option>
 							{#each Array($buttons.length) as _, i}
 								<option>{i}</option>
 							{/each}
 						</select>
 						<p>Target axis Y:</p>
-						<select bind:value={IKobject.targetYAxis}>
+						<select bind:value={$state.ik.targetYAxis}>
 							<option value={-1}>-</option>
 							{#each Array($buttons.length) as _, i}
 								<option>{i}</option>
@@ -155,45 +169,45 @@
 				</Panel>
 				<Panel>
 					<Header>Servo settings</Header>
-					<Content>
+					<Content>						
 						<h2>Arm settings</h2>
-						<p>Midpoint: {IKobject.servoMidpointArm / Math.PI} &#960;</p>
+						<p>Midpoint: {$state.ik.servoMidpointArm} &#176;</p>
 						<Slider
-							bind:value={IKobject.servoMidpointArm}
-							min={-Math.PI * 2}
-							max={Math.PI * 2}
-							step={Math.PI / 2}
+							bind:value={$state.ik.servoMidpointArm}
+							min={-360}
+							max={360}
+							step={1}
 							discrete
 							tickMarks
 							input$aria-label="Servo midpoint arm"
 						/>
-						<p>Range: {IKobject.servoRangeArm / Math.PI} &#960;</p>
+						<p>Range: {$state.ik.servoRangeArm} &#176;</p>
 						<Slider
-							bind:value={IKobject.servoRangeArm}
-							min={-Math.PI * 2}
-							max={Math.PI * 2}
-							step={Math.PI / 2}
+							bind:value={$state.ik.servoRangeArm}
+							min={-360}
+							max={360}
+							step={1}
 							discrete
 							tickMarks
 							input$aria-label="Servo range arm"
 						/>
 						<h2>Forearm settings</h2>
-						<p>Midpoint: {IKobject.servoMidpointForeArm / Math.PI} &#960;</p>
+						<p>Midpoint: {$state.ik.servoMidpointForeArm} &#176;</p>
 						<Slider
-							bind:value={IKobject.servoMidpointForeArm}
-							min={-Math.PI * 2}
-							max={Math.PI * 2}
-							step={Math.PI / 2}
+							bind:value={$state.ik.servoMidpointForeArm}
+							min={-360}
+							max={360}
+							step={1}
 							discrete
 							tickMarks
 							input$aria-label="Servo midpoint arm"
 						/>
-						<p>Range: {IKobject.servoRangeForeArm / Math.PI} &#960;</p>
+						<p>Range: {$state.ik.servoRangeForeArm} &#176;</p>
 						<Slider
-							bind:value={IKobject.servoRangeForeArm}
-							min={-Math.PI * 2}
-							max={Math.PI * 2}
-							step={Math.PI / 2}
+							bind:value={$state.ik.servoRangeForeArm}
+							min={-360}
+							max={360}
+							step={1}
 							discrete
 							tickMarks
 							input$aria-label="Servo range arm"
