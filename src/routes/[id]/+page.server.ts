@@ -1,7 +1,8 @@
+import { IK } from '$lib/IK/IK';
 import type { State } from '$lib/types';
-import type { RequestHandler } from '@sveltejs/kit';
 
-export const get: RequestHandler = async ({ params, locals }) => {
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ params, locals }) {
 	let state: State;
 
 	try {
@@ -14,7 +15,7 @@ export const get: RequestHandler = async ({ params, locals }) => {
 			error: `State ${params.id} not found.`
 		};
 	}
-
+	console.log({ body: { state, uuid: params.id } });
 	return { body: { state, uuid: params.id } };
 };
 
@@ -29,6 +30,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 7) state = v7tov8(state);
 	if (state.version == 8) state = v8tov9(state);
 	if (state.version == 9) state = v9tov10(state);
+	if (state.version == 10) state = v10tov11(state);
 	return state;
 };
 
@@ -123,5 +125,11 @@ const v9tov10 = (state: State) => {
 	state.servos.forEach((servo) => {
 		servo.exp = 1.0;
 	});
+	return state;
+};
+const v10tov11 = (state: State) => {
+	console.log('v10 -> v11');
+	state.version = 11;
+	state.ik = JSON.stringify(new IK());
 	return state;
 };

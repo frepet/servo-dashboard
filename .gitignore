@@ -9,3 +9,4 @@ node_modules
 static/smui-dark.css
 static/smui.css
 venv
+pgdata
