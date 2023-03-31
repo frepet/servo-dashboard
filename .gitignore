@@ -10,3 +10,4 @@ static/smui-dark.css
 static/smui.css
 venv
 pgdata
+*mypy_cache
