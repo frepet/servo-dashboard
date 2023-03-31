@@ -30,7 +30,7 @@ npm run dev -- --open
 Start the local database
 
 ```bash
-docker-compose up db -d
+docker-compose up -d db
 ```
 
 Init theme and create database table, just needed once
@@ -38,7 +38,7 @@ Init theme and create database table, just needed once
 ```
 npm run smui-theme-dark
 
-docker exec servo-dashboard-db-1  psql -U servodashboard -c 'CREATE TABLE states (
+docker exec servo-dashboard_db_1  psql -U servodashboard -c 'CREATE TABLE states (
   uuid UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   state JSON
 );'

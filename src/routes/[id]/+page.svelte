@@ -11,7 +11,6 @@
 	import { IK as IK_OBJECT } from '$lib/IK/IK';
 	import { onMount } from 'svelte';
 	import { Vec2 } from '$lib/IK/vec2';
-	import type { Servo as Servo_t } from '$lib/types';
 
 	export let data: any;
 	let state: State;
