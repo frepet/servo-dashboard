@@ -4,7 +4,7 @@
 	"scripts": {
 		"start": "node build/index.js",
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "npm run smui-theme-light && npm run smui-theme-dark && vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
