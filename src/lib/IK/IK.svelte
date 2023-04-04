@@ -7,10 +7,8 @@
 	import { IK } from './IK';
 	import Slider from '@smui/slider';
 	import { buttons } from '$lib/stores/ButtonsStore';
-	import { Vec2 } from './vec2';
-	import type { Servo as Servo_t } from '$lib/types';
 
-	let context: any;
+	let context: CanvasRenderingContext2D;
 	let canvas: any;
 
 	onMount(() => {
@@ -24,6 +22,7 @@
 		if ($state.ik == undefined) {
 			return;
 		}
+
 		for (let i = $state.ik.servos.length; i < 2; i++) {
 			let servo = $state.servos.at(i);
 			if (servo != undefined) {
@@ -53,6 +52,7 @@
 			update();
 		}
 	}
+
 	function deadzone(axis: number, val: number) {
 		if (Math.abs(val) < $state.deadzones[axis]) {
 			return 0;
@@ -63,13 +63,15 @@
 
 	function update() {
 		if ($state.ik == undefined || canvas == undefined || context == undefined) {
-			console.log('Hello world');
+			console.log('IK could not update, something is undefined');
 			return;
 		}
+
 		if (!($state.ik instanceof IK)) {
-			console.log('Hello world');
+			console.log('$state.ik not instanceof IK')
 			return;
 		}
+
 		// TODO add disable
 		$state.ik.update();
 		draw(
@@ -79,7 +81,9 @@
 			$state.ik.arm,
 			$state.ik.target,
 			canvas.width,
-			canvas.height
+			canvas.height,
+			$state.ik.boundingBox,
+			$state.ik.limbArm + $state.ik.limbFore
 		);
 	}
 </script>
@@ -218,50 +222,59 @@
 					</Content>
 				</Panel>
 				<Panel>
-					<Header>base settings</Header>
+					<Header>Base</Header>
 					<Content>
-						<p>base</p>
+						<p>Position:</p>
+						<input type="number" bind:value={$state.ik.base.x}/>
+						<input type="number" bind:value={$state.ik.base.y}/>
 					</Content>
 				</Panel>
 				<Panel>
-					<Header>bounding box settings</Header>
+					<Header>Bounding Box</Header>
 					<Content>
-						<p>constrainTarget</p>
+						<p>Back:</p>
+						<Slider
+							bind:value={$state.ik.boundingBox[0].x} 
+							min={0}
+							max={500}
+							step={1}
+							discrete
+							tickMarks
+							input$aria-label="Back"
+						/>
+						<p>Floor:</p>
+						<Slider
+							bind:value={$state.ik.boundingBox[0].y} 
+							min={0}
+							max={500}
+							step={1}
+							discrete
+							tickMarks
+							input$aria-label="Floor"
+						/>
+						<p>Forward:</p>
+						<Slider
+							bind:value={$state.ik.boundingBox[1].x} 
+							min={100}
+							max={500}
+							step={1}
+							discrete
+							tickMarks
+							input$aria-label="Forward"
+						/>
+						<p>Ceiling:</p>
+						<Slider
+							bind:value={$state.ik.boundingBox[1].y} 
+							min={0}
+							max={500}
+							step={1}
+							discrete
+							tickMarks
+							input$aria-label="Ceiling"
+						/>
 					</Content>
 				</Panel>
 			{/if}
 		</Content>
 	</Panel>
 </Accordion>
-
-<style>
-	.row {
-		display: flex;
-		height: 2em;
-	}
-
-	.row p {
-		margin: auto 0 auto 0;
-	}
-
-	.row .value {
-		min-width: 4em;
-	}
-
-	.button {
-		border-radius: 0.5em;
-		border: solid #676778 1px;
-		width: 2em;
-		text-align: center;
-		padding: 0.3em 0 0.5em 0;
-	}
-
-	.pressed {
-		background-color: #ff3e00;
-	}
-
-	.label {
-		min-width: 1.5em;
-		text-align: right;
-	}
-</style>

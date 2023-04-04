@@ -4,7 +4,7 @@ import type { Servo } from "$lib/types";
 import { deg2rad } from "./utils";
 
 export class IK {
-    target: Vec2 = vec2(0, 0);
+    target: Vec2 = vec2(100, 100);
     arm: Vec2[] = [];
 
     base: Vec2 = vec2(0, 74.5); // mm
@@ -23,6 +23,8 @@ export class IK {
     limbFore = 200; // mm
     servoRangeForeArm = 0;
     servoMidpointForeArm = 0;
+
+    boundingBox = [vec2(0, 0), vec2(400, 350)];
 
     //Abstract away please
     servos: Servo[] = [];
@@ -53,21 +55,25 @@ export class IK {
         if (this.target.length() > this.limbArm + this.limbFore) {
             this.target = this.target.resize(this.limbArm + this.limbFore);
         }
+
         // Back limit
-        if (this.target.x < 100) {
-            this.target.x = 100;
+        if (this.target.x < this.boundingBox[0].x - this.base.x) {
+            this.target.x = this.boundingBox[0].x - this.base.x;
         }
-        // Front limit
-        if (this.target.x > 440) {
-            this.target.x = 440;
-        }
+
         // Low limit
-        if (this.target.y < 100 - this.base.y) {
-            this.target.y = 100 - this.base.y;
+        if (this.target.y < this.boundingBox[0].y - this.base.y) {
+            this.target.y = this.boundingBox[0].y - this.base.y;
         }
+
+        // Front limit
+        if (this.target.x > this.boundingBox[1].x - this.base.x) {
+            this.target.x = this.boundingBox[1].x - this.base.x;
+        }
+
         // High limit
-        if (this.target.y > 350 - this.base.y) {
-            this.target.y = 350 - this.base.y;
+        if (this.target.y > this.boundingBox[1].y - this.base.y) {
+            this.target.y = this.boundingBox[1].y - this.base.y;
         }
     }
 
@@ -97,7 +103,8 @@ export class IK {
         if (this.servos.length < 2) {
             return;
         }
-        let arm = [];
+
+        const arm = [];
         const l0 = this.limbArm;
         const l1 = this.limbFore;
         const alfa = this.PWMToRadians(this.servos[0].value, deg2rad(this.servoRangeArm), deg2rad(this.servoMidpointArm));
@@ -109,11 +116,12 @@ export class IK {
 
         this.arm = arm;
     }
+
     PWMToRadians(pwm: number, range: number, midpoint: number) {
         return (pwm / 255.0 * range) - range / 2 + midpoint;
     }
+
     RadiansToPWM(radians: number, range: number, midpoint: number) {
         return (255.0 / range) * ((range / 2) - midpoint + radians);
     }
-    
 }

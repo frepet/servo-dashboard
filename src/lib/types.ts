@@ -47,9 +47,14 @@ export type SkidSteer = {
 	turnSpeed: number;
 };
 
+export type Settings = {
+	IKEnabled: boolean;
+};
+
 export type State = {
 	version: number;
 	name: string;
+	settings: Settings;
 	deadzones: number[];
 	servos: Servo[];
 	skidsteers: SkidSteer[];

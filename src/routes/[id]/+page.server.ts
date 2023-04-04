@@ -31,6 +31,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 8) state = v8tov9(state);
 	if (state.version == 9) state = v9tov10(state);
 	if (state.version == 10) state = v10tov11(state);
+	if (state.version == 11) state = v11tov12(state);
 	return state;
 };
 
@@ -127,9 +128,19 @@ const v9tov10 = (state: State) => {
 	});
 	return state;
 };
+
 const v10tov11 = (state: State) => {
 	console.log('v10 -> v11');
 	state.version = 11;
 	state.ik = JSON.stringify(new IK());
+	return state;
+};
+
+const v11tov12 = (state: State) => {
+	console.log('v11 -> v12');
+	state.version = 12;
+	state.settings = {
+		IKEnabled: false
+	}
 	return state;
 };

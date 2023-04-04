@@ -11,6 +11,7 @@
 	import { IK as IK_OBJECT } from '$lib/IK/IK';
 	import { onMount } from 'svelte';
 	import { Vec2 } from '$lib/IK/vec2';
+	import Settings from '$lib/Settings.svelte';
 
 	export let data: any;
 	let state: State;
@@ -38,7 +39,8 @@
 <div class="container">
 	{#if state != undefined}
 		<StateCard {uuid} />
-		<IK />
+		<Settings />
+		{#if $stateStore.settings.IKEnabled} <IK /> {/if}
 		<GamepadsCard />
 		<ServosCard />
 		<MotorsCard />

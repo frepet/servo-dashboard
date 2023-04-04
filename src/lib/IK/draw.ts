@@ -1,34 +1,34 @@
 import type { Servo } from "$lib/types";
 import { deg2rad } from "./utils";
-import { Vec2 } from "./vec2";
+import { Vec2, vec2 } from "./vec2";
 
-export function draw(context: any, servos: Servo[], base: Vec2, arm: Vec2[], target: Vec2, width: number, height: number) {
+export function draw(context: CanvasRenderingContext2D, servos: Servo[], base: Vec2, arm: Vec2[], target: Vec2, width: number, height: number, boundingBox: Vec2[], maxReach: number) {
 
 	context.transform(1, 0, 0, -1, 0, height); // Flip Y so that origo is at lower left corner
 	context.clearRect(0, 0, width, height);
 
 	// Right-side view
-	drawRightSideArena(context);
+	drawRightSideArena(context, base, boundingBox, maxReach);
 	if (arm.length >= 2) {
-		drawRightSideArm(context,base, arm, target);
+		drawRightSideArm(context, base, arm, target);
 	}
 
-	drawDivider(context, width / 2.8, height);
+	// drawDivider(context, width / 2.8, height);
 
 	// Top-down view
-	context.transform(1, 0, 0, 1, width * 1.9 / 2.8, 75);
-	drawTopDownArena(context);
-	if (servos.length >= 3) {
-		//drawTopDownArm(context,arm, servos, target, base);
-	}
+	// context.transform(1, 0, 0, 1, width * 1.9 / 2.8, 75);
+	// drawTopDownArena(context);
+	// if (servos.length >= 3) {
+		// drawTopDownArm(context,arm, servos, target, base);
+	// }
+	//context.transform(1, 0, 0, 1, -width * 1.9 / 2.8, -75);
 
-	context.transform(1, 0, 0, 1, -width * 1.9 / 2.8, -75);
 	context.transform(1, 0, 0, -1, 0, height);
 }
 
 /*
 TODO fix radians
-export function drawTopDownArm(context: any, arm: Vec2[], servos: Servo[], target: Vec2, base: Vec2) {
+export function drawTopDownArm(context: CanvasRenderingContext2D, arm: Vec2[], servos: Servo[], target: Vec2, base: Vec2) {
 	const hand = new Vec2(0, arm[1].x).rotate(servos[2].radians);
 	const elbow = new Vec2(0, arm[0].x).rotate(servos[2].radians);
 	const _target = new Vec2(0, target.x).rotate(servos[2].radians);
@@ -43,11 +43,13 @@ export function drawTopDownArm(context: any, arm: Vec2[], servos: Servo[], targe
 }
 */
 
+/*
 function PWMToRadians(pwm: number, range: number, midpoint: number) {
 	return (pwm / 255.0 * range) - range / 2 + midpoint;
 }
+*/
 
-export function drawTopDownArena(context: any) {
+export function drawTopDownArena(context: CanvasRenderingContext2D) {
 	drawTorus(context, new Vec2(0, 0), 200, 400, 120, 160, "#977");
 	drawTorus(context, new Vec2(0, 0), 200, 400, 60, 120, "#797");
 	drawTorus(context, new Vec2(0, 0), 200, 400, 20, 60, "#779");
@@ -57,7 +59,7 @@ export function drawTopDownArena(context: any) {
 	drawRect(context, -75, -75, 150, 150, "#666");
 }
 
-export function drawDivider(context: any, x: number, height: number) {
+export function drawDivider(context: CanvasRenderingContext2D, x: number, height: number) {
 	context.strokeStyle = "black";
 	context.lineWidth = 1;
 	context.beginPath();
@@ -66,7 +68,7 @@ export function drawDivider(context: any, x: number, height: number) {
 	context.stroke();
 }
 
-export function drawTorus(context: any, pos: Vec2, innerRadius: number, outerRadius: number, start: number, end: number, color: string) {
+export function drawTorus(context: CanvasRenderingContext2D, pos: Vec2, innerRadius: number, outerRadius: number, start: number, end: number, color: string) {
 	context.beginPath();
 	context.fillStyle = color;
 	context.strokeStyle = "#000";
@@ -78,7 +80,7 @@ export function drawTorus(context: any, pos: Vec2, innerRadius: number, outerRad
 	context.stroke();
 }
 
-export function drawRightSideArena(context: any) {
+export function drawRightSideArena(context: CanvasRenderingContext2D, base: Vec2, boundingBox: Vec2[], armLength: number) {
 	// Mounting point
 	drawRect(context, -150 / 2, 0, 150, 2, "#666");
 
@@ -91,9 +93,21 @@ export function drawRightSideArena(context: any) {
 
 	// Zone
 	drawRect(context, 200, 0, 200, 2, "black");
+
+	// Bounding Box
+	drawRectOutline(context,
+		boundingBox[0].x,
+		boundingBox[0].y,
+		boundingBox[1].x - boundingBox[0].x,
+		boundingBox[1].y - boundingBox[0].y,
+		"orange"
+	);
+	
+	// Range
+	drawCircleOutline(context, vec2(0, 0).add(base), armLength, "#555500", 2);
 }
 
-export function drawRightSideArm(context: any, base: Vec2, arm: Vec2[], target: Vec2) {
+export function drawRightSideArm(context: CanvasRenderingContext2D, base: Vec2, arm: Vec2[], target: Vec2) {
 	drawLine(context, base, base.add(arm[0]), "#005500", 4);
 	drawLine(context, base.add(arm[0]), base.add(arm[1]), "#000088", 4);
 
@@ -107,7 +121,7 @@ export function drawRightSideArm(context: any, base: Vec2, arm: Vec2[], target: 
 	drawVector(context, base.add(arm[1]), base.add(arm[1]).add(vectorToTarget), "orange");
 }
 
-export function drawLine(context: any, start: Vec2, end: Vec2, color: string, thickness: number) {
+export function drawLine(context: CanvasRenderingContext2D, start: Vec2, end: Vec2, color: string, thickness: number) {
 	context.beginPath();
 	context.lineWidth = thickness;
 	context.strokeStyle = color;
@@ -118,14 +132,14 @@ export function drawLine(context: any, start: Vec2, end: Vec2, color: string, th
 }
 
 
-export function drawRect(context: any, x: number, y: number, w: number, h: number, color: string) {
+export function drawRect(context: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string) {
 	context.beginPath();
 	context.rect(x, y, w, h);
 	context.fillStyle = color;
 	context.fill();
 }
 
-export function drawRectOutline(context: any, x: number, y: number, w: number, h: number, color = "#666", width = 2) {
+export function drawRectOutline(context: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color = "#666", width = 2) {
 	context.beginPath();
 	context.rect(x, y, w, h);
 	context.strokeStyle = color;
@@ -133,7 +147,7 @@ export function drawRectOutline(context: any, x: number, y: number, w: number, h
 	context.stroke();
 }
 
-export function drawCircle(context: any, pos: Vec2, radius: number, color: string) {
+export function drawCircle(context: CanvasRenderingContext2D, pos: Vec2, radius: number, color: string) {
 	context.moveTo(pos.x, pos.y);
 	context.beginPath();
 	context.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
@@ -141,7 +155,16 @@ export function drawCircle(context: any, pos: Vec2, radius: number, color: strin
 	context.fill();
 }
 
-export function drawVector(context: any, start: Vec2, vector: Vec2, color: string) {
+export function drawCircleOutline(context: CanvasRenderingContext2D, pos: Vec2, radius: number, color: string, width: number) {
+	context.moveTo(pos.x, pos.y);
+	context.beginPath();
+	context.arc(pos.x, pos.y, radius, 0, Math.PI * 2);
+	context.strokeStyle = color;
+	context.lineWidth = width;
+	context.stroke();
+}
+
+export function drawVector(context: CanvasRenderingContext2D, start: Vec2, vector: Vec2, color: string) {
 	context.beginPath();
 	context.strokeStyle = color;
 	context.moveTo(start.x, start.y);
