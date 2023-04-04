@@ -1,53 +1,44 @@
-import type { Servo } from "$lib/types";
+import type { IK } from "./IK";
 import { deg2rad } from "./utils";
 import { Vec2, vec2 } from "./vec2";
 
-export function draw(context: CanvasRenderingContext2D, servos: Servo[], base: Vec2, arm: Vec2[], target: Vec2, width: number, height: number, boundingBox: Vec2[], maxReach: number) {
+export function draw(context: CanvasRenderingContext2D, canvasSize: Vec2, ik: IK) {
 
-	context.transform(1, 0, 0, -1, 0, height); // Flip Y so that origo is at lower left corner
-	context.clearRect(0, 0, width, height);
+	context.transform(1, 0, 0, -1, 0, canvasSize.y); // Flip Y so that origo is at lower left corner
+	context.clearRect(0, 0, canvasSize.x, canvasSize.y);
 
 	// Right-side view
-	drawRightSideArena(context, base, boundingBox, maxReach);
-	if (arm.length >= 2) {
-		drawRightSideArm(context, base, arm, target);
+	drawRightSideArena(context, ik.base, ik.boundingBox, ik.limbArm + ik.limbFore);
+	if (ik.arm.length >= 2) {
+		drawRightSideArm(context, ik.base, ik.arm, ik.target);
 	}
 
-	// drawDivider(context, width / 2.8, height);
+	drawDivider(context, canvasSize.x / 2.8, canvasSize.y);
 
 	// Top-down view
-	// context.transform(1, 0, 0, 1, width * 1.9 / 2.8, 75);
-	// drawTopDownArena(context);
-	// if (servos.length >= 3) {
-		// drawTopDownArm(context,arm, servos, target, base);
-	// }
-	//context.transform(1, 0, 0, 1, -width * 1.9 / 2.8, -75);
+	context.transform(1, 0, 0, 1, canvasSize.x * 1.9 / 2.8, 75);
+	drawTopDownArena(context);
+	if (ik.servos.length >= 3) {
+		drawTopDownArm(context, ik);
+	}
+	context.transform(1, 0, 0, 1, -canvasSize.x * 1.9 / 2.8, -75);
 
-	context.transform(1, 0, 0, -1, 0, height);
+	context.transform(1, 0, 0, -1, 0, canvasSize.y);
 }
 
-/*
-TODO fix radians
-export function drawTopDownArm(context: CanvasRenderingContext2D, arm: Vec2[], servos: Servo[], target: Vec2, base: Vec2) {
-	const hand = new Vec2(0, arm[1].x).rotate(servos[2].radians);
-	const elbow = new Vec2(0, arm[0].x).rotate(servos[2].radians);
-	const _target = new Vec2(0, target.x).rotate(servos[2].radians);
+export function drawTopDownArm(context: CanvasRenderingContext2D, ik: IK) {
+	const hand = new Vec2(0, ik.arm[1].x).rotate(ik.radiansOfRotation());
+	const elbow = new Vec2(0, ik.arm[0].x).rotate(ik.radiansOfRotation());
+	const _target = new Vec2(0, ik.target.x).rotate(ik.radiansOfRotation());
 
 	drawCircle(context, new Vec2(0, 0), 6, "black");
-	drawCircle(context, hand, Math.min(Math.max(6 * ((arm[1].y + base.y) / 100), 4), 12), "#000099");
+	drawCircle(context, hand, Math.min(Math.max(6 * ((ik.arm[1].y + ik.base.y) / 100), 4), 12), "#000099");
 	drawLine(context, elbow, hand, "#000099", 4);
-	drawCircle(context, elbow, Math.min(Math.max(6 * ((arm[0].y + base.y) / 100), 4), 12), "#009900");
+	drawCircle(context, elbow, Math.min(Math.max(6 * ((ik.arm[0].y + ik.base.y) / 100), 4), 12), "#009900");
 	drawLine(context, new Vec2(0, 0), elbow, "#009900", 4);
 	drawCircle(context, _target, 2, "#ff5500");
 	context.beginPath()
 }
-*/
-
-/*
-function PWMToRadians(pwm: number, range: number, midpoint: number) {
-	return (pwm / 255.0 * range) - range / 2 + midpoint;
-}
-*/
 
 export function drawTopDownArena(context: CanvasRenderingContext2D) {
 	drawTorus(context, new Vec2(0, 0), 200, 400, 120, 160, "#977");

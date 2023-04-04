@@ -124,4 +124,8 @@ export class IK {
     RadiansToPWM(radians: number, range: number, midpoint: number) {
         return (255.0 / range) * ((range / 2) - midpoint + radians);
     }
+
+    radiansOfRotation(): number {
+        return this.PWMToRadians(this.servos[2].value, deg2rad(180), deg2rad(0));
+    }
 }
