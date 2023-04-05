@@ -40,8 +40,8 @@
 <div class="container">
 	{#if state != undefined}
 		<StateCard {uuid} />
-		{#if $stateStore.settings.IFrameEnabled} <IFrameCard /> {/if}
 		<Settings />
+		{#if $stateStore.settings.IFrameEnabled} <IFrameCard /> {/if}
 		{#if $stateStore.settings.IKEnabled} <IK /> {/if}
 		<GamepadsCard />
 		<ServosCard />
