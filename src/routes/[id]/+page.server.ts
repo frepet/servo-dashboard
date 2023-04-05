@@ -32,6 +32,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 9) state = v9tov10(state);
 	if (state.version == 10) state = v10tov11(state);
 	if (state.version == 11) state = v11tov12(state);
+	if (state.version == 12) state = v12tov13(state);
 	return state;
 };
 
@@ -141,6 +142,17 @@ const v11tov12 = (state: State) => {
 	state.version = 12;
 	state.settings = {
 		IKEnabled: false
+	}
+	return state;
+};
+
+const v12tov13 = (state: State) => {
+	console.log('v12 -> v13');
+	state.version = 13;
+	state.settings.IFrameEnabled = false;
+	state.iframeSettings = {
+		src: "",
+		height: 600
 	}
 	return state;
 };

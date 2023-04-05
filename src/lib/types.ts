@@ -49,7 +49,13 @@ export type SkidSteer = {
 
 export type Settings = {
 	IKEnabled: boolean;
+	IFrameEnabled: boolean;
 };
+
+export type IFrameSettings = {
+	src: string;
+	height: number;
+}
 
 export type State = {
 	version: number;
@@ -61,4 +67,5 @@ export type State = {
 	macros: Macro[];
 	swapButton: number;
 	ik: IK;
+	iframeSettings: IFrameSettings;
 };

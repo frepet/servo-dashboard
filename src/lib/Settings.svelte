@@ -15,6 +15,11 @@
                     <Switch bind:checked={$state.settings.IKEnabled}></Switch>
                     Inverse Kinematics
                 </span>
+                <br/>
+                <span>
+                    <Switch bind:checked={$state.settings.IFrameEnabled}></Switch>
+                    IFrame Panel
+                </span>
             </Content>
         </Panel>
     </Accordion>
