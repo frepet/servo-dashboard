@@ -4,6 +4,8 @@
 
 #include <Servo.h>
 
+#define USE_H_BRIDGE true
+
 typedef struct {
 	byte pwm;
 	byte dir;
@@ -22,7 +24,8 @@ const byte MOTOR_1_PWM = 5;
 const byte MOTOR_2_PWM = 6;
 
 long last_bad_checksum = millis();
-byte motors[4] = {0};
+byte motors[2] = {0};
+Servo motors_servo[2];
 byte pwms[SERVOS] = {127};
 Servo servo[SERVOS];
 byte custom = 0;
@@ -30,10 +33,19 @@ byte custom = 0;
 void setup() {
 	pinMode(BAD_CHECKSUM_LED_PIN, OUTPUT);
 	pinMode(CUSTOM_PIN, OUTPUT);
-	pinMode(MOTOR_2_DIR, OUTPUT);
-	pinMode(MOTOR_2_DIR, OUTPUT);
-	pinMode(MOTOR_1_PWM, OUTPUT);
-	pinMode(MOTOR_2_PWM, OUTPUT);
+
+	if (USE_H_BRIDGE) {
+		pinMode(MOTOR_2_DIR, OUTPUT);
+		pinMode(MOTOR_2_DIR, OUTPUT);
+		pinMode(MOTOR_1_PWM, OUTPUT);
+		pinMode(MOTOR_2_PWM, OUTPUT);
+	} else {
+		motors_servo[0].writeMicroseconds(1500);
+		motors_servo[1].writeMicroseconds(1500);
+		motors_servo[0].attach(MOTOR_1_PWM);
+		motors_servo[1].attach(MOTOR_2_PWM);
+	}
+
 	Serial.begin(BAUD_RATE);
 }
 
@@ -94,10 +106,15 @@ void updateServos(byte *pwms) {
 }
 
 void updateMotors(byte *motors) {
-	analogWrite(MOTOR_1_PWM, motors[0]);
-	digitalWrite(MOTOR_1_DIR, motors[1]);
-	analogWrite(MOTOR_2_PWM, motors[2]);
-	digitalWrite(MOTOR_2_DIR, motors[3]);
+	if (USE_H_BRIDGE) {
+		analogWrite(MOTOR_1_PWM, motors[0]);
+		digitalWrite(MOTOR_1_DIR, motors[1]);
+		analogWrite(MOTOR_2_PWM, motors[2]);
+		digitalWrite(MOTOR_2_DIR, motors[3]);
+	} else {
+		motors_servo[0].writeMicroseconds(map(motors[0], 0, 255, 1500, motors[1] ? 2500 : 500));
+		motors_servo[1].writeMicroseconds(map(motors[2], 0, 255, 1500, motors[3] ? 2500 : 500));
+	}
 }
 
 void updateCustom(byte custom) {

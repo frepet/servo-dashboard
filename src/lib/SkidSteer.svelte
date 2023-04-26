@@ -38,7 +38,7 @@
 			let throttle = 0;
 			if ($axes[forwardAxis] != undefined && $axes[reverseAxis] != undefined) {
 				if (forwardAxis === reverseAxis) {
-					throttle = $axes[forwardAxis];
+					throttle = motorState.speed * $axes[forwardAxis];
 				} else {
 					throttle = (motorState.speed * ($axes[forwardAxis] - $axes[reverseAxis])) / 2;
 				}
