@@ -1,15 +1,12 @@
 /*
- * Robot Arm Controller for Arduino
+ * Servo Dashboard Receiver for Arduino UNO
  */
 
 #include <Servo.h>
 
+// true: Usees pin 4, 5, 6, 7 as direction and PWM pins for motor control.
+// false: Uses Pin 5 and 6 as regular PWM outputs for motor control using ESC's.
 #define USE_H_BRIDGE true
-
-typedef struct {
-	byte pwm;
-	byte dir;
-} Motor;
 
 const int SERVO_PINS[9] = {8, 9, 10, 11, 12, 13, A0, A1, A2};
 const int SERVOS = 9;

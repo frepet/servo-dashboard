@@ -1,41 +1,46 @@
-# create-svelte
+# Servo Dashboard
+This is a project to remotely control servos/motors.
+The communication chain consists of three parts and are connected in the following way:
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm init svelte
-
-# create a new project in my-app
-npm init svelte my-app
+```
+Web Page <-Web Socket-> Python Reciever <-Serial-> Arduino Receiver
 ```
 
-## Developing
+## Wireless over Serial
+If wireless control is wanted over serial then the Python Receiver should be running on the same machine as the Web Page is opened in. The Serial interface between the machine and the Arduino should then be wireless.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Wireless over Internet
+If wireless control is wanted over internet then the Python Receiver can be started on a remote machine. This would then need a tunnel from localhost to the remote machine, since the Web Page will always try to connect to localhost due to security reasons.
+
+
+# Developing the Sveltekit component
+
+## Starting the application 
+The application can run directly using node and an external postgres database or using docker-compose to run both the application and a local database.
+
+### External Database (Node)
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start server:
 
 ```bash
 DATABASE_URL="POSTGRES CONNECTION STRING" npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Local Developing
-
-Start the local database
+### Local Database (Docker)
+Start the local database:
 
 ```bash
 docker-compose up -d db
 ```
 
-Init theme and create database table, just needed once
+Init theme and create database table (just needed once):
 
-```
+```bash
 npm run smui-theme-dark
 
 docker exec servo-dashboard_db_1  psql -U servodashboard -c 'CREATE TABLE states (
@@ -44,31 +49,24 @@ docker exec servo-dashboard_db_1  psql -U servodashboard -c 'CREATE TABLE states
 );'
 ```
 
-Set environment variables and start dev
+Set environment variables and start dev server:
 
-```
+```bash
 export DATABASE_URL=postgres://servodashboard:somelongsecret@localhost:5432
 export NO_SSL="true"
-```
-
-```
 npm run dev -- --open
 ```
 
-Create new state
+Create new save state:
 
-```
+```bash
 curl -X POST localhost:8080/state -H 'Content-Type: application/json' -d '{"name": "","deadzones": [],"servos": [],"skidsteers": [],"macros": [],"swapButton": -1}'
 ```
 
 ## Building
 
-To create a production version of your app:
+To create a production version of the app:
 
 ```bash
 npm run build
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
