@@ -19,16 +19,10 @@
 	onMount(() => {
 		const loop = () => {
 			$state.servos.forEach((servo: Servo_t) => {
-				let new_value = 0;
-				if (servo.centering) {
-					let invert = 1;
-					if (servo.speed < 0) {
-						invert = -1;
-					}
+				let new_value = servo.value;
 
+				if (servo.centering) {
 					new_value = 127 + servo.centerTrim;
-				} else {
-					new_value += servo.value;
 				}
 
 				if (servo.axis > -1) {
@@ -43,6 +37,7 @@
 
 				servo.value = clamp(new_value, servo.min, servo.max);
 			});
+
 			$state.servos = $state.servos;
 			poll = requestAnimationFrame(loop);
 		};

@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 	import { draw } from './draw';
 	import { IK } from './IK';
-	import Slider from '@smui/slider';
 	import { buttons } from '$lib/stores/ButtonsStore';
 	import { vec2 } from './vec2';
 

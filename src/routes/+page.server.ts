@@ -12,6 +12,6 @@ export async function load({ locals }) {
 			error: `Could not get saves from database.`
 		};
 	}
-	console.log(saves);
+	// console.log(saves);
 	return { body: { saves } };
 };

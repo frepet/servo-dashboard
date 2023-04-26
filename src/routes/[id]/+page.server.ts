@@ -15,7 +15,7 @@ export async function load({ params, locals }) {
 			error: `State ${params.id} not found.`
 		};
 	}
-	console.log({ body: { state, uuid: params.id } });
+	// console.log({ body: { state, uuid: params.id } });
 	return { body: { state, uuid: params.id } };
 };
 
