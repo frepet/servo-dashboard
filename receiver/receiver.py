@@ -34,8 +34,12 @@ async def main():
 
 		async def socket_handler(websocket):
 			last_update = time()
+			last_msg = ""
 			async for message in websocket:
-				print(message)
+				if message != last_msg:
+					last_msg = message
+					print(message)
+
 				if time() < last_update + 0.02:
 					continue
 				last_update = time()
