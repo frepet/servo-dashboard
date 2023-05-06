@@ -54,10 +54,23 @@ void setup() {
 byte nextByte() {
 	byte b = Serial.read();
 	while (b == -1) {
+		failsafe();
 		b = Serial.read();
 		delay(10);
 	}
 	return b;
+}
+
+void failsafe() {
+	if (failsafe_timer + FAILSAFE_MS < millis()) {
+		digitalWrite(FAILSAFE_LED_PIN, HIGH);
+		if (!USE_H_BRIDGE) {
+			motors_servo[0].writeMicroseconds(1500);
+			motors_servo[1].writeMicroseconds(1500);
+		}
+	} else {
+		digitalWrite(FAILSAFE_LED_PIN, LOW);
+	}
 }
 
 void clearMessage() {
@@ -67,16 +80,8 @@ void clearMessage() {
 void waitForSTX() {
 	byte temp = nextByte();
 	while (temp != STX) {
+		failsafe();
 		temp = nextByte();
-		if (failsafe_timer + FAILSAFE_MS < millis()) {
-			digitalWrite(FAILSAFE_LED_PIN, HIGH);
-			if (!USE_H_BRIDGE) {
-				motors_servo[0].writeMicroseconds(1500);
-				motors_servo[1].writeMicroseconds(1500);
-			}
-		} else {
-			digitalWrite(FAILSAFE_LED_PIN, LOW);
-		}
 		delay(10);
 	}
 }
