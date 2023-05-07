@@ -1,5 +1,11 @@
 import type { IK } from "./IK/IK";
 
+export type Mixin = {
+	servo: number;
+	offset: number;
+	multiplier: number;
+};
+
 export type Servo = {
 	name: string;
 	id: number;
@@ -14,6 +20,7 @@ export type Servo = {
 	buttonSpeed: number;
 	centering: boolean;
 	centerTrim: number;
+	mixins: Mixin[];
 };
 
 export type Action = {

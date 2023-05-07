@@ -88,6 +88,20 @@
 				<input class="valueInput" type="number" step={1} bind:value={servo.centerTrim} />
 			</li>
 		</ul>
+		
+		<ul>
+			Mixins:
+			{#each servo.mixins as mixin}
+				<li class="row">
+					<p class="label">Servo:</p>
+					<input class="valueInput" type="number" step={1} min=0 bind:value={mixin.servo} />
+					<p class="label">Offset:</p>
+					<input class="valueInput" type="number" step={1} bind:value={mixin.offset} />
+					<p class="label">Multiplier:</p>
+					<input class="valueInput" type="number" step={0.1} bind:value={mixin.multiplier} />
+				</li>
+			{/each}
+		</ul>
 	</div>
 {/if}
 

@@ -34,6 +34,15 @@
 				if (servo.buttonMinus > -1) {
 					new_value -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
 				}
+				
+				if (servo.mixins.length > 0) {
+					new_value = 127;
+					servo.mixins.forEach(mixin => {
+						if ($state.servos[mixin.servo]) {
+							new_value += ($state.servos[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
+						}
+					});
+				}
 
 				servo.value = clamp(new_value, servo.min, servo.max);
 			});
@@ -63,6 +72,19 @@
 						</Header>
 						<Content>
 							<Servo bind:servo />
+							<Button
+								on:click={() => {
+									servo.mixins.push({
+										servo: 0,
+										offset: 0,
+										multiplier: 1.0
+									});
+								}}
+								title="Add Mixin"
+								variant="outlined"
+							>
+								<Label>Add Mixin</Label>
+							</Button>
 							<Button
 								on:click={() => {
 									$state.servos = $state.servos.filter((s) => s != servo);
@@ -97,7 +119,8 @@
 							buttonMinus: -1,
 							buttonSpeed: 0,
 							centering: false,
-							centerTrim: 0
+							centerTrim: 0,
+							mixins: []
 						}
 					];
 				}}

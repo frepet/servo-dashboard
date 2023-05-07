@@ -33,6 +33,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 10) state = v10tov11(state);
 	if (state.version == 11) state = v11tov12(state);
 	if (state.version == 12) state = v12tov13(state);
+	if (state.version == 13) state = v13tov14(state);
 	return state;
 };
 
@@ -154,5 +155,14 @@ const v12tov13 = (state: State) => {
 		src: "",
 		height: 600
 	}
+	return state;
+};
+
+const v13tov14 = (state: State) => {
+	console.log('v13 -> v14');
+	state.version = 14;
+	state.servos.forEach(servo => {
+		servo.mixins = [];
+	});
 	return state;
 };
