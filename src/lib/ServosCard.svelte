@@ -25,6 +25,15 @@
 					new_value = 127 + servo.centerTrim;
 				}
 
+				if (servo.mixins.length > 0) {
+					new_value = 127;
+					servo.mixins.forEach(mixin => {
+						if ($state.servos[mixin.servo]) {
+							new_value += ($state.servos[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
+						}
+					});
+				}
+
 				if (servo.axis > -1) {
 					new_value += expF(($axes[servo.axis] ?? 0), servo.exp) * servo.speed;
 				}
@@ -35,15 +44,6 @@
 					new_value -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
 				}
 				
-				if (servo.mixins.length > 0) {
-					new_value = 127;
-					servo.mixins.forEach(mixin => {
-						if ($state.servos[mixin.servo]) {
-							new_value += ($state.servos[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
-						}
-					});
-				}
-
 				servo.value = clamp(new_value, servo.min, servo.max);
 			});
 
