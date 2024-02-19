@@ -60,7 +60,7 @@ npm run dev -- --open
 Create new save state:
 
 ```bash
-curl -X POST localhost:8080/state -H 'Content-Type: application/json' -d '{"name": "","deadzones": [],"servos": [],"skidsteers": [],"macros": [],"swapButton": -1}'
+curl -X POST localhost:8080/api/states -H 'Content-Type: application/json' -d '{"name": "","deadzones": [],"servos": [],"skidsteers": [],"macros": [],"swapButton": -1}'
 ```
 
 ## Building
