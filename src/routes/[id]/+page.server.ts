@@ -34,6 +34,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 11) state = v11tov12(state);
 	if (state.version == 12) state = v12tov13(state);
 	if (state.version == 13) state = v13tov14(state);
+	if (state.version == 14) state = v14tov15(state);
 	return state;
 };
 
@@ -164,5 +165,12 @@ const v13tov14 = (state: State) => {
 	state.servos.forEach(servo => {
 		servo.mixins = [];
 	});
+	return state;
+};
+
+const v14tov15 = (state: State) => {
+	console.log('v14 -> v15');
+	state.version = 15;
+	state.mecanumsteers = [];
 	return state;
 };

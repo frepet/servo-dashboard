@@ -13,6 +13,7 @@
 	import { Vec2 } from '$lib/IK/vec2';
 	import Settings from '$lib/Settings.svelte';
 	import IFrameCard from '$lib/IFrameCard.svelte';
+	import MecanumCard from '$lib/MecanumCard.svelte';
 
 	export let data: any;
 	let state: State;
@@ -46,6 +47,7 @@
 		<GamepadsCard />
 		<ServosCard />
 		<MotorsCard />
+		<MecanumCard />
 		<MacrosCard />
 		<WebSocketCard />
 	{/if}
