@@ -54,6 +54,19 @@ export type SkidSteer = {
 	turnSpeed: number;
 };
 
+export type MecanumSteer = {
+	id: number;
+	forwardAxis: number;
+	strafeAxis: number;
+	rotationAxis: number;
+	forwardAxisReversed: boolean;
+	strafeAxisReversed: boolean;
+	rotationdAxisReversed: boolean;
+	forwardSpeed: number;
+	strafeSpeed: number;
+	rotationSpeed: number;
+};
+
 export type Settings = {
 	IKEnabled: boolean;
 	IFrameEnabled: boolean;
@@ -71,6 +84,7 @@ export type State = {
 	deadzones: number[];
 	servos: Servo[];
 	skidsteers: SkidSteer[];
+	mecanumsteers: MecanumSteer[];
 	macros: Macro[];
 	swapButton: number;
 	ik: IK;
