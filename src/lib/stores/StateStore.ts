@@ -8,6 +8,7 @@ const store = writable<State>({
 	settings: {IKEnabled: false, IFrameEnabled: false},
 	deadzones: [],
 	servos: [],
+	motors: [],
 	skidsteers: [],
 	mecanumsteers: [],
 	macros: [],

@@ -23,6 +23,20 @@ export type Servo = {
 	mixins: Mixin[];
 };
 
+export type Motor = {
+	name: string;
+	id: number;
+	axis: number;
+	reverseAxis: boolean;
+	min: number;
+	max: number;
+	value: number;
+	exp: number;
+	buttonPlus: number;
+	buttonMinus: number;
+	mixins: Mixin[];
+}
+
 export type Action = {
 	servo: number;
 	pwm: number;
@@ -83,6 +97,7 @@ export type State = {
 	settings: Settings;
 	deadzones: number[];
 	servos: Servo[];
+	motors: Motor[];
 	skidsteers: SkidSteer[];
 	mecanumsteers: MecanumSteer[];
 	macros: Macro[];

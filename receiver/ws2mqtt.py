@@ -82,7 +82,7 @@ async def main(client, failsafe_timer):
 				mqtt_write(client, f"{mqtt_topic_root}/servos/{i}", servo)
 
 			for i, motor in enumerate(message["motors"]):
-				mqtt_write(client, f"{mqtt_topic_root}/motors/{i}", f"{motor[0],motor[1]}")
+				mqtt_write(client, f"{mqtt_topic_root}/motors/{i}", motor)
 
 			client.publish(f"{mqtt_topic_root}/status", payload="alive", qos=2, retain=True)
 	try:
@@ -100,7 +100,7 @@ def set_shutdown_state(client):
 	for i in range(SERVOS):
 		client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
 	for i in range(MOTORS):
-		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="{0, false}", qos=2, retain=True)
+		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="0", qos=2, retain=True)
 
 
 class ResettableTimer:
@@ -144,7 +144,7 @@ def set_failsafe_state(client):
 	for i in range(SERVOS):
 		client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
 	for i in range(MOTORS):
-		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="{0, false}", qos=2, retain=True)
+		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="0", qos=2, retain=True)
 
 
 client = connect_mqtt()

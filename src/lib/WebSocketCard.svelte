@@ -1,12 +1,12 @@
 <script lang="ts">
 	import WS from '$lib/stores/WebsocketStore';
-	import { motors } from '$lib/stores/MotorsStore';
 	import { localStore } from './stores/LocalStore';
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { onDestroy, onMount } from 'svelte';
 	import { state } from './stores/StateStore';
 	import type { Servo as Servo_t } from '$lib/types';
+	import type { Motor as Motor_t } from '$lib/types';
 	import { browser } from '$app/environment';
 
 	let msgs: string[] = [];
@@ -26,7 +26,7 @@
 		if (connected) {
 			$WS = JSON.stringify({
 				servos: $state.servos.map((servo: Servo_t) => Math.ceil(servo.value)),
-				motors: $motors.map((motor: number) => [Math.ceil(Math.abs(motor * 255)), motor > 0]),
+				motors: $state.motors.map((motor: Motor_t) => Math.ceil(motor.value)),
 				custom: $localStore.mode
 			});
 		}

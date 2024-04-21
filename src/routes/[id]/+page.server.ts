@@ -35,6 +35,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 12) state = v12tov13(state);
 	if (state.version == 13) state = v13tov14(state);
 	if (state.version == 14) state = v14tov15(state);
+	if (state.version == 15) state = v15tov16(state);
 	return state;
 };
 
@@ -172,5 +173,12 @@ const v14tov15 = (state: State) => {
 	console.log('v14 -> v15');
 	state.version = 15;
 	state.mecanumsteers = [];
+	return state;
+};
+
+const v15tov16 = (state: State) => {
+	console.log('v15 -> v16');
+	state.version = 16;
+	state.motors = [];
 	return state;
 };
