@@ -4,17 +4,22 @@ from time import time
 import random
 from paho.mqtt import client as mqtt_client
 from paho.mqtt.client import Client
+from dotenv import load_dotenv
+from os import getenv
 import websockets
 import json
 
+load_dotenv()
+
+mqtt_broker = getenv("MQTT_BROKER")
+mqtt_port = int(getenv("MQTT_PORT"))
+mqtt_username = getenv("MQTT_USERNAME")
+mqtt_password = getenv("MQTT_PASSWORD")
+mqtt_topic_root = getenv("MQTT_TOPIC_ROOT")
+
 socket_port = None
 SERVOS = 4
-
-broker = ''
-port = 1883
-username = ''
-password = ''
-topic_prefix = ''
+MOTORS = 4
 
 # Generate a random Client ID.
 client_id = f'robot-{random.randint(0, 1000)}'
@@ -34,16 +39,18 @@ def connect_mqtt():
 	def on_disconnect(client, userdata, rc):
 		if rc != 0:
 			print("Connection lost, sending Last Will")
-		for i in range(10):
-			client.publish(f"{topic_prefix}/servos/{i}", payload="1", qos=2, retain=True)
+		for i in range(SERVOS):
+			client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
+		for i in range(MOTORS):
+			client.publish(f"{mqtt_topic_root}/motors/{i}", payload=[0, false], qos=2, retain=True)
 
 	client = mqtt_client.Client(client_id=client_id, callback_api_version=mqtt_client.CallbackAPIVersion.VERSION2)
-	client.username_pw_set(username, password)
+	client.username_pw_set(mqtt_username, mqtt_password)
 	client.on_connect = on_connect
 	client.on_disconnect = on_disconnect
-	for i in range(10):
-		client.will_set(f"{topic_prefix}/servos/{i}", payload="2", qos=2, retain=True)
-	client.connect(broker, port)
+	for i in range(SERVOS):
+		client.will_set(f"{mqtt_topic_root}/servos/{i}", payload="2", qos=2, retain=True)
+	client.connect(mqtt_broker, mqtt_port)
 	return client
 
 try:
@@ -53,7 +60,7 @@ except IndexError as ex:
 	exit(1)
 
 def mqtt_write(client, topic, msg):
-	result = client.publish(topic, msg, qos)
+	result = client.publish(topic, msg, qos, retain=True)
 	if result.rc != 0:
 		print(f"Failed to send message to topic {topic}")
 
@@ -77,10 +84,10 @@ async def main():
 			message = json.loads(message)
 			
 			for i, servo in enumerate(message["servos"]):
-				mqtt_write(client, f"{topic_prefix}/servos/{i}", servo)
+				mqtt_write(client, f"{mqtt_topic_root}/servos/{i}", servo)
 
 			for i, motor in enumerate(message["motors"]):
-				mqtt_write(client, f"{topic_prefix}/motors/{i}", f"{motor[0],motor[1]}")
+				mqtt_write(client, f"{mqtt_topic_root}/motors/{i}", f"{motor[0],motor[1]}")
 
 	async with websockets.serve(socket_handler, "0.0.0.0", socket_port):
 		await asyncio.Future()

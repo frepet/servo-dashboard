@@ -1,3 +1,4 @@
 pyserial
 websockets
 paho-mqtt
+python-dotenv
