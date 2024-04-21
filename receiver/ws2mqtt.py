@@ -1,6 +1,7 @@
+import threading
 import asyncio
 import sys
-from time import time
+from time import time, sleep
 import random
 from paho.mqtt import client as mqtt_client
 from paho.mqtt.client import Client
@@ -31,25 +32,21 @@ def connect_mqtt():
 
 	def on_connect(client, userdata, flags, rc, properties):
 		"""This function is called when the client connects to the broker."""
+		print("on_connect")
 		if rc == 0:
 			print("Connected to MQTT Broker!")
+			client.publish(f"{mqtt_topic_root}/status", payload="false", qos=2, retain=True)
 		else:
 			print("Failed to connect, return code %d\n", rc)
 
-	def on_disconnect(client, userdata, rc):
-		if rc != 0:
-			print("Connection lost, sending Last Will")
-		for i in range(SERVOS):
-			client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
-		for i in range(MOTORS):
-			client.publish(f"{mqtt_topic_root}/motors/{i}", payload=[0, false], qos=2, retain=True)
+	def on_disconnect(client, userdata, disconnect_flags, reason_code, properties):
+		print("on_disconnect")
 
 	client = mqtt_client.Client(client_id=client_id, callback_api_version=mqtt_client.CallbackAPIVersion.VERSION2)
 	client.username_pw_set(mqtt_username, mqtt_password)
 	client.on_connect = on_connect
 	client.on_disconnect = on_disconnect
-	for i in range(SERVOS):
-		client.will_set(f"{mqtt_topic_root}/servos/{i}", payload="2", qos=2, retain=True)
+	client.will_set(f"{mqtt_topic_root}/status", payload="disconnected", qos=2, retain=True)
 	client.connect(mqtt_broker, mqtt_port)
 	return client
 
@@ -65,14 +62,12 @@ def mqtt_write(client, topic, msg):
 		print(f"Failed to send message to topic {topic}")
 
 
-async def main():
-	client = connect_mqtt()
-	client.loop_start()
-
+async def main(client, failsafe_timer):
 	async def socket_handler(websocket):
 		last_update = time()
 		last_msg = ""
 		async for message in websocket:
+			failsafe_timer.reset()
 			if message != last_msg:
 				last_msg = message
 				print(message)
@@ -89,12 +84,80 @@ async def main():
 			for i, motor in enumerate(message["motors"]):
 				mqtt_write(client, f"{mqtt_topic_root}/motors/{i}", f"{motor[0],motor[1]}")
 
-	async with websockets.serve(socket_handler, "0.0.0.0", socket_port):
-		await asyncio.Future()
+			client.publish(f"{mqtt_topic_root}/status", payload="alive", qos=2, retain=True)
+	try:
+		print("Before websocket")
+		async with websockets.serve(socket_handler, "0.0.0.0", socket_port):
+			await asyncio.Future()
+		print("After websocket")
+	except KeyboardInterrupt as e:
+		print("KeyboardInterrupt in main")
+		print(e)
 
-	client.loop_stop()
+
+def set_shutdown_state(client):
+	client.publish(f"{mqtt_topic_root}/status", payload="shutdown", qos=2, retain=True)
+	for i in range(SERVOS):
+		client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
+	for i in range(MOTORS):
+		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="{0, false}", qos=2, retain=True)
+
+
+class ResettableTimer:
+    def __init__(self, timeout, callback, *args, **kwargs):
+        self.timeout = timeout
+        self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
+        self.timer = None
+        self.create_timer()
+
+    def create_timer(self):
+        """Create a new timer instance that resets itself after executing the callback."""
+        self.timer = threading.Timer(self.timeout, self.handle_callback)
+
+    def handle_callback(self):
+        """Handle the timer callback and reset the timer."""
+        self.callback(*self.args, **self.kwargs)
+        self.reset()
+
+    def start(self):
+        if not self.timer.is_alive():
+            self.timer.start()
+
+    def reset(self):
+        """Reset the timer to the initial timeout."""
+        if self.timer is not None:
+            self.timer.cancel()
+        self.create_timer()
+        self.timer.start()
+
+    def stop(self):
+        """Stop the timer, preventing any further action."""
+        if self.timer is not None:
+            self.timer.cancel()
+
+
+def set_failsafe_state(client):
+	print("FAILSAFE!")
+	client.publish(f"{mqtt_topic_root}/status", payload="failsafe", qos=2, retain=True)
+	for i in range(SERVOS):
+		client.publish(f"{mqtt_topic_root}/servos/{i}", payload="1", qos=2, retain=True)
+	for i in range(MOTORS):
+		client.publish(f"{mqtt_topic_root}/motors/{i}", payload="{0, false}", qos=2, retain=True)
+
+
+client = connect_mqtt()
+client.loop_start()
+failsafe_timer = ResettableTimer(1, set_failsafe_state, client)
+failsafe_timer.start()
 
 try:
-	asyncio.run(main())
+	asyncio.run(main(client, failsafe_timer))
 except KeyboardInterrupt:
-	exit(0)
+	print("KeyboardInterrupt outside main")
+	set_shutdown_state(client)
+	failsafe_timer.stop()
+
+sleep(2)
+client.loop_stop()
