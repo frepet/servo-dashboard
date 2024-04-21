@@ -35,7 +35,7 @@ def connect_mqtt():
 		print("on_connect")
 		if rc == 0:
 			print("Connected to MQTT Broker!")
-			client.publish(f"{mqtt_topic_root}/status", payload="false", qos=2, retain=True)
+			client.publish(f"{mqtt_topic_root}/status", payload="connected", qos=2, retain=True)
 		else:
 			print("Failed to connect, return code %d\n", rc)
 
