@@ -44,6 +44,7 @@
 		"@types/dotenv": "^8.2.0",
 		"@types/mqtt": "^2.5.0",
 		"@types/pg-promise": "^5.4.3",
+		"buffer": "^6.0.3",
 		"dotenv": "^16.0.0",
 		"mqtt": "^5.5.3",
 		"pg-promise": "^10.11.1",
