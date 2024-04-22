@@ -6,10 +6,6 @@ export interface IMqttSettings {
 }
 
 export interface IMqttConnection {
-	url: string;
-	port: number;
-	username: string;
-	password: string;
 	isConnected: boolean;
-	client: any; // We can be more specific depending on the MQTT library's type definitions
+	client: any;
 }

@@ -36,6 +36,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 13) state = v13tov14(state);
 	if (state.version == 14) state = v14tov15(state);
 	if (state.version == 15) state = v15tov16(state);
+	if (state.version == 16) state = v16tov17(state);
 	return state;
 };
 
@@ -180,5 +181,15 @@ const v15tov16 = (state: State) => {
 	console.log('v15 -> v16');
 	state.version = 16;
 	state.motors = [];
+	return state;
+};
+
+const v16tov17 = (state: State) => {
+	console.log('v16 -> v17');
+	state.version = 17;
+	state.mqttSettings = {
+		topic_prefix: '',
+		port: 9001
+	};
 	return state;
 };

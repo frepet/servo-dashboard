@@ -91,6 +91,11 @@ export type IFrameSettings = {
 	height: number;
 };
 
+export type MqttSettings = {
+	topic_prefix: string,
+	port: number
+}
+
 export type State = {
 	version: number;
 	name: string;
@@ -104,4 +109,5 @@ export type State = {
 	swapButton: number;
 	ik: IK;
 	iframeSettings: IFrameSettings;
+	mqttSettings: MqttSettings;
 };
