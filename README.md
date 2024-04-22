@@ -1,19 +1,40 @@
 # Servo Dashboard
 
-This is a project to remotely control servos/motors.
-The communication chain consists of three parts and are connected in the following way:
+This is a project to remotely control servos robots from a web frontend using Svelte and MQTT.
+
+
+## Communication
+The Servo Dashboard communicated to the robot using MQTT.
+Due to security reasons only locally hosted MQTT Brokers are supported.
+However, the locally hosted broker can be set up to proxy all traffic to a remote broker.
+
+This is an example config for Mosquitto:
+```conf
+# Bridge settings
+connection my-bridge
+address <REMOTE_BROKER_URL>:<REMOTE_BROKER_PORT>
+topic # in 0
+topic # out 0
+try_private false
+bridge_protocol_version mqttv311
+cleansession true
+
+# If your remote broker requires authentication
+remote_username <REMOTE_USERNAME>
+remote_password <REMOTE_PASSWORD>
+
+# MQTT listener
+# Used to proxy other MQTT traffic such as from `mqttui`
+listener 1883
+protocol mqtt
+allow_anonymous true
+
+# WebSocket listener
+# Used by the Servo Dashboard
+listener 9001 # Change port if there are conflicts, must be same as selected in Servo Dashboard.
+protocol websockets
 
 ```
-Web Page <-Web Socket-> Python Reciever <-Serial-> Arduino Receiver
-```
-
-## Wireless over Serial
-
-If wireless control is wanted over serial then the Python Receiver should be running on the same machine as the Web Page is opened in. The Serial interface between the machine and the Arduino should then be wireless.
-
-## Wireless over Internet
-
-If wireless control is wanted over internet then the Python Receiver can be started on a remote machine. This would then need a tunnel from localhost to the remote machine, since the Web Page will always try to connect to localhost due to security reasons.
 
 # Developing the Sveltekit component
 
