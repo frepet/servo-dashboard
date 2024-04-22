@@ -70,6 +70,10 @@ export type SkidSteer = {
 
 export type MecanumSteer = {
 	id: number;
+	frontLeftMotorId: number;
+	frontRightMotorId: number;
+	backLeftMotorId: number;
+	backRightMotorId: number;
 	forwardAxis: number;
 	strafeAxis: number;
 	rotationAxis: number;
@@ -92,9 +96,9 @@ export type IFrameSettings = {
 };
 
 export type MqttSettings = {
-	topic_prefix: string,
-	port: number
-}
+	topic_prefix: string;
+	port: number;
+};
 
 export type State = {
 	version: number;

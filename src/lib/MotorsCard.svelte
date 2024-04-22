@@ -19,7 +19,10 @@
 	onMount(() => {
 		const loop = () => {
 			$state.motors.forEach((motor: Motor_t) => {
-				let new_value = 0;
+				let new_value = motor.value;
+				if (motor.axis >= 0) {
+					new_value = 0;
+				}
 
 				if (motor.mixins.length > 0) {
 					new_value = 0;

@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import mqtt from 'mqtt';
 	import { mqttConnection } from './stores/MQTTStore';
-	import type { IClientOptions, MqttClient, IClientPublishOptions} from 'mqtt';
+	import type { IClientOptions, MqttClient, IClientPublishOptions } from 'mqtt';
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { state } from './stores/StateStore';
@@ -14,8 +14,8 @@
 	const QoS0_RETAIN: IClientPublishOptions = {
 		qos: 0,
 		retain: true
-	}
-	const LAST_WILL_MSG: Buffer = Buffer.from("OFFLINE");
+	};
+	const LAST_WILL_MSG: Buffer = Buffer.from('OFFLINE');
 
 	function connectToBroker(): void {
 		console.log('connectToBroker');
@@ -26,7 +26,7 @@
 				topic: `${$state.mqttSettings.topic_prefix}/statuses/dashboard`,
 				payload: LAST_WILL_MSG,
 				qos: 1,
-				retain: true,
+				retain: true
 			}
 		};
 
@@ -51,7 +51,10 @@
 
 	function disconnectFromBroker(): void {
 		console.log('Disconnected from the broker!');
-		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE2', {qos: 1, retain: true});
+		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE2', {
+			qos: 1,
+			retain: true
+		});
 		mqttConnection.setIsConnected(false);
 		client?.end();
 	}
@@ -59,8 +62,20 @@
 	let poll: number;
 	const loop = () => {
 		if (client?.connected) {
-			$state.servos.forEach((servo, index) => client?.publish(`${$state.mqttSettings.topic_prefix}/servos/${index}`, Math.ceil(servo.value).toString(), QoS0_RETAIN));
-			$state.motors.forEach((motor, index) => client?.publish(`${$state.mqttSettings.topic_prefix}/motors/${index}`, Math.round(motor.value).toString(), QoS0_RETAIN));
+			$state.servos.forEach((servo, index) =>
+				client?.publish(
+					`${$state.mqttSettings.topic_prefix}/servos/${index}`,
+					Math.ceil(servo.value).toString(),
+					QoS0_RETAIN
+				)
+			);
+			$state.motors.forEach((motor, index) =>
+				client?.publish(
+					`${$state.mqttSettings.topic_prefix}/motors/${index}`,
+					Math.round(motor.value).toString(),
+					QoS0_RETAIN
+				)
+			);
 			client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', QoS0_RETAIN);
 		}
 
@@ -88,8 +103,21 @@
 <Card>
 	<Content>
 		<h2>MQTT</h2>
-		Topic Prefix: <input id="topic_prefix" class="port" type="text" bind:value={$state.mqttSettings.topic_prefix} />
-		Port: <input id="port" class="port" type="number" min={1024} max={65535} bind:value={$state.mqttSettings.port} />
+		Topic Prefix:<input
+			id="topic_prefix"
+			class="port"
+			type="text"
+			bind:value={$state.mqttSettings.topic_prefix}
+		/>
+		Port:
+		<input
+			id="port"
+			class="port"
+			type="number"
+			min={1024}
+			max={65535}
+			bind:value={$state.mqttSettings.port}
+		/>
 
 		{#if $mqttConnection.isConnected}
 			<Button on:click={() => disconnectFromBroker()} variant="raised">Disconnect</Button>

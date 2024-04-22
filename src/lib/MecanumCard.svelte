@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Mecanum from '$lib/Mecanum.svelte';
 	import { state } from '$lib/stores/StateStore';
-
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
 	import Card, { Actions, ActionButtons } from '@smui/card';
 	import Button, { Label } from '@smui/button';
@@ -44,6 +43,10 @@
 						...$state.mecanumsteers,
 						{
 							id: $state.skidsteers.length,
+							frontLeftMotorId: -1,
+							frontRightMotorId: -1,
+							backLeftMotorId: -1,
+							backRightMotorId: -1,
 							forwardAxis: -1,
 							strafeAxis: -1,
 							rotationAxis: -1,

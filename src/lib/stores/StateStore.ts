@@ -14,7 +14,8 @@ const store = writable<State>({
 	macros: [],
 	swapButton: -1,
 	ik: new IK(),
-	iframeSettings: { src: '', height: 100 }
+	iframeSettings: { src: '', height: 100 },
+	mqttSettings: { topic_prefix: '', port: 9001 }
 });
 
 const uploadState = async (id: string) => {

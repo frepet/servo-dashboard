@@ -37,6 +37,7 @@ const backwardsCompatability = (state: State) => {
 	if (state.version == 14) state = v14tov15(state);
 	if (state.version == 15) state = v15tov16(state);
 	if (state.version == 16) state = v16tov17(state);
+	if (state.version == 17) state = v17tov18(state);
 	return state;
 };
 
@@ -191,5 +192,20 @@ const v16tov17 = (state: State) => {
 		topic_prefix: '',
 		port: 9001
 	};
+	return state;
+};
+
+const v17tov18 = (state: State) => {
+	console.log('v17 -> v18');
+	state.version = 18;
+	state.mecanumsteers = state.mecanumsteers.map((old) => {
+		return {
+			...old,
+			frontLeftMotorId: -1,
+			frontRightMotorId: -1,
+			backLeftMotorId: -1,
+			backRightMotorId: -1
+		};
+	});
 	return state;
 };
