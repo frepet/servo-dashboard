@@ -2,13 +2,14 @@
 
 This is a project to remotely control servos robots from a web frontend using Svelte and MQTT.
 
-
 ## Communication
+
 The Servo Dashboard communicated to the robot using MQTT.
 Due to security reasons only locally hosted MQTT Brokers are supported.
 However, the locally hosted broker can be set up to proxy all traffic to a remote broker.
 
 This is an example config for Mosquitto:
+
 ```conf
 # Bridge settings
 connection my-bridge

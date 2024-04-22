@@ -28,8 +28,7 @@
 					new_value = 0;
 					motor.mixins.forEach((mixin) => {
 						if ($state.motors[mixin.servo]) {
-							new_value +=
-								($state.motors[mixin.servo].value) * mixin.multiplier + mixin.offset;
+							new_value += $state.motors[mixin.servo].value * mixin.multiplier + mixin.offset;
 						}
 					});
 				}
