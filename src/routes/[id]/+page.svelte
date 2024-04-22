@@ -50,8 +50,8 @@
 		<MotorsCard />
 		<MecanumCard />
 		<MacrosCard />
-		<WebSocketCard />
 		<MqttCard />
+		<WebSocketCard />
 	{/if}
 </div>
 
