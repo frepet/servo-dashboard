@@ -18,7 +18,7 @@
 	const LAST_WILL_MSG: Buffer = Buffer.from('OFFLINE');
 
 	function connectToBroker(): void {
-		console.log('connectToBroker');
+		msgs = ['Connecting to the broker..', ...msgs];
 		const options: IClientOptions = {
 			connectTimeout: 4000,
 			clientId: 'svelte_mqtt_' + Math.random().toString(16),
@@ -34,23 +34,22 @@
 		mqttConnection.setClient(client);
 
 		client.on('connect', () => {
-			console.log('Connected to the broker!');
+			msgs = ['CONNECTED!', ...msgs];
 			mqttConnection.setIsConnected(true);
 		});
 
-		client.on('error', (error) => {
-			console.error('Connection failed:', error);
+		client.on('error', () => {
 			mqttConnection.setIsConnected(false);
 		});
 
 		client.on('disconnect', () => {
-			console.error('Disconnected:');
+			msgs = ['DISCONNECTED!', ...msgs];
 			mqttConnection.setIsConnected(false);
 		});
 	}
 
 	function disconnectFromBroker(): void {
-		console.log('Disconnected from the broker!');
+		msgs = ['Disconnected from the broker!', ...msgs];
 		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE2', {
 			qos: 1,
 			retain: true
