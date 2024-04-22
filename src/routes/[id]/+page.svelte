@@ -14,6 +14,7 @@
 	import Settings from '$lib/Settings.svelte';
 	import IFrameCard from '$lib/IFrameCard.svelte';
 	import MecanumCard from '$lib/MecanumCard.svelte';
+	import MqttCard from '$lib/MQTTCard.svelte';
 
 	export let data: any;
 	let state: State;
@@ -50,6 +51,7 @@
 		<MecanumCard />
 		<MacrosCard />
 		<WebSocketCard />
+		<MqttCard />
 	{/if}
 </div>
 

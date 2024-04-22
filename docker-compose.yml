@@ -1,10 +1,10 @@
 version: '3.9'
 
-services:  
+services:
   db:
     image: postgres:13
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_PASSWORD: somelongsecret
       POSTGRES_USER: servodashboard
@@ -19,6 +19,6 @@ services:
       dockerfile: ./Dockerfile
     environment:
       DATABASE_URL: postgres://servodashboard:somelongsecret@db:5432
-      NO_SSL: "true"
+      NO_SSL: 'true'
     ports:
-      - "8080:3000"
+      - '8080:3000'

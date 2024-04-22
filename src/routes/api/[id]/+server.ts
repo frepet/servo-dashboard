@@ -16,7 +16,7 @@ export async function GET({ params, locals }) {
 	}
 
 	return new Response(String({ body: state }));
-};
+}
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request, params, locals }) {
@@ -34,11 +34,13 @@ export async function POST({ request, params, locals }) {
 			body: 'Could not update state'
 		};
 	}
-	return new Response(String({
-		status: 200,
-		body: { state }
-	}));
-};
+	return new Response(
+		String({
+			status: 200,
+			body: { state }
+		})
+	);
+}
 
 /** @type {import('./$types').RequestHandler} */
 export async function DELETE({ locals, params }) {
@@ -49,8 +51,10 @@ export async function DELETE({ locals, params }) {
 		};
 	} catch (error) {
 		console.log(error);
-		return new Response(String({
-			status: 500
-		}));
+		return new Response(
+			String({
+				status: 500
+			})
+		);
 	}
-};
+}

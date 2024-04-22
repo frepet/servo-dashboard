@@ -9,11 +9,11 @@
 	import type { Servo as Servo_t } from '$lib/types';
 	import { clamp } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
-	
+
 	const expF = (value: number, strength: number) => {
-		let expf = Math.abs(Math.pow(value, (1+(strength*2))));
+		let expf = Math.abs(Math.pow(value, 1 + strength * 2));
 		return value > 0 ? expf : -expf;
-	}
+	};
 
 	let poll: number;
 	onMount(() => {
@@ -27,15 +27,16 @@
 
 				if (servo.mixins.length > 0) {
 					new_value = 127;
-					servo.mixins.forEach(mixin => {
+					servo.mixins.forEach((mixin) => {
 						if ($state.servos[mixin.servo]) {
-							new_value += ($state.servos[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
+							new_value +=
+								($state.servos[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
 						}
 					});
 				}
 
 				if (servo.axis > -1) {
-					new_value += expF(($axes[servo.axis] ?? 0), servo.exp) * servo.speed;
+					new_value += expF($axes[servo.axis] ?? 0, servo.exp) * servo.speed;
 				}
 				if (servo.buttonPlus > -1) {
 					new_value += ($buttons[servo.buttonPlus] ? 1 : 0) * servo.buttonSpeed;
@@ -43,7 +44,7 @@
 				if (servo.buttonMinus > -1) {
 					new_value -= ($buttons[servo.buttonMinus] ? 1 : 0) * servo.buttonSpeed;
 				}
-				
+
 				servo.value = clamp(new_value, servo.min, servo.max);
 			});
 

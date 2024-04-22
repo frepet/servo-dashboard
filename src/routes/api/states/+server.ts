@@ -1,8 +1,7 @@
 import type { State } from '$lib/types';
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST({ request, locals }){
-
+export async function POST({ request, locals }) {
 	const body = { uuid: '' };
 	const reqBody = await request.json();
 
@@ -16,7 +15,7 @@ export async function POST({ request, locals }){
 	}
 
 	return new Response(String(body.uuid));
-};
+}
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ locals }) {
@@ -35,4 +34,4 @@ export async function GET({ locals }) {
 	}
 
 	return new Response(String(JSON.stringify(body)));
-};
+}

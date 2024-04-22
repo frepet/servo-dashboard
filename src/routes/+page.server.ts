@@ -14,4 +14,4 @@ export async function load({ locals }) {
 	}
 	// console.log(saves);
 	return { body: { saves } };
-};
+}

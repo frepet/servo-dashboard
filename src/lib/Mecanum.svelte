@@ -16,14 +16,11 @@
 	$motors[backLeftMotor] = 0;
 	$motors[backRightMotor] = 0;
 
-	const mecanumSteer: (forward: number, strafe: number, rotation: number) => [number, number, number, number] = (
-		forward,
-		strafe,
-		rotation
-	) => {
-
-		console.log(strafe);
-
+	const mecanumSteer: (
+		forward: number,
+		strafe: number,
+		rotation: number
+	) => [number, number, number, number] = (forward, strafe, rotation) => {
 		// Calculate the raw speeds based on joystick inputs and rotation
 		let frontLeftSpeed = forward + strafe - rotation;
 		let frontRightSpeed = forward - strafe + rotation;
@@ -31,7 +28,12 @@
 		let backRightSpeed = forward + strafe + rotation;
 
 		// Normalize the speeds to avoid exceeding the maximum motor speed
-		let maxRawSpeed = Math.max(Math.abs(frontLeftSpeed), Math.abs(frontRightSpeed), Math.abs(backLeftSpeed), Math.abs(backRightSpeed));
+		let maxRawSpeed = Math.max(
+			Math.abs(frontLeftSpeed),
+			Math.abs(frontRightSpeed),
+			Math.abs(backLeftSpeed),
+			Math.abs(backRightSpeed)
+		);
 		if (maxRawSpeed > 1.0) {
 			frontLeftSpeed /= maxRawSpeed;
 			frontRightSpeed /= maxRawSpeed;
@@ -49,17 +51,26 @@
 
 			let forward = 0;
 			if ($axes[mecanumState.forwardAxis] != undefined) {
-				forward = mecanumState.forwardSpeed * $axes[mecanumState.forwardAxis] * (mecanumState.forwardAxisReversed ? -1 : 1);
+				forward =
+					mecanumState.forwardSpeed *
+					$axes[mecanumState.forwardAxis] *
+					(mecanumState.forwardAxisReversed ? -1 : 1);
 			}
 
 			let strafe = 0;
 			if ($axes[mecanumState.strafeAxis] != undefined) {
-				strafe = mecanumState.strafeSpeed * $axes[mecanumState.strafeAxis] * (mecanumState.strafeAxisReversed ? -1 : 1);
+				strafe =
+					mecanumState.strafeSpeed *
+					$axes[mecanumState.strafeAxis] *
+					(mecanumState.strafeAxisReversed ? -1 : 1);
 			}
 
 			let rotation = 0;
 			if ($axes[mecanumState.rotationAxis] != undefined) {
-				rotation = mecanumState.rotationSpeed * $axes[mecanumState.rotationAxis] * (mecanumState.rotationAxisReversed ? -1 : 1);
+				rotation =
+					mecanumState.rotationSpeed *
+					$axes[mecanumState.rotationAxis] *
+					(mecanumState.rotationAxisReversed ? -1 : 1);
 			}
 
 			let result = mecanumSteer(forward, strafe, rotation);
@@ -181,7 +192,11 @@
 					{/each}
 				</select>
 				<p class="label">Reversed:</p>
-				<input class="checkbox" type="checkbox" bind:checked={$state.mecanumsteers[id].forwardAxisReversed} />
+				<input
+					class="checkbox"
+					type="checkbox"
+					bind:checked={$state.mecanumsteers[id].forwardAxisReversed}
+				/>
 			</li>
 
 			<li class="row">
@@ -193,7 +208,11 @@
 					{/each}
 				</select>
 				<p class="label">Reversed:</p>
-				<input class="checkbox" type="checkbox" bind:checked={$state.mecanumsteers[id].strafeAxisReversed} />
+				<input
+					class="checkbox"
+					type="checkbox"
+					bind:checked={$state.mecanumsteers[id].strafeAxisReversed}
+				/>
 			</li>
 
 			<li class="row">
@@ -205,7 +224,11 @@
 					{/each}
 				</select>
 				<p class="label">Reversed:</p>
-				<input class="checkbox" type="checkbox" bind:checked={$state.mecanumsteers[id].rotationAxisReversed} />
+				<input
+					class="checkbox"
+					type="checkbox"
+					bind:checked={$state.mecanumsteers[id].rotationAxisReversed}
+				/>
 			</li>
 		</ul>
 	{/if}

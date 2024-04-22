@@ -17,7 +17,7 @@ export async function load({ params, locals }) {
 	}
 	// console.log({ body: { state, uuid: params.id } });
 	return { body: { state, uuid: params.id } };
-};
+}
 
 const backwardsCompatability = (state: State) => {
 	if (state.version == undefined) state = v0tov1(state);
@@ -145,7 +145,7 @@ const v11tov12 = (state: State) => {
 	state.version = 12;
 	state.settings = {
 		IKEnabled: false
-	}
+	};
 	return state;
 };
 
@@ -154,16 +154,16 @@ const v12tov13 = (state: State) => {
 	state.version = 13;
 	state.settings.IFrameEnabled = false;
 	state.iframeSettings = {
-		src: "",
+		src: '',
 		height: 600
-	}
+	};
 	return state;
 };
 
 const v13tov14 = (state: State) => {
 	console.log('v13 -> v14');
 	state.version = 14;
-	state.servos.forEach(servo => {
+	state.servos.forEach((servo) => {
 		servo.mixins = [];
 	});
 	return state;

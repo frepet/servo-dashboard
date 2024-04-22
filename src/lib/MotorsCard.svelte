@@ -9,11 +9,11 @@
 	import type { Motor as Motor_t } from '$lib/types';
 	import { clamp } from '$lib/utils';
 	import { onMount, onDestroy } from 'svelte';
-	
+
 	const expF = (value: number, strength: number) => {
-		let expf = Math.abs(Math.pow(value, (1+(strength*2))));
+		let expf = Math.abs(Math.pow(value, 1 + strength * 2));
 		return value > 0 ? expf : -expf;
-	}
+	};
 
 	let poll: number;
 	onMount(() => {
@@ -23,15 +23,16 @@
 
 				if (motor.mixins.length > 0) {
 					new_value = 0;
-					motor.mixins.forEach(mixin => {
+					motor.mixins.forEach((mixin) => {
 						if ($state.motors[mixin.servo]) {
-							new_value += ($state.motors[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
+							new_value +=
+								($state.motors[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
 						}
 					});
 				}
 
 				if (motor.axis > -1) {
-					new_value += expF(($axes[motor.axis] ?? 0), motor.exp) * 100 * (motor.reverseAxis ? -1 : 1);
+					new_value += expF($axes[motor.axis] ?? 0, motor.exp) * 100 * (motor.reverseAxis ? -1 : 1);
 				}
 				if (motor.buttonPlus > -1) {
 					new_value += ($buttons[motor.buttonPlus] ? 1 : 0) * 100;
@@ -39,7 +40,7 @@
 				if (motor.buttonMinus > -1) {
 					new_value -= ($buttons[motor.buttonMinus] ? 1 : 0) * 100;
 				}
-				
+
 				motor.value = clamp(new_value, motor.min, motor.max);
 			});
 

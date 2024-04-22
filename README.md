@@ -1,4 +1,5 @@
 # Servo Dashboard
+
 This is a project to remotely control servos/motors.
 The communication chain consists of three parts and are connected in the following way:
 
@@ -7,18 +8,21 @@ Web Page <-Web Socket-> Python Reciever <-Serial-> Arduino Receiver
 ```
 
 ## Wireless over Serial
+
 If wireless control is wanted over serial then the Python Receiver should be running on the same machine as the Web Page is opened in. The Serial interface between the machine and the Arduino should then be wireless.
 
 ## Wireless over Internet
-If wireless control is wanted over internet then the Python Receiver can be started on a remote machine. This would then need a tunnel from localhost to the remote machine, since the Web Page will always try to connect to localhost due to security reasons.
 
+If wireless control is wanted over internet then the Python Receiver can be started on a remote machine. This would then need a tunnel from localhost to the remote machine, since the Web Page will always try to connect to localhost due to security reasons.
 
 # Developing the Sveltekit component
 
-## Starting the application 
+## Starting the application
+
 The application can run directly using node and an external postgres database or using docker-compose to run both the application and a local database.
 
 ### External Database (Node)
+
 Install dependencies:
 
 ```bash
@@ -32,6 +36,7 @@ DATABASE_URL="POSTGRES CONNECTION STRING" npm run dev
 ```
 
 ### Local Database (Docker)
+
 Start the local database:
 
 ```bash

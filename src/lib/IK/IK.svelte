@@ -39,14 +39,14 @@
 		if ($state.ik != undefined) {
 			if ($state.ik.targetXAxis != undefined && $axes[$state.ik.targetXAxis]) {
 				$state.ik.target.x +=
-					deadzone($state.ik.targetXAxis, $axes[$state.ik.targetXAxis]) *
-					$state.ik.ikSpeedX/10 *
+					((deadzone($state.ik.targetXAxis, $axes[$state.ik.targetXAxis]) * $state.ik.ikSpeedX) /
+						10) *
 					delta;
 			}
 			if ($state.ik.targetYAxis != undefined && $axes[$state.ik.targetYAxis]) {
 				$state.ik.target.y +=
-					deadzone($state.ik.targetYAxis, $axes[$state.ik.targetYAxis]) *
-					$state.ik.ikSpeedY/10 *
+					((deadzone($state.ik.targetYAxis, $axes[$state.ik.targetYAxis]) * $state.ik.ikSpeedY) /
+						10) *
 					delta;
 			}
 			update();
@@ -68,17 +68,13 @@
 		}
 
 		if (!($state.ik instanceof IK)) {
-			console.log('$state.ik not instanceof IK')
+			console.log('$state.ik not instanceof IK');
 			return;
 		}
 
 		// TODO add disable
 		$state.ik.update();
-		draw(
-			context,
-			vec2(canvas.width, canvas.height),
-			$state.ik
-		);
+		draw(context, vec2(canvas.width, canvas.height), $state.ik);
 	}
 </script>
 
@@ -98,12 +94,12 @@
 							<ul>
 								<li class="row">
 									X:
-									<input type="number" bind:value={$state.ik.base.x}/>
+									<input type="number" bind:value={$state.ik.base.x} />
 								</li>
 
 								<li class="row">
 									Y:
-									<input type="number" bind:value={$state.ik.base.y}/>
+									<input type="number" bind:value={$state.ik.base.y} />
 								</li>
 							</ul>
 						</div>
@@ -143,7 +139,12 @@
 								</li>
 								<li class="row">
 									Speed:
-									<input class="valueInput" type="number" step={0.1} bind:value={$state.ik.ikSpeedX} />
+									<input
+										class="valueInput"
+										type="number"
+										step={0.1}
+										bind:value={$state.ik.ikSpeedX}
+									/>
 								</li>
 							</ul>
 						</div>
@@ -162,12 +163,20 @@
 
 								<li class="row">
 									<p class="label">Midpoint (&#176;):</p>
-									<input class="valueInput" type="number" bind:value={$state.ik.servoMidpointForeArm} />
+									<input
+										class="valueInput"
+										type="number"
+										bind:value={$state.ik.servoMidpointForeArm}
+									/>
 								</li>
 
 								<li class="row">
 									<p class="label">Range (&#176;):</p>
-									<input class="valueInput" type="number" bind:value={$state.ik.servoRangeForeArm} />
+									<input
+										class="valueInput"
+										type="number"
+										bind:value={$state.ik.servoRangeForeArm}
+									/>
 								</li>
 							</ul>
 
@@ -183,7 +192,12 @@
 								</li>
 								<li class="row">
 									Speed:
-									<input class="valueInput" type="number" step={0.1} bind:value={$state.ik.ikSpeedY} />
+									<input
+										class="valueInput"
+										type="number"
+										step={0.1}
+										bind:value={$state.ik.ikSpeedY}
+									/>
 								</li>
 							</ul>
 						</div>
@@ -197,25 +211,44 @@
 							<ul>
 								<li class="row">
 									Back:
-									<input class="valueInput" type="number" step={1} bind:value={$state.ik.boundingBox[0].x} />
+									<input
+										class="valueInput"
+										type="number"
+										step={1}
+										bind:value={$state.ik.boundingBox[0].x}
+									/>
 								</li>
 
 								<li class="row">
 									Front:
-									<input class="valueInput" type="number" step={1} bind:value={$state.ik.boundingBox[1].x} />
+									<input
+										class="valueInput"
+										type="number"
+										step={1}
+										bind:value={$state.ik.boundingBox[1].x}
+									/>
 								</li>
-
 							</ul>
 
 							<ul>
 								<li class="row">
 									Ceiling:
-									<input class="valueInput" type="number" step={1} bind:value={$state.ik.boundingBox[1].y} />
+									<input
+										class="valueInput"
+										type="number"
+										step={1}
+										bind:value={$state.ik.boundingBox[1].y}
+									/>
 								</li>
 
 								<li class="row">
 									Floor:
-									<input class="valueInput" type="number" step={1} bind:value={$state.ik.boundingBox[0].y} />
+									<input
+										class="valueInput"
+										type="number"
+										step={1}
+										bind:value={$state.ik.boundingBox[0].y}
+									/>
 								</li>
 							</ul>
 						</div>

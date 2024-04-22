@@ -42,8 +42,10 @@
 		"@smui/textfield": "^6.0.0-beta.16",
 		"@sveltejs/adapter-node": "^1.0.0-next.73",
 		"@types/dotenv": "^8.2.0",
+		"@types/mqtt": "^2.5.0",
 		"@types/pg-promise": "^5.4.3",
 		"dotenv": "^16.0.0",
+		"mqtt": "^5.5.3",
 		"pg-promise": "^10.11.1",
 		"tslib": "^2.3.1"
 	}

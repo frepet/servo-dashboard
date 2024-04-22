@@ -1,4 +1,4 @@
-import type { IK } from "./IK/IK";
+import type { IK } from './IK/IK';
 
 export type Mixin = {
 	servo: number;
@@ -35,7 +35,7 @@ export type Motor = {
 	buttonPlus: number;
 	buttonMinus: number;
 	mixins: Mixin[];
-}
+};
 
 export type Action = {
 	servo: number;
@@ -89,7 +89,7 @@ export type Settings = {
 export type IFrameSettings = {
 	src: string;
 	height: number;
-}
+};
 
 export type State = {
 	version: number;

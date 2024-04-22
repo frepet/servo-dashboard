@@ -5,7 +5,7 @@ import { IK } from '$lib/IK/IK';
 const store = writable<State>({
 	version: 1,
 	name: '',
-	settings: {IKEnabled: false, IFrameEnabled: false},
+	settings: { IKEnabled: false, IFrameEnabled: false },
 	deadzones: [],
 	servos: [],
 	motors: [],
@@ -14,7 +14,7 @@ const store = writable<State>({
 	macros: [],
 	swapButton: -1,
 	ik: new IK(),
-	iframeSettings: {src: "", height: 100},
+	iframeSettings: { src: '', height: 100 }
 });
 
 const uploadState = async (id: string) => {
