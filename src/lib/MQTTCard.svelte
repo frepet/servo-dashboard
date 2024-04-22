@@ -50,7 +50,7 @@
 
 	function disconnectFromBroker(): void {
 		msgs = ['Disconnected from the broker!', ...msgs];
-		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE2', {
+		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', {
 			qos: 1,
 			retain: true
 		});
