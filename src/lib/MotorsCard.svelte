@@ -20,7 +20,7 @@
 		const loop = () => {
 			$state.motors.forEach((motor: Motor_t) => {
 				let new_value = motor.value;
-				if (motor.axis >= 0) {
+				if (motor.axis >= 0 || motor.buttonMinus >= 0 || motor.buttonPlus >= 0) {
 					new_value = 0;
 				}
 
@@ -29,7 +29,7 @@
 					motor.mixins.forEach((mixin) => {
 						if ($state.motors[mixin.servo]) {
 							new_value +=
-								($state.motors[mixin.servo].value - 127) * mixin.multiplier + mixin.offset;
+								($state.motors[mixin.servo].value) * mixin.multiplier + mixin.offset;
 						}
 					});
 				}
