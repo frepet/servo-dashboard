@@ -2,6 +2,10 @@
 #include <ESP32MQTTClient.h>
 #include "Motor.h"
 #include "ServoWrapper.h"
+#include "Failsafe.h"
+
+// Global Variables
+ESP32MQTTClient mqttClient;
 
 // Wi-Fi Settings.
 const String WIFI_SSID = "Fi-Fi name";
@@ -13,7 +17,7 @@ const char *BROKER_USERNAME = "";
 const char *BROKER_PASSWORD = "";
 const uint8_t KEEP_ALIVE_SECONDS = 5;
 
-// Robot Settings
+// START of Robot Settings
 static const String TOPIC_PREFIX = "robotdags";
 const int MAX_SERVOS = 1;
 const int MAX_MOTORS = 4;
@@ -26,23 +30,33 @@ Motor motors[MAX_MOTORS] = {
 ServoWrapper servos[MAX_SERVOS] {
   ServoWrapper(3)
 };
+const unsigned long FAILSAFE_MILLIS = 1000;
+// END of Robot Settings
 
 // Derrived Constants
 static const String STATUS_TOPIC = TOPIC_PREFIX + "/statuses/receiver";
 static const String SERVOS_PREFIX = TOPIC_PREFIX + "/servos/";
 static const String MOTORS_PREFIX = TOPIC_PREFIX + "/motors/";
 
-// Global Variables
-ESP32MQTTClient mqttClient;
-
+// Failsafe Handler, update to your likings
+void failsafeHandler() {
+  for (uint8_t i = 0; i < MAX_SERVOS; ++i) {
+    servos[i].detach();
+  }
+  for (uint8_t i = 0; i < MAX_MOTORS; ++i) {
+    motors[i].update(0);
+  }
+  mqttClient.publish(STATUS_TOPIC, "FAILSAFE", 2, true);
+}
+Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
 
 /*
   Returns -1 if no '/' found, indicating an error.
 */
 int extractNumberFromTopic(const String& topic) {
-    int lastSlashIndex = topic.lastIndexOf('/');
-    if (lastSlashIndex == -1) return -1;
-    return topic.substring(lastSlashIndex + 1).toInt();
+  int lastSlashIndex = topic.lastIndexOf('/');
+  if (lastSlashIndex == -1) return -1;
+  return topic.substring(lastSlashIndex + 1).toInt();
 }
 
 // Assuming topic format is "SERVOS_PREFIX/x" where x is an integer.
@@ -135,5 +149,7 @@ void setup() {
 }
 
 void loop(){
-  delay(1000);
+	failsafe.reset();
+	mqttClient.publish(STATUS_TOPIC, "OK", 0, true);
+	delay(FAILSAFE_MILLIS - 10);
 }
