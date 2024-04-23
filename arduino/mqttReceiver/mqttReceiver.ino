@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <ESP32MQTTClient.h>
 #include <Servo.h> // From https://github.com/alunit3/ServoESP32/ (Called ServoESP32Fix in Library Manager)
+#include "Motor.h"
 
 // Wi-Fi Settings.
 const String WIFI_SSID = "Fi-Fi name";
@@ -15,15 +16,23 @@ const uint8_t KEEP_ALIVE_SECONDS = 5;
 // Robot Settings
 static const String TOPIC_PREFIX = "robotdags";
 const int MAX_SERVOS = 1;
-const int MAX_MOTORS = 6;
+const int MAX_MOTORS = 4;
+Motor motors[MAX_MOTORS] = {
+  Motor(12, 13),
+  Motor(14, 21),
+  Motor(9, 10),
+  Motor(47, 11)
+};
+Servo servos[MAX_SERVOS];
 
 // Derrived Constants
-static const String SERVO_PREFIX = TOPIC_PREFIX + "/servos/";
 static const String STATUS_TOPIC = TOPIC_PREFIX + "/statuses/receiver";
+static const String SERVOS_PREFIX = TOPIC_PREFIX + "/servos/";
+static const String MOTORS_PREFIX = TOPIC_PREFIX + "/motors/";
 
 // Global Variables
 ESP32MQTTClient mqttClient;
-Servo servos[MAX_SERVOS];
+
 
 /*
   Returns -1 if no '/' found, indicating an error.
@@ -34,17 +43,28 @@ int extractNumberFromTopic(const String& topic) {
     return topic.substring(lastSlashIndex + 1).toInt();
 }
 
-// Assuming topic format is "SERVO_PREFIX/x" where x is an integer.
+// Assuming topic format is "SERVOS_PREFIX/x" where x is an integer.
 void updateServos(const String &topic, const String &payload) {
-  int position = payload.toInt(); // Convert payload to an integer
-  
-  if (topic.startsWith(SERVO_PREFIX)) { 
+  if (topic.startsWith(SERVOS_PREFIX)) { 
     uint8_t servoNumber = extractNumberFromTopic(topic);
     if (servoNumber >= 0 && servoNumber < MAX_SERVOS) {
-      servos[servoNumber].write(map(position, -100, 100, 0, 180));
+      servos[servoNumber].write(map(payload.toInt(), -100, 100, 0, 180));
     } else {
       // Handle error or invalid servo number
       Serial.println("Error: Servo number out of range");
+    }
+  }
+}
+
+// Assuming topic format is "MOTORS_PREFIX/x" where x is an integer.
+void updateMotors(const String &topic, const String &payload) {
+  if (topic.startsWith(MOTORS_PREFIX)) { 
+    uint8_t motorNumber = extractNumberFromTopic(topic);
+    if (motorNumber >= 0 && motorNumber < MAX_MOTORS) {
+      motors[motorNumber].update(payload.toInt());
+    } else {
+      // Handle error or invalid motor number
+      Serial.println("Error: Motor number out of range");
     }
   }
 }
@@ -75,8 +95,8 @@ void onWifiDisconnect(const WiFiEvent_t event, const WiFiEventInfo_t info) {
 void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   Serial.println("MQTT connection established.");
 
-  mqttClient.subscribe(SERVO_PREFIX + "/#", updateServos
-);
+  mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
+  mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
