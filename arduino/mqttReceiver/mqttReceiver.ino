@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #include <ESP32MQTTClient.h>
-#include <Servo.h> // From https://github.com/alunit3/ServoESP32/ (Called ServoESP32Fix in Library Manager)
 #include "Motor.h"
+#include "ServoWrapper.h"
 
 // Wi-Fi Settings.
 const String WIFI_SSID = "Fi-Fi name";
@@ -23,7 +23,9 @@ Motor motors[MAX_MOTORS] = {
   Motor(9, 10),
   Motor(47, 11)
 };
-Servo servos[MAX_SERVOS];
+ServoWrapper servos[MAX_SERVOS] {
+  ServoWrapper(3)
+};
 
 // Derrived Constants
 static const String STATUS_TOPIC = TOPIC_PREFIX + "/statuses/receiver";
@@ -48,7 +50,7 @@ void updateServos(const String &topic, const String &payload) {
   if (topic.startsWith(SERVOS_PREFIX)) { 
     uint8_t servoNumber = extractNumberFromTopic(topic);
     if (servoNumber >= 0 && servoNumber < MAX_SERVOS) {
-      servos[servoNumber].write(map(payload.toInt(), -100, 100, 0, 180));
+      servos[servoNumber].update(map(payload.toInt(), -100, 100, 0, 180));
     } else {
       // Handle error or invalid servo number
       Serial.println("Error: Servo number out of range");
