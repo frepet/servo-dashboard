@@ -1,8 +1,8 @@
-#include <WiFi.h>
-#include <ESP32MQTTClient.h>
+#include "Failsafe.h"
 #include "Motor.h"
 #include "ServoWrapper.h"
-#include "Failsafe.h"
+#include <ESP32MQTTClient.h>
+#include <WiFi.h>
 
 // Global Variables
 ESP32MQTTClient mqttClient;
@@ -21,15 +21,9 @@ const uint8_t KEEP_ALIVE_SECONDS = 5;
 static const String TOPIC_PREFIX = "robotdags";
 const int MAX_SERVOS = 1;
 const int MAX_MOTORS = 4;
-Motor motors[MAX_MOTORS] = {
-  Motor(12, 13),
-  Motor(14, 21),
-  Motor(9, 10),
-  Motor(47, 11)
-};
-ServoWrapper servos[MAX_SERVOS] {
-  ServoWrapper(3)
-};
+Motor motors[MAX_MOTORS] = {Motor(12, 13), Motor(14, 21), Motor(9, 10),
+                            Motor(47, 11)};
+ServoWrapper servos[MAX_SERVOS]{ServoWrapper(3)};
 const unsigned long FAILSAFE_MILLIS = 1000;
 // END of Robot Settings
 
@@ -53,15 +47,16 @@ Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
 /*
   Returns -1 if no '/' found, indicating an error.
 */
-int extractNumberFromTopic(const String& topic) {
+int extractNumberFromTopic(const String &topic) {
   int lastSlashIndex = topic.lastIndexOf('/');
-  if (lastSlashIndex == -1) return -1;
+  if (lastSlashIndex == -1)
+    return -1;
   return topic.substring(lastSlashIndex + 1).toInt();
 }
 
 // Assuming topic format is "SERVOS_PREFIX/x" where x is an integer.
 void updateServos(const String &topic, const String &payload) {
-  if (topic.startsWith(SERVOS_PREFIX)) { 
+  if (topic.startsWith(SERVOS_PREFIX)) {
     uint8_t servoNumber = extractNumberFromTopic(topic);
     if (servoNumber >= 0 && servoNumber < MAX_SERVOS) {
       servos[servoNumber].update(map(payload.toInt(), -100, 100, 0, 180));
@@ -74,7 +69,7 @@ void updateServos(const String &topic, const String &payload) {
 
 // Assuming topic format is "MOTORS_PREFIX/x" where x is an integer.
 void updateMotors(const String &topic, const String &payload) {
-  if (topic.startsWith(MOTORS_PREFIX)) { 
+  if (topic.startsWith(MOTORS_PREFIX)) {
     uint8_t motorNumber = extractNumberFromTopic(topic);
     if (motorNumber >= 0 && motorNumber < MAX_MOTORS) {
       motors[motorNumber].update(payload.toInt());
@@ -122,15 +117,16 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
  * the library so I keep it here as well.
  */
 esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
-    mqttClient.onEventCallback(event);
-    return ESP_OK;
+  mqttClient.onEventCallback(event);
+  return ESP_OK;
 }
 
 void setup() {
   // Setup Wi-Fi event listeners.
   WiFi.onEvent(onWifiConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
   WiFi.onEvent(onWifiIPAssigned, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
-  WiFi.onEvent(onWifiDisconnect, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
+  WiFi.onEvent(onWifiDisconnect,
+               WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
 
   // Prevent sleep for lower latency at the cost of higher power consumption.
   WiFi.setSleep(false);
@@ -140,7 +136,7 @@ void setup() {
   mqttClient.setKeepAlive(KEEP_ALIVE_SECONDS);
 
   mqttClient.enableLastWillMessage(STATUS_TOPIC.c_str(), "OFFLINE", true);
-  
+
   // Try and connect to the specified Wi-Fi network.
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -148,8 +144,8 @@ void setup() {
   mqttClient.loopStart();
 }
 
-void loop(){
-	failsafe.reset();
-	mqttClient.publish(STATUS_TOPIC, "OK", 0, true);
-	delay(FAILSAFE_MILLIS - 10);
+void loop() {
+  failsafe.reset();
+  mqttClient.publish(STATUS_TOPIC, "OK", 0, true);
+  delay(FAILSAFE_MILLIS - 10);
 }

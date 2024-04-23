@@ -7,22 +7,22 @@ private:
   int dirPin;
 
 public:
-    Motor(int dirPin, int pwmPin) {
-        this->pwmPin = pwmPin;
-        this->dirPin = dirPin;
-        pinMode(pwmPin, OUTPUT);
-        pinMode(dirPin, OUTPUT);
-    }
+  Motor(int dirPin, int pwmPin) {
+    this->pwmPin = pwmPin;
+    this->dirPin = dirPin;
+    pinMode(pwmPin, OUTPUT);
+    pinMode(dirPin, OUTPUT);
+  }
 
-    void update(int speed) {
-        if (speed >= 0) {
-            digitalWrite(dirPin, HIGH);
-            analogWrite(pwmPin, map(speed, 0, 100, 0, 255));
-        } else {
-            digitalWrite(dirPin, LOW);
-            analogWrite(pwmPin, map(-speed, 0, 100, 0, 255));
-        }
+  void update(int speed) {
+    if (speed >= 0) {
+      digitalWrite(dirPin, HIGH);
+      analogWrite(pwmPin, map(speed, 0, 100, 0, 255));
+    } else {
+      digitalWrite(dirPin, LOW);
+      analogWrite(pwmPin, map(-speed, 0, 100, 0, 255));
     }
+  }
 };
 
 #endif
