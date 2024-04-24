@@ -58,30 +58,36 @@
 		client?.end();
 	}
 
+	let lastTime = 0;
+	const interval = 100;
 	let poll: number;
-	const loop = () => {
-		if (client?.connected) {
-			$state.servos.forEach((servo, index) =>
-				client?.publish(
-					`${$state.mqttSettings.topic_prefix}/servos/${index}`,
-					Math.ceil(servo.value).toString(),
-					QoS0_RETAIN
-				)
-			);
-			$state.motors.forEach((motor, index) =>
-				client?.publish(
-					`${$state.mqttSettings.topic_prefix}/motors/${index}`,
-					Math.round(motor.value).toString(),
-					QoS0_RETAIN
-				)
-			);
-			client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', QoS0_RETAIN);
-		}
+	const loop = (currentTime: number) => {
+		if (currentTime - lastTime > interval) {
+			lastTime = currentTime;
 
-		if (!mouseOver) {
-			const msgbox = document.getElementById('msgbox');
-			if (msgbox) {
-				msgbox.scrollTo(0, msgbox.scrollHeight);
+			if (client?.connected) {
+				$state.servos.forEach((servo, index) =>
+					client?.publish(
+						`${$state.mqttSettings.topic_prefix}/servos/${index}`,
+						Math.ceil(servo.value).toString(),
+						{ qos: 0, retain: true }
+					)
+				);
+				$state.motors.forEach((motor, index) =>
+					client?.publish(
+						`${$state.mqttSettings.topic_prefix}/motors/${index}`,
+						Math.round(motor.value).toString(),
+						{ qos: 0, retain: true }
+					)
+				);
+				client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', { qos: 0, retain: true });
+			}
+
+			if (!mouseOver) {
+				const msgbox = document.getElementById('msgbox');
+				if (msgbox) {
+					msgbox.scrollTo(0, msgbox.scrollHeight);
+				}
 			}
 		}
 
@@ -89,7 +95,7 @@
 	};
 
 	onMount(() => {
-		loop();
+		poll = requestAnimationFrame(loop);
 	});
 
 	onDestroy(() => {
