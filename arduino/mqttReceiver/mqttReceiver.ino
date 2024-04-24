@@ -18,7 +18,7 @@ const char *BROKER_PASSWORD = "";
 const uint8_t KEEP_ALIVE_SECONDS = 5;
 
 // START of Robot Settings
-static const String TOPIC_PREFIX = "robotdags";
+static const String TOPIC_PREFIX = "robot";
 const int MAX_SERVOS = 1;
 const int MAX_MOTORS = 4;
 Motor motors[MAX_MOTORS] = {Motor(12, 13), Motor(14, 21), Motor(9, 10),
@@ -100,8 +100,6 @@ void onWifiDisconnect(const WiFiEvent_t event, const WiFiEventInfo_t info) {
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
  * with this name existing.
- *
- * This function gets called every time an MQTT server/broker is connected to.
  */
 void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   Serial.println("MQTT connection established.");
@@ -113,9 +111,6 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
  * with this name existing.
- *
- * I haven't looked into what this does, but it was present in the example from
- * the library so I keep it here as well.
  */
 esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
   if (event->event_id == MQTT_EVENT_DATA) {
@@ -153,6 +148,7 @@ void setupMQTT(String clientName) {
 }
 
 void setup() {
+  Serial.begin(115200);
   setupWifi();
   setupMQTT(randomClientName());
 }
