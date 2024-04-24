@@ -8,11 +8,11 @@
 ESP32MQTTClient mqttClient;
 
 // Wi-Fi Settings.
-const String WIFI_SSID = "Fi-Fi name";
+const String WIFI_SSID = "Wi-Fi";
 const String WIFI_PASSWORD = "password";
 
 // MQTT Broker Settings
-const char *BROKER_URL = "mqtt://localhost";
+const char *BROKER_URL = "";
 const char *BROKER_USERNAME = "";
 const char *BROKER_PASSWORD = "";
 const uint8_t KEEP_ALIVE_SECONDS = 5;
@@ -29,8 +29,8 @@ const unsigned long FAILSAFE_MILLIS = 1000;
 
 // Derrived Constants
 static const String STATUS_TOPIC = TOPIC_PREFIX + "/statuses/receiver";
-static const String SERVOS_PREFIX = TOPIC_PREFIX + "/servos/";
-static const String MOTORS_PREFIX = TOPIC_PREFIX + "/motors/";
+static const String SERVOS_PREFIX = TOPIC_PREFIX + "/servos";
+static const String MOTORS_PREFIX = TOPIC_PREFIX + "/motors";
 
 // Failsafe Handler, update to your likings
 void failsafeHandler() {
@@ -42,7 +42,7 @@ void failsafeHandler() {
   }
   mqttClient.publish(STATUS_TOPIC, "FAILSAFE", 2, true);
 }
-Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
+//Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
 
 /*
   Returns -1 if no '/' found, indicating an error.
@@ -103,10 +103,9 @@ void onWifiDisconnect(const WiFiEvent_t event, const WiFiEventInfo_t info) {
  */
 void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   Serial.println("MQTT connection established.");
-
   mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
   mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
-  failsafe.reset();
+//  failsafe.reset();
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
@@ -116,7 +115,7 @@ esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
   if (event->event_id == MQTT_EVENT_DATA) {
     if (event->topic_len > TOPIC_PREFIX.length()) {
       if (strncmp(event->topic, TOPIC_PREFIX.c_str(), TOPIC_PREFIX.length())) {
-        failsafe.reset();
+//        failsafe.reset();
       }
     }
   }
@@ -134,9 +133,9 @@ void setupWifi() {
 }
 
 String randomClientName() {
-  randomSeed(analogRead(0));
+  randomSeed(analogRead(35));
   int randomSuffixNumber = random(1000, 10000);
-  String mqttClientName = TOPIC_PREFIX + "-receiver-" + String(randomSuffixNumber);
+  return TOPIC_PREFIX + "-receiver-" + String(randomSuffixNumber);
 }
 
 void setupMQTT(String clientName) {

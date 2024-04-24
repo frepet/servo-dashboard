@@ -17,7 +17,7 @@ public:
   void update(int speed) {
     if (speed >= 0) {
       digitalWrite(dirPin, HIGH);
-      analogWrite(pwmPin, map(speed, 0, 100, 0, 255));
+      analogWrite(pwmPin, map(speed, 100, 0, 0, 255));
     } else {
       digitalWrite(dirPin, LOW);
       analogWrite(pwmPin, map(-speed, 0, 100, 0, 255));
