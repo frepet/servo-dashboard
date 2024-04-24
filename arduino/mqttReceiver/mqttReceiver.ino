@@ -108,6 +108,7 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
 
   mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
   mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
+  failsafe.reset();
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
@@ -117,35 +118,46 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
  * the library so I keep it here as well.
  */
 esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
+  if (event->event_id == MQTT_EVENT_DATA) {
+    if (event->topic_len > TOPIC_PREFIX.length()) {
+      if (strncmp(event->topic, TOPIC_PREFIX.c_str(), TOPIC_PREFIX.length())) {
+        failsafe.reset();
+      }
+    }
+  }
   mqttClient.onEventCallback(event);
   return ESP_OK;
 }
 
-void setup() {
-  // Setup Wi-Fi event listeners.
+void setupWifi() {
   WiFi.onEvent(onWifiConnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_CONNECTED);
   WiFi.onEvent(onWifiIPAssigned, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_GOT_IP);
   WiFi.onEvent(onWifiDisconnect,
                WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);
-
-  // Prevent sleep for lower latency at the cost of higher power consumption.
   WiFi.setSleep(false);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+}
 
-  // Apply MQTT settings.
+String randomClientName() {
+  randomSeed(analogRead(0));
+  int randomSuffixNumber = random(1000, 10000);
+  String mqttClientName = TOPIC_PREFIX + "-receiver-" + String(randomSuffixNumber);
+}
+
+void setupMQTT(String clientName) {
   mqttClient.setURI(BROKER_URL, BROKER_USERNAME, BROKER_PASSWORD);
   mqttClient.setKeepAlive(KEEP_ALIVE_SECONDS);
-
+  mqttClient.setMqttClientName(clientName.c_str());
   mqttClient.enableLastWillMessage(STATUS_TOPIC.c_str(), "OFFLINE", true);
-
-  // Try and connect to the specified Wi-Fi network.
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  // Start the MQTT client.
   mqttClient.loopStart();
 }
 
+void setup() {
+  setupWifi();
+  setupMQTT(randomClientName());
+}
+
 void loop() {
-  failsafe.reset();
   mqttClient.publish(STATUS_TOPIC, "OK", 0, true);
   delay(FAILSAFE_MILLIS - 10);
 }
