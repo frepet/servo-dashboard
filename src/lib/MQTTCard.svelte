@@ -7,6 +7,7 @@
 	import Card, { Content } from '@smui/card';
 	import Button from '@smui/button';
 	import { state } from './stores/StateStore';
+	import { beforeNavigate } from '$app/navigation';
 
 	let mouseOver = false;
 	let client: MqttClient | null = null;
@@ -25,7 +26,7 @@
 			will: {
 				topic: `${$state.mqttSettings.topic_prefix}/statuses/dashboard`,
 				payload: LAST_WILL_MSG,
-				qos: 1,
+				qos: 2,
 				retain: true
 			}
 		};
@@ -51,46 +52,62 @@
 	function disconnectFromBroker(): void {
 		msgs = ['Disconnected from the broker!', ...msgs];
 		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', {
-			qos: 1,
+			qos: 2,
 			retain: true
 		});
 		mqttConnection.setIsConnected(false);
 		client?.end();
 	}
 
-	let lastTime = 0;
-	const interval = 100;
+	let lastTimeOfStatus: number = 0;
+	let lastTimeOfServo: Array<number> = Array(100).fill(100);
+	let lastTimeOfMotor: Array<number> = Array(100).fill(100);
+	let sentServoValues: Array<number> = [];
+	let sentMotorValues: Array<number> = [];
+	const delayBetweenSends = 50;
 	let poll: number;
-	const loop = (currentTime: number) => {
-		if (currentTime - lastTime > interval) {
-			lastTime = currentTime;
+	const loop = () => {
+		if (client?.connected) {
+			$state.servos.forEach((servo, index) => {
+				if (sentServoValues[index] != servo.value) {
+					if (Date.now() > lastTimeOfServo[index] + delayBetweenSends) {
+						client?.publish(
+							`${$state.mqttSettings.topic_prefix}/servos/${index}`,
+							Math.ceil(servo.value).toString(),
+							{ qos: 2, retain: true }
+						);
+						sentServoValues[index] = servo.value;
+						lastTimeOfServo[index] = Date.now();
+					}
+				}
+			});
 
-			if (client?.connected) {
-				$state.servos.forEach((servo, index) =>
-					client?.publish(
-						`${$state.mqttSettings.topic_prefix}/servos/${index}`,
-						Math.ceil(servo.value).toString(),
-						{ qos: 0, retain: true }
-					)
-				);
-				$state.motors.forEach((motor, index) =>
+			$state.motors.forEach((motor, index) => {
+				if (sentMotorValues[index] != motor.value) {
+					if (Date.now() > lastTimeOfMotor[index] + delayBetweenSends) {
 					client?.publish(
 						`${$state.mqttSettings.topic_prefix}/motors/${index}`,
 						Math.round(motor.value).toString(),
-						{ qos: 0, retain: true }
-					)
-				);
-				client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', { qos: 0, retain: true });
-			}
-
-			if (!mouseOver) {
-				const msgbox = document.getElementById('msgbox');
-				if (msgbox) {
-					msgbox.scrollTo(0, msgbox.scrollHeight);
+						{ qos: 2, retain: true }
+					);
+					sentMotorValues[index] = motor.value;
+					lastTimeOfMotor[index] = Date.now();
+					}
 				}
+			});
+
+			if (Date.now() > lastTimeOfStatus + delayBetweenSends*10) {
+				client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', { qos: 2, retain: false});
+				lastTimeOfStatus = Date.now();
 			}
 		}
 
+		if (!mouseOver) {
+			const msgbox = document.getElementById('msgbox');
+			if (msgbox) {
+				msgbox.scrollTo(0, msgbox.scrollHeight);
+			}
+		}
 		poll = requestAnimationFrame(loop);
 	};
 
@@ -99,8 +116,14 @@
 	});
 
 	onDestroy(() => {
+		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
 		client?.end();
-		console.log('Disconnected from the broker!');
+		mqttConnection.setIsConnected(false);
+	});
+
+	beforeNavigate(() => {
+		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
+		client?.end();
 		mqttConnection.setIsConnected(false);
 	});
 </script>
