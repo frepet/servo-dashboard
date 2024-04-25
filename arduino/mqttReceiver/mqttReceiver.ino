@@ -40,9 +40,8 @@ void failsafeHandler() {
   for (uint8_t i = 0; i < MAX_MOTORS; ++i) {
     motors[i].update(0);
   }
-  mqttClient.publish(STATUS_TOPIC, "FAILSAFE", 2, true);
 }
-//Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
+Failsafe failsafe = Failsafe(FAILSAFE_MILLIS, failsafeHandler);
 
 /*
   Returns -1 if no '/' found, indicating an error.
@@ -98,6 +97,10 @@ void onWifiDisconnect(const WiFiEvent_t event, const WiFiEventInfo_t info) {
   WiFi.reconnect();
 }
 
+void checkStatus(const String &payload) {
+  if (payload.equals("OK")) failsafe.reset();
+}
+
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
  * with this name existing.
  */
@@ -105,20 +108,13 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   Serial.println("MQTT connection established.");
   mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
   mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
-//  failsafe.reset();
+  mqttClient.subscribe(TOPIC_PREFIX + "/dashboard", checkStatus, 0);
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
  * with this name existing.
  */
 esp_err_t handleMQTT(esp_mqtt_event_handle_t event) {
-  if (event->event_id == MQTT_EVENT_DATA) {
-    if (event->topic_len > TOPIC_PREFIX.length()) {
-      if (strncmp(event->topic, TOPIC_PREFIX.c_str(), TOPIC_PREFIX.length())) {
-//        failsafe.reset();
-      }
-    }
-  }
   mqttClient.onEventCallback(event);
   return ESP_OK;
 }
@@ -153,6 +149,11 @@ void setup() {
 }
 
 void loop() {
-  mqttClient.publish(STATUS_TOPIC, "OK", 0, true);
-  delay(FAILSAFE_MILLIS - 10);
+  failsafe.check();
+  if (Failsafe.inFailsafe()) {
+    mqttClient.publish(STATUS_TOPIC, "FAILSAFE", 2, true);
+  } else {
+    mqttClient.publish(STATUS_TOPIC, "OK", 0, false);
+  }
+  delay(500);
 }

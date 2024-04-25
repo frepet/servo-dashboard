@@ -8,21 +8,27 @@ private:
   unsigned long lastResetTimeMillis;
   const unsigned long intervalMillis;
   void (*failsafeCallback)();
+  bool activated;
 
 public:
   Failsafe(unsigned long milliseconds, void (*callback)())
       : intervalMillis(milliseconds), failsafeCallback(callback),
-        lastResetTimeMillis(0) {}
+        lastResetTimeMillis(0), activated(false) {}
 
-  // Reset the failsafe timer
-  void reset() { lastResetTimeMillis = millis(); }
+  void reset() { 
+    lastResetTimeMillis = millis();
+    activated = false;
+  }
 
-  // Check if the failsafe condition is met and call the external failsafe
-  // function
+  bool inFailsafe() {
+    return activated;
+  }
+
   void check() {
     if (millis() - lastResetTimeMillis >= intervalMillis) {
+      activated = true;
       failsafeCallback();
-      reset();
+      lastResetTimeMillis = millis();
     }
   }
 };
