@@ -24,7 +24,7 @@
 			connectTimeout: 4000,
 			clientId: 'svelte_mqtt_' + Math.random().toString(16),
 			will: {
-				topic: `${$state.mqttSettings.topic_prefix}/statuses/dashboard`,
+				topic: `${$state.mqttSettings.topicPrefix}/statuses/dashboard`,
 				payload: LAST_WILL_MSG,
 				qos: 2,
 				retain: true
@@ -51,7 +51,7 @@
 
 	function disconnectFromBroker(): void {
 		msgs = ['Disconnected from the broker!', ...msgs];
-		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', {
+		client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OFFLINE', {
 			qos: 2,
 			retain: true
 		});
@@ -64,7 +64,7 @@
 	let lastTimeOfMotor: Array<number> = Array(100).fill(100);
 	let sentServoValues: Array<number> = [];
 	let sentMotorValues: Array<number> = [];
-	const delayBetweenSends = 50;
+	$: delayBetweenSends = Math.max(1, (1000 / $state.mqttSettings.updateFrequency));
 	let poll: number;
 	const loop = () => {
 		if (client?.connected) {
@@ -72,7 +72,7 @@
 				if (sentServoValues[index] != servo.value) {
 					if (Date.now() > lastTimeOfServo[index] + delayBetweenSends) {
 						client?.publish(
-							`${$state.mqttSettings.topic_prefix}/servos/${index}`,
+							`${$state.mqttSettings.topicPrefix}/servos/${index}`,
 							Math.ceil(servo.value).toString(),
 							{ qos: 2, retain: true }
 						);
@@ -86,7 +86,7 @@
 				if (sentMotorValues[index] != motor.value) {
 					if (Date.now() > lastTimeOfMotor[index] + delayBetweenSends) {
 					client?.publish(
-						`${$state.mqttSettings.topic_prefix}/motors/${index}`,
+						`${$state.mqttSettings.topicPrefix}/motors/${index}`,
 						Math.round(motor.value).toString(),
 						{ qos: 2, retain: true }
 					);
@@ -97,7 +97,7 @@
 			});
 
 			if (Date.now() > lastTimeOfStatus + delayBetweenSends*10) {
-				client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OK', { qos: 2, retain: false});
+				client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OK', { qos: 2, retain: false});
 				lastTimeOfStatus = Date.now();
 			}
 		}
@@ -116,13 +116,13 @@
 	});
 
 	onDestroy(() => {
-		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
+		client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
 		client?.end();
 		mqttConnection.setIsConnected(false);
 	});
 
 	beforeNavigate(() => {
-		client?.publish(`${$state.mqttSettings.topic_prefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
+		client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
 		client?.end();
 		mqttConnection.setIsConnected(false);
 	});
@@ -131,11 +131,13 @@
 <Card>
 	<Content>
 		<h2>MQTT</h2>
+		<h4>Connection settings:</h4>
 		Topic Prefix:<input
-			id="topic_prefix"
+			id="topicPrefix"
 			class="port"
 			type="text"
-			bind:value={$state.mqttSettings.topic_prefix}
+			disabled={$mqttConnection.isConnected}
+			bind:value={$state.mqttSettings.topicPrefix}
 		/>
 		Port:
 		<input
@@ -144,15 +146,22 @@
 			type="number"
 			min={1024}
 			max={65535}
+			disabled={$mqttConnection.isConnected}
 			bind:value={$state.mqttSettings.port}
 		/>
-
+		Update Frequency:
+		<input 
+			type="number"
+			class="port"
+			min={1}
+			max={100}
+			bind:value={$state.mqttSettings.updateFrequency}
+		/>
 		{#if $mqttConnection.isConnected}
 			<Button on:click={() => disconnectFromBroker()} variant="raised">Disconnect</Button>
 		{:else}
 			<Button on:click={() => connectToBroker()} variant="outlined">Connect</Button>
 		{/if}
-
 		<hr />
 		<div
 			class="messages"

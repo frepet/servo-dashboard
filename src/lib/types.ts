@@ -96,8 +96,9 @@ export type IFrameSettings = {
 };
 
 export type MqttSettings = {
-	topic_prefix: string;
+	topicPrefix: string;
 	port: number;
+	updateFrequency: number;
 };
 
 export type State = {
