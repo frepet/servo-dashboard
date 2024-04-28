@@ -108,7 +108,7 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   Serial.println("MQTT connection established.");
   mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
   mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
-  mqttClient.subscribe(TOPIC_PREFIX + "/dashboard", checkStatus, 0);
+  mqttClient.subscribe(TOPIC_PREFIX + "/statuses/dashboard", checkStatus, 0);
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
@@ -150,7 +150,7 @@ void setup() {
 
 void loop() {
   failsafe.check();
-  if (Failsafe.inFailsafe()) {
+  if (failsafe.inFailsafe()) {
     mqttClient.publish(STATUS_TOPIC, "FAILSAFE", 2, true);
   } else {
     mqttClient.publish(STATUS_TOPIC, "OK", 0, false);
