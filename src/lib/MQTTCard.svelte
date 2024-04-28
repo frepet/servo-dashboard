@@ -37,10 +37,23 @@
 		client.on('connect', () => {
 			msgs = ['CONNECTED!', ...msgs];
 			mqttConnection.setIsConnected(true);
+			client?.subscribe(`${$state.mqttSettings.topicPrefix}/pong`, (err) => {
+				if (!err) {
+					console.log('Subscription successful');
+				} else {
+					console.error('Subscription failed:', err);
+				}
+			});
 		});
 
 		client.on('error', () => {
 			mqttConnection.setIsConnected(false);
+		});
+
+		client.on('message', (topic, message) => {
+			if (topic === `${$state.mqttSettings.topicPrefix}/pong`) {
+				ping = Date.now() - Number(message);
+			}
 		});
 
 		client.on('disconnect', () => {
@@ -111,20 +124,35 @@
 		poll = requestAnimationFrame(loop);
 	};
 
+	let pingLoopId: NodeJS.Timer;
+	let ping = 0;
+	const sendPing = () => {
+		if (client?.connected) {
+			client?.publish(`${$state.mqttSettings.topicPrefix}/ping`, Date.now().toFixed(0), { qos: 0, retain: false});
+		}
+	};
+
+	const handlePong = () => {
+
+	}
+
 	onMount(() => {
 		poll = requestAnimationFrame(loop);
+		pingLoopId = setInterval(sendPing, 1000);
 	});
 
 	onDestroy(() => {
 		client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
 		client?.end();
 		mqttConnection.setIsConnected(false);
+		clearInterval(pingLoopId);
 	});
 
 	beforeNavigate(() => {
 		client?.publish(`${$state.mqttSettings.topicPrefix}/statuses/dashboard`, 'OFFLINE', { qos: 2, retain: true});
 		client?.end();
 		mqttConnection.setIsConnected(false);
+		clearInterval(pingLoopId);
 	});
 </script>
 
@@ -159,6 +187,9 @@
 		/>
 		{#if $mqttConnection.isConnected}
 			<Button on:click={() => disconnectFromBroker()} variant="raised">Disconnect</Button>
+			<ul>
+				<li>Ping: {ping} ms</li>
+			</ul>
 		{:else}
 			<Button on:click={() => connectToBroker()} variant="outlined">Connect</Button>
 		{/if}

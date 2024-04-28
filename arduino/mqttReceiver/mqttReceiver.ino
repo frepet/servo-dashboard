@@ -101,6 +101,10 @@ void checkStatus(const String &payload) {
   if (payload.equals("OK")) failsafe.reset();
 }
 
+void handlePing(const String &payload) {
+  mqttClient.publish(TOPIC_PREFIX + "/pong", payload, 0, false);
+}
+
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
  * with this name existing.
  */
@@ -109,6 +113,7 @@ void onConnectionEstablishedCallback(esp_mqtt_client_handle_t client) {
   mqttClient.subscribe(SERVOS_PREFIX + "/#", updateServos, 0);
   mqttClient.subscribe(MOTORS_PREFIX + "/#", updateMotors, 0);
   mqttClient.subscribe(TOPIC_PREFIX + "/statuses/dashboard", checkStatus, 0);
+  mqttClient.subscribe(TOPIC_PREFIX + "/ping", handlePing, 0);
 }
 
 /* NOTE: This function cannot be renamed. The MQTT library relies on a function
