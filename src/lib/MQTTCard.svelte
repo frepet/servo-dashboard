@@ -17,6 +17,9 @@
 		retain: true
 	};
 	const LAST_WILL_MSG: Buffer = Buffer.from('OFFLINE');
+	let lastKnownReceiverStatus = "UNKNOWN";
+	let lastKnownReceiverStatusTimeStamp = Date.now();
+	let timeSinceLastKnownRecieverStatus = 0;
 
 	function connectToBroker(): void {
 		msgs = ['Connecting to the broker..', ...msgs];
@@ -44,6 +47,13 @@
 					console.error('Subscription failed:', err);
 				}
 			});
+			client?.subscribe(`${$state.mqttSettings.topicPrefix}/statuses/receiver`, (err) => {
+				if (!err) {
+					console.log('Subscription successful');
+				} else {
+					console.error('Subscription failed:', err);
+				}
+			});
 		});
 
 		client.on('error', () => {
@@ -53,6 +63,10 @@
 		client.on('message', (topic, message) => {
 			if (topic === `${$state.mqttSettings.topicPrefix}/pong`) {
 				ping = Date.now() - Number(message);
+			}
+			if (topic === `${$state.mqttSettings.topicPrefix}/statuses/receiver`) {
+				lastKnownReceiverStatus = String(message);
+				lastKnownReceiverStatusTimeStamp = Date.now();
 			}
 		});
 
@@ -121,6 +135,9 @@
 				msgbox.scrollTo(0, msgbox.scrollHeight);
 			}
 		}
+		
+		timeSinceLastKnownRecieverStatus = Date.now() - lastKnownReceiverStatusTimeStamp;
+		
 		poll = requestAnimationFrame(loop);
 	};
 
@@ -187,12 +204,16 @@
 		/>
 		{#if $mqttConnection.isConnected}
 			<Button on:click={() => disconnectFromBroker()} variant="raised">Disconnect</Button>
-			<ul>
-				<li>Ping: {ping} ms</li>
-			</ul>
 		{:else}
 			<Button on:click={() => connectToBroker()} variant="outlined">Connect</Button>
 		{/if}
+
+		<ul>
+		{#if $mqttConnection.isConnected}
+			<li>Ping: {ping} ms</li>
+		{/if}
+			<li>Last Known Receiver Status: {lastKnownReceiverStatus} ({(timeSinceLastKnownRecieverStatus / 1000).toFixed()} s)</li>
+		</ul>
 		<hr />
 		<div
 			class="messages"
