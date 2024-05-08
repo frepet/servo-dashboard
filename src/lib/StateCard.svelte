@@ -4,16 +4,22 @@
 	export let uuid: string;
 </script>
 
-<h2>{$state.name}</h2>
 <div class="container">
-	<Button on:click={() => state.uploadState(uuid)} variant="raised">Save</Button>
+	<h2>{$state.name}</h2>
+	<div id="save">
+		<Button id="save" on:click={() => state.uploadState(uuid)} variant="raised">Save</Button>
+	</div>
 </div>
 
 <style>
 	h2 {
-		margin-top: 0px;
+		margin-right: 1rem;
 	}
 	.container {
 		display: flex;
+	}
+	#save {
+		margin-top: auto;
+		margin-bottom: auto;
 	}
 </style>

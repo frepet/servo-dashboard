@@ -11,10 +11,25 @@
 
 <h2>Select Save:</h2>
 
-{#each saves as save}
-	{#if save != undefined}
-		<p>
-			<a href={save.uuid}>{save.state.name} ({save.uuid.substring(0, 3)}..)</a>
-		</p>
-	{/if}
-{/each}
+<ul>
+	{#each saves as save}
+		{#if save != undefined}
+			<li>
+				<a href={save.uuid}>{save.state.name} ({save.uuid.substring(0, 3)}..)</a>
+			</li>
+		{/if}
+	{/each}
+</ul>
+
+<style lang="css">
+	h2 {
+		color: #db1c26;
+	}
+	a {
+		text-decoration: none;
+		color: white;
+	}
+	ul {
+		color: #db1c26;
+	}
+</style>

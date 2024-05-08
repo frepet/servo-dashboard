@@ -38,7 +38,6 @@
 		stateStore.set(state);
 	});
 </script>
-
 <div class="container">
 	{#if state != undefined}
 		<StateCard {uuid} />
