@@ -8,7 +8,7 @@ $primary: #db1c26;
 @use '@material/theme/index' as theme with (
 	$primary: $primary,
 	$secondary: color.scale(#676778, $whiteness: -10%),
-	$surface: color.adjust(color-palette.$grey-900, $blue: +4),
+	$surface: #0b131c,
 	$background: #000,
 	$error: color-palette.$red-700
 );
@@ -27,4 +27,8 @@ a {
 a:visited {
 	color: #fff;
 	text-decoration: none;
+}
+
+input {
+	accent-color: $primary;
 }

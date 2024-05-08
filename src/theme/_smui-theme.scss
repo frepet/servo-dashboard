@@ -28,3 +28,7 @@ a:visited {
 	color: #000;
 	text-decoration: none;
 }
+
+input[type="range"] {
+	accent-color: $primary;
+}
