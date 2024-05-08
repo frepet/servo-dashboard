@@ -2,9 +2,11 @@
 
 @use '@material/theme/color-palette';
 
+$primary: #db1c26;
+
 // Svelte Colors!
 @use '@material/theme/index' as theme with (
-	$primary: #ff3e00,
+	$primary: $primary,
 	$secondary: #676778,
 	$surface: #fff,
 	$background: #fff,
@@ -15,11 +17,14 @@ html,
 body {
 	background-color: theme.$surface;
 	color: theme.$on-surface;
+	font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 a {
-	color: #40b3ff;
+	color: #000;
+	text-decoration: none;
 }
 a:visited {
-	color: color.scale(#40b3ff, $lightness: -35%);
+	color: #000;
+	text-decoration: none;
 }

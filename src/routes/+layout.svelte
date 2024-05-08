@@ -12,12 +12,12 @@
 </div>
 
 <style>
-	#container, #header{
-		font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-	}
 	#header {
 		display: flex;
 		justify-content: flex-start;
+		margin-bottom: 1rem;
+		margin-top: 1rem;
+		margin-left: 0rem;
 	}
 	#logo {
 		width: 8em;

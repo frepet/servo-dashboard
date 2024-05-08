@@ -19,6 +19,7 @@
 		"@smui-extra/accordion": "^6.0.0-beta.16",
 		"@smui/button": "^6.0.0-beta.16",
 		"@smui/card": "^6.0.0-beta.16",
+		"@smui/list": "^7.0.0",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@typescript-eslint/eslint-plugin": "^5.10.1",
