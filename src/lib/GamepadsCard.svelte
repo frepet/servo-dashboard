@@ -2,9 +2,9 @@
 	import { axes } from '$lib/stores/AxesStore';
 	import { buttons } from '$lib/stores/ButtonsStore';
 	import { state } from '$lib/stores/StateStore';
+	import { Group } from '@smui/button';
 	import { localStore } from './stores/LocalStore';
 	import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-	import Group from '@smui/button/src/Group.svelte';
 	let axis: number[] = [];
 	let poll: number;
 	let duplicateInput = false;
