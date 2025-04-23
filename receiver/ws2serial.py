@@ -21,6 +21,18 @@ except IndexError as ex:
 	exit(1)
 
 
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+	# Figure out how 'wide' each range is
+	leftSpan = leftMax - leftMin
+	rightSpan = rightMax - rightMin
+
+	# Convert the left range into a 0-1 range (float)
+	valueScaled = float(value - leftMin) / float(leftSpan)
+
+	# Convert the 0-1 range into a value in the right range.
+	return rightMin + (valueScaled * rightSpan)
+
+
 async def main():
 	with serial.Serial(com_port, com_rate, write_timeout=0, timeout=0) as ser:
 		async def read_serial_to_socket(websocket):
@@ -51,9 +63,9 @@ async def main():
 					pwms[i] = s_pwm
 
 				motors = []
-				for m_pwm, m_dir in message["motors"]:
-					motors.append(m_pwm)
-					motors.append(255 if m_dir else 0)
+				for m_pwm in message["motors"]:
+					motors.append(translate(m_pwm, -100, 100, 0, 255))
+					motors.append(255 if m_pwm > 0 else 0)
 
 				custom = 0
 				if "custom" in message:
@@ -71,6 +83,7 @@ async def main():
 				buff[-2] = custom
 				buff[-1] = sum(buff[2:-1]) % 256  # Checksum
 				ser.write(buff)
+				print(f"{buff=}")
 
 				await read_serial_to_socket(websocket)
 
