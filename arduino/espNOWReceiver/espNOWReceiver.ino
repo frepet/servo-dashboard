@@ -11,11 +11,11 @@
 
 // true: Usees pin 4, 5, 6, 7 as direction and PWM pins for motor control.
 // false: Uses Pin 5 and 6 as regular PWM outputs for motor control using ESC's.
-#define USE_H_BRIDGE false
+#define USE_H_BRIDGE true
 #define FAILSAFE_MS 50
 
 const int SERVO_PINS[9] = {8, 9, 10, 11, 12, 13, A0, A1, A2};
-const int SERVOS = 9;
+const int SERVOS = 4;
 const int BAUD_RATE = 19200;
 const byte STX = 2;
 const int BAD_CHECKSUM_LED_PIN = 2;
@@ -27,7 +27,7 @@ const byte MOTOR_2_DIR = 7;
 const byte MOTOR_1_PWM = 5;
 const byte MOTOR_2_PWM = 6;
 
-const MacAddress peer_mac_address({0xF4, 0x12, 0xFA, 0x40, 0x64, 0x4C});
+const MacAddress peer_mac_address({0xDC, 0xDA, 0x0C, 0x20, 0xD7, 0x58});
 const int wifi_channel = 1;
 ESP_NOW_Serial_Class wireless(peer_mac_address, wifi_channel, WIFI_IF_STA);
 
@@ -40,6 +40,9 @@ Servo servo[SERVOS];
 byte custom = 0;
 
 void setup() {
+  delay(2000);
+  Serial.begin(19200);
+  Serial.println("setup");
 	pinMode(BAD_CHECKSUM_LED_PIN, OUTPUT);
 	pinMode(CUSTOM_PIN, OUTPUT);
 	pinMode(FAILSAFE_LED_PIN, OUTPUT);
@@ -56,7 +59,8 @@ void setup() {
 		motors_servo[0].attach(MOTOR_1_PWM);
 		motors_servo[1].attach(MOTOR_2_PWM);
 	}
-  
+
+   Serial.println("Initialize WiFi"); 
   // Initialize Wi-Fi.
   WiFi.mode(WIFI_STA);
   WiFi.setChannel(wifi_channel, WIFI_SECOND_CHAN_NONE);
@@ -65,8 +69,9 @@ void setup() {
     // Blink fast while waiting on Wi-Fi.
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     delay(100);
+    Serial.print(".");
   }
-
+  Serial.println("wiFi Initialized");
   wireless.begin(BAUD_RATE);
 }
 
@@ -106,21 +111,24 @@ void waitForSTX() {
 }
 
 bool readSerial() {
+  Serial.println("A");
 	byte n = nextByte();
+  Serial.println("B");
 
 	byte temp[n] = {0};
 	byte checksum = 0;
 	for (int i = 0; i < n; i++) {
+    Serial.println(i);
 		temp[i] = nextByte();
 		checksum += temp[i];
 	}
 
 	byte received_checksum = nextByte();
 	if (received_checksum != checksum) {
-		wireless.print("Bad checksum, received: ");
-		wireless.print(received_checksum);
-		wireless.print(", calculated: ");
-		wireless.println(checksum);
+		Serial.print("Bad checksum, received: ");
+		Serial.print(received_checksum);
+		Serial.print(", calculated: ");
+		Serial.println(checksum);
 		last_bad_checksum = millis();
 		return false;
 	}
@@ -159,8 +167,11 @@ void updateCustom(byte custom) {
 }
 
 void loop() {
+  Serial.println("1");
 	clearMessage();
+  Serial.println("2");
 	waitForSTX();
+  Serial.println("3");
 	if (readSerial()) {
 		updateServos(pwms);
 		updateMotors(motors);

@@ -64,7 +64,7 @@ async def main():
 
 				motors = []
 				for m_pwm in message["motors"]:
-					motors.append(translate(m_pwm, -100, 100, 0, 255))
+					motors.append(int(translate(m_pwm, -100, 100, 0, 255)))
 					motors.append(255 if m_pwm > 0 else 0)
 
 				custom = 0
@@ -83,7 +83,7 @@ async def main():
 				buff[-2] = custom
 				buff[-1] = sum(buff[2:-1]) % 256  # Checksum
 				ser.write(buff)
-				print(f"{buff=}")
+				print(f"buff={buff}")
 
 				await read_serial_to_socket(websocket)
 
