@@ -42,7 +42,6 @@ byte custom = 0;
 void setup() {
   delay(2000);
   Serial.begin(19200);
-  Serial.println("setup");
 	pinMode(BAD_CHECKSUM_LED_PIN, OUTPUT);
 	pinMode(CUSTOM_PIN, OUTPUT);
 	pinMode(FAILSAFE_LED_PIN, OUTPUT);
@@ -60,7 +59,6 @@ void setup() {
 		motors_servo[1].attach(MOTOR_2_PWM);
 	}
 
-   Serial.println("Initialize WiFi"); 
   // Initialize Wi-Fi.
   WiFi.mode(WIFI_STA);
   WiFi.setChannel(wifi_channel, WIFI_SECOND_CHAN_NONE);
@@ -69,9 +67,7 @@ void setup() {
     // Blink fast while waiting on Wi-Fi.
     digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     delay(100);
-    Serial.print(".");
   }
-  Serial.println("wiFi Initialized");
   wireless.begin(BAUD_RATE);
 }
 
@@ -111,24 +107,21 @@ void waitForSTX() {
 }
 
 bool readSerial() {
-  Serial.println("A");
 	byte n = nextByte();
-  Serial.println("B");
 
 	byte temp[n] = {0};
 	byte checksum = 0;
 	for (int i = 0; i < n; i++) {
-    Serial.println(i);
 		temp[i] = nextByte();
 		checksum += temp[i];
 	}
 
 	byte received_checksum = nextByte();
 	if (received_checksum != checksum) {
-		Serial.print("Bad checksum, received: ");
-		Serial.print(received_checksum);
-		Serial.print(", calculated: ");
-		Serial.println(checksum);
+		wireless.print("Bad checksum, received: ");
+		wireless.print(received_checksum);
+		wireless.print(", calculated: ");
+		wireless.println(checksum);
 		last_bad_checksum = millis();
 		return false;
 	}
@@ -167,11 +160,8 @@ void updateCustom(byte custom) {
 }
 
 void loop() {
-  Serial.println("1");
 	clearMessage();
-  Serial.println("2");
 	waitForSTX();
-  Serial.println("3");
 	if (readSerial()) {
 		updateServos(pwms);
 		updateMotors(motors);
