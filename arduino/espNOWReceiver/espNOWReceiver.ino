@@ -94,7 +94,14 @@ void failsafe() {
 			motors_servo[0].writeMicroseconds(1500);
 			motors_servo[1].writeMicroseconds(1500);
 			motors_servo[2].writeMicroseconds(1500);
-		}
+		} else {
+      digitalWrite(MOTOR_1_DIR, LOW);
+      digitalWrite(MOTOR_1_PWM, LOW);
+      digitalWrite(MOTOR_2_DIR, LOW);
+      digitalWrite(MOTOR_2_PWM, LOW);
+      digitalWrite(MOTOR_3_DIR, LOW);
+      digitalWrite(MOTOR_3_PWM, LOW);
+    }
 	} else {
 		digitalWrite(FAILSAFE_LED_PIN, LOW);
 	}
