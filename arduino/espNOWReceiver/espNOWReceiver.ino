@@ -47,11 +47,13 @@ void setup() {
 	digitalWrite(FAILSAFE_LED_PIN, HIGH);
 
   pinMode(MOTOR_1_DIR, OUTPUT);
-  pinMode(MOTOR_1_PWM, OUTPUT);
   pinMode(MOTOR_2_DIR, OUTPUT);
-  pinMode(MOTOR_2_PWM, OUTPUT);
   pinMode(MOTOR_3_DIR, OUTPUT);
-  pinMode(MOTOR_3_PWM, OUTPUT);
+
+  const int FREQ = 5000, RES = 8;
+  ledcAttach(MOTOR_1_PWM, FREQ, RES);
+  ledcAttach(MOTOR_2_PWM, FREQ, RES);
+  ledcAttach(MOTOR_3_PWM, FREQ, RES);
 
   // Initialize Wi-Fi.
   WiFi.mode(WIFI_STA);
@@ -140,11 +142,11 @@ void updateServos(byte *pwms) {
 }
 
 void updateMotors(byte *motors) {
-  analogWrite(MOTOR_1_PWM, motors[0]);
+  ledcWrite(MOTOR_1_PWM, motors[0]);
   digitalWrite(MOTOR_1_DIR, motors[1]);
-  analogWrite(MOTOR_2_PWM, motors[2]);
+  ledcWrite(MOTOR_2_PWM, motors[2]);
   digitalWrite(MOTOR_2_DIR, motors[3]);
-  analogWrite(MOTOR_3_PWM, motors[4]);
+  ledcWrite(MOTOR_3_PWM, motors[4]);
   digitalWrite(MOTOR_3_DIR, motors[5]);
 }
 
