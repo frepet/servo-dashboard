@@ -16,7 +16,8 @@ const int SERVOS = 2;
 const int BAUD_RATE = 19200;
 const byte STX = 2;
 const int BAD_CHECKSUM_LED_PIN = 2;
-const int FAILSAFE_LED_PIN = 3;
+const int FAILSAFE_LED_PIN = LED_BUILTIN;
+const int FAILSAFE_INVERTED_PIN = 3;
 const int CUSTOM_PIN = 4;
 
 const byte MOTORS = 3;
@@ -45,6 +46,8 @@ void setup() {
 	pinMode(CUSTOM_PIN, OUTPUT);
 	pinMode(FAILSAFE_LED_PIN, OUTPUT);
 	digitalWrite(FAILSAFE_LED_PIN, HIGH);
+	pinMode(FAILSAFE_INVERTED_PIN, OUTPUT);
+	digitalWrite(FAILSAFE_INVERTED_PIN, LOW);
 
   pinMode(MOTOR_1_DIR, OUTPUT);
   pinMode(MOTOR_2_DIR, OUTPUT);
@@ -79,15 +82,17 @@ byte nextByte() {
 
 void failsafe() {
 	if (failsafe_timer + FAILSAFE_MS < millis()) {
-		digitalWrite(FAILSAFE_LED_PIN, HIGH);
+		digitalWrite(FAILSAFE_INVERTED_PIN, LOW);
     digitalWrite(MOTOR_1_DIR, LOW);
-    digitalWrite(MOTOR_1_PWM, LOW);
+    ledcWrite(MOTOR_1_PWM, 0);
     digitalWrite(MOTOR_2_DIR, LOW);
-    digitalWrite(MOTOR_2_PWM, LOW);
+    ledcWrite(MOTOR_2_PWM, 0);
     digitalWrite(MOTOR_3_DIR, LOW);
-    digitalWrite(MOTOR_3_PWM, LOW);
+    ledcWrite(MOTOR_3_PWM, 0);
+		digitalWrite(FAILSAFE_LED_PIN, HIGH);
 	} else {
 		digitalWrite(FAILSAFE_LED_PIN, LOW);
+		digitalWrite(FAILSAFE_INVERTED_PIN, HIGH);
 	}
 }
 
