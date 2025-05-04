@@ -11,8 +11,8 @@
 
 #define FAILSAFE_MS 50
 
-const int SERVO_PINS[9] = {8, 9, 10, 11, 12, 13, A0, A1, A2};
-const int SERVOS = 4;
+const int SERVO_PINS[2] = {A0, A1};
+const int SERVOS = 2;
 const int BAUD_RATE = 19200;
 const byte STX = 2;
 const int BAD_CHECKSUM_LED_PIN = A5;
@@ -20,12 +20,12 @@ const int FAILSAFE_LED_PIN = A3;
 const int CUSTOM_PIN = A4;
 
 const byte MOTORS = 3;
-const byte MOTOR_1_DIR = 2;
-const byte MOTOR_1_PWM = 3;
-const byte MOTOR_2_DIR = 4;
-const byte MOTOR_2_PWM = 5;
-const byte MOTOR_3_DIR = 6;
-const byte MOTOR_3_PWM = 7;
+const byte MOTOR_1_DIR = A2;
+const byte MOTOR_1_PWM = A3;
+const byte MOTOR_2_DIR = A4;
+const byte MOTOR_2_PWM = A5;
+const byte MOTOR_3_DIR = A6;
+const byte MOTOR_3_PWM = A7;
 
 const MacAddress peer_mac_address({0xDC, 0xDA, 0x0C, 0x20, 0xD7, 0x58});
 const int wifi_channel = 1;
