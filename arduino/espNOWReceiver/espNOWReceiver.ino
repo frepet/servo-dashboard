@@ -15,9 +15,9 @@ const int SERVO_PINS[2] = {A0, A1};
 const int SERVOS = 2;
 const int BAUD_RATE = 19200;
 const byte STX = 2;
-const int BAD_CHECKSUM_LED_PIN = A5;
-const int FAILSAFE_LED_PIN = A3;
-const int CUSTOM_PIN = A4;
+const int BAD_CHECKSUM_LED_PIN = 2;
+const int FAILSAFE_LED_PIN = 3;
+const int CUSTOM_PIN = 4;
 
 const byte MOTORS = 3;
 const byte MOTOR_1_DIR = A2;
@@ -127,7 +127,7 @@ bool readSerial() {
 	failsafe_timer = millis();
 
 	memcpy(pwms, temp, SERVOS);
-	memcpy(motors, &temp[SERVOS], MOTORS);
+	memcpy(motors, &temp[SERVOS], MOTORS * 2);
 	custom = temp[SERVOS + 4];
 	return true;
 }
