@@ -9,9 +9,6 @@
 #include "WiFi.h"
 #include "esp_wifi.h"
 
-// true: Usees pin 4, 5, 6, 7 as direction and PWM pins for motor control.
-// false: Uses Pin 5 and 6 as regular PWM outputs for motor control using ESC's.
-#define USE_H_BRIDGE true
 #define FAILSAFE_MS 50
 
 const int SERVO_PINS[9] = {8, 9, 10, 11, 12, 13, A0, A1, A2};
@@ -22,6 +19,7 @@ const int BAD_CHECKSUM_LED_PIN = A5;
 const int FAILSAFE_LED_PIN = A3;
 const int CUSTOM_PIN = A4;
 
+const byte MOTORS = 3;
 const byte MOTOR_1_DIR = 2;
 const byte MOTOR_1_PWM = 3;
 const byte MOTOR_2_DIR = 4;
@@ -35,8 +33,7 @@ ESP_NOW_Serial_Class wireless(peer_mac_address, wifi_channel, WIFI_IF_STA);
 
 long last_bad_checksum = millis();
 long failsafe_timer = 0L;
-byte motors[6] = {0};
-Servo motors_servo[3];
+byte motors[MOTORS*2] = {0};
 byte pwms[SERVOS] = {127};
 Servo servo[SERVOS];
 byte custom = 0;
@@ -49,21 +46,12 @@ void setup() {
 	pinMode(FAILSAFE_LED_PIN, OUTPUT);
 	digitalWrite(FAILSAFE_LED_PIN, HIGH);
 
-	if (USE_H_BRIDGE) {
-		pinMode(MOTOR_1_DIR, OUTPUT);
-		pinMode(MOTOR_1_PWM, OUTPUT);
-		pinMode(MOTOR_2_DIR, OUTPUT);
-		pinMode(MOTOR_2_PWM, OUTPUT);
-		pinMode(MOTOR_3_DIR, OUTPUT);
-		pinMode(MOTOR_3_PWM, OUTPUT);
-	} else {
-		motors_servo[0].writeMicroseconds(1500);
-		motors_servo[0].attach(MOTOR_1_PWM);
-		motors_servo[1].writeMicroseconds(1500);
-		motors_servo[1].attach(MOTOR_2_PWM);
-		motors_servo[2].writeMicroseconds(1500);
-		motors_servo[2].attach(MOTOR_3_PWM);
-	}
+  pinMode(MOTOR_1_DIR, OUTPUT);
+  pinMode(MOTOR_1_PWM, OUTPUT);
+  pinMode(MOTOR_2_DIR, OUTPUT);
+  pinMode(MOTOR_2_PWM, OUTPUT);
+  pinMode(MOTOR_3_DIR, OUTPUT);
+  pinMode(MOTOR_3_PWM, OUTPUT);
 
   // Initialize Wi-Fi.
   WiFi.mode(WIFI_STA);
@@ -90,18 +78,12 @@ byte nextByte() {
 void failsafe() {
 	if (failsafe_timer + FAILSAFE_MS < millis()) {
 		digitalWrite(FAILSAFE_LED_PIN, HIGH);
-		if (!USE_H_BRIDGE) {
-			motors_servo[0].writeMicroseconds(1500);
-			motors_servo[1].writeMicroseconds(1500);
-			motors_servo[2].writeMicroseconds(1500);
-		} else {
-      digitalWrite(MOTOR_1_DIR, LOW);
-      digitalWrite(MOTOR_1_PWM, LOW);
-      digitalWrite(MOTOR_2_DIR, LOW);
-      digitalWrite(MOTOR_2_PWM, LOW);
-      digitalWrite(MOTOR_3_DIR, LOW);
-      digitalWrite(MOTOR_3_PWM, LOW);
-    }
+    digitalWrite(MOTOR_1_DIR, LOW);
+    digitalWrite(MOTOR_1_PWM, LOW);
+    digitalWrite(MOTOR_2_DIR, LOW);
+    digitalWrite(MOTOR_2_PWM, LOW);
+    digitalWrite(MOTOR_3_DIR, LOW);
+    digitalWrite(MOTOR_3_PWM, LOW);
 	} else {
 		digitalWrite(FAILSAFE_LED_PIN, LOW);
 	}
@@ -143,7 +125,7 @@ bool readSerial() {
 	failsafe_timer = millis();
 
 	memcpy(pwms, temp, SERVOS);
-	memcpy(motors, &temp[SERVOS], 4);
+	memcpy(motors, &temp[SERVOS], MOTORS);
 	custom = temp[SERVOS + 4];
 	return true;
 }
@@ -158,18 +140,12 @@ void updateServos(byte *pwms) {
 }
 
 void updateMotors(byte *motors) {
-	if (USE_H_BRIDGE) {
-		analogWrite(MOTOR_1_PWM, motors[0]);
-		digitalWrite(MOTOR_1_DIR, motors[1]);
-		analogWrite(MOTOR_2_PWM, motors[2]);
-		digitalWrite(MOTOR_2_DIR, motors[3]);
-		analogWrite(MOTOR_3_PWM, motors[4]);
-		digitalWrite(MOTOR_3_DIR, motors[5]);
-	} else {
-		motors_servo[0].writeMicroseconds(map(motors[0], 0, 255, 1500, motors[1] ? 2500 : 500));
-		motors_servo[1].writeMicroseconds(map(motors[2], 0, 255, 1500, motors[3] ? 2500 : 500));
-		motors_servo[2].writeMicroseconds(map(motors[4], 0, 255, 1500, motors[5] ? 2500 : 500));
-	}
+  analogWrite(MOTOR_1_PWM, motors[0]);
+  digitalWrite(MOTOR_1_DIR, motors[1]);
+  analogWrite(MOTOR_2_PWM, motors[2]);
+  digitalWrite(MOTOR_2_DIR, motors[3]);
+  analogWrite(MOTOR_3_PWM, motors[4]);
+  digitalWrite(MOTOR_3_DIR, motors[5]);
 }
 
 void updateCustom(byte custom) {
