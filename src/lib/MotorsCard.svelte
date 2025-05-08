@@ -34,7 +34,13 @@
 				}
 
 				if (motor.axis > -1) {
-					new_value += expF($axes[motor.axis] ?? 0, motor.exp) * 100 * (motor.reverseAxis ? -1 : 1);
+					if (motor.axis2 > -1) {
+						let combined = $axes[motor.axis] - $axes[motor.axis2];
+						new_value += expF(combined ?? 0, motor.exp) * 100 * (motor.reverseAxis ? -1 : 1);
+					} else {
+						new_value +=
+							expF($axes[motor.axis] ?? 0, motor.exp) * 100 * (motor.reverseAxis ? -1 : 1);
+					}
 				}
 				if (motor.buttonPlus > -1) {
 					new_value += ($buttons[motor.buttonPlus] ? 1 : 0) * 100;

@@ -38,6 +38,12 @@
 						<option>{i}</option>
 					{/each}
 				</select>
+				<select bind:value={motor.axis2}>
+					<option value={-1}>-</option>
+					{#each Array($axes.length) as _, i}
+						<option>{i}</option>
+					{/each}
+				</select>
 			</li>
 
 			<li class="row">

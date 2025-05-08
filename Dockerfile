@@ -1,5 +1,5 @@
 # https://www.reddit.com/r/sveltejs/comments/tbu8sy/tutorial_how_to_build_a_sveltekit_docker_image_to/
-FROM node:16.17 as build
+FROM node:24.0 as build
 
 # install dependencies
 WORKDIR /app
